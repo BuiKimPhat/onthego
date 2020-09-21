@@ -4,10 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.google.android.material.button.MaterialButton;
+import com.leobkdn.onthego.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +22,28 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private IntroAdapter introAdapter;
     private LinearLayout introIndicators;
+    private MaterialButton buttonIntroAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // make activity fullscreen
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // check if intro opened before
+        if (restorePrefsData()) {
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+        }
         setContentView(R.layout.activity_main);
 
         setupIntroItems();
-        ViewPager2 introViewPager = findViewById(R.id.introViewPager);
+        final ViewPager2 introViewPager = findViewById(R.id.introViewPager);
         introViewPager.setAdapter(introAdapter);
 
+        buttonIntroAction = findViewById(R.id.buttonIntroAction);
         introIndicators = findViewById(R.id.introIndicators);
         setupIntroIndicators();
         setCurrentIntroIndicator(0);
@@ -36,6 +55,35 @@ public class MainActivity extends AppCompatActivity {
                 setCurrentIntroIndicator(position);
             }
         });
+
+        buttonIntroAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (introViewPager.getCurrentItem() + 1 < introAdapter.getItemCount()) {
+                    introViewPager.setCurrentItem(introViewPager.getCurrentItem() + 1);
+                } else {
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    savePrefsData();
+                    finish();
+                }
+            }
+        });
+    }
+
+    private void savePrefsData() {
+        // save if intro opened
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isIntroOpened", true);
+        editor.commit();
+
+    }
+
+    private boolean restorePrefsData() {
+        // check if intro opened
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        Boolean introOpened = prefs.getBoolean("isIntroOpened", false);
+        return introOpened;
     }
 
     private void setupIntroItems() {
@@ -70,12 +118,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupIntroIndicators() {
+        //array of indicator images (Views)
         ImageView[] indicators = new ImageView[introAdapter.getItemCount()];
-        //dunno
+        // set attributes for Views in LinearLayout ViewGroup
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         );
         layoutParams.setMargins(8, 0, 8, 0);
+
+        //
         for (int i = 0; i < indicators.length; i++) {
             indicators[i] = new ImageView(getApplicationContext());
             indicators[i].setImageDrawable(ContextCompat.getDrawable(
@@ -100,6 +151,12 @@ public class MainActivity extends AppCompatActivity {
                         ContextCompat.getDrawable(getApplicationContext(), R.drawable.intro_indicators_inactive)
                 );
             }
+        }
+        // set button text
+        if (index == introAdapter.getItemCount() - 1) {
+            buttonIntroAction.setText("Bắt đầu");
+        } else {
+            buttonIntroAction.setText("Tiếp tục");
         }
     }
 }
