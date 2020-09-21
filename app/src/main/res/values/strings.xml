@@ -1,12 +1,11 @@
 <resources>
     <string name="app_name">OnTheGo</string>
-    <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="prompt_password">Mật khẩu</string>
+    <string name="log_in">Đăng nhập</string>
+    <string name="sign_up">Đăng kí</string>
+    <string name="welcome">"Xin chào "</string>
+    <string name="invalid_username">Tên đăng nhập không hợp lệ</string>
+    <string name="invalid_password">Mật khẩu phải có ít nhất 6 kí tự</string>
+    <string name="login_failed">"Đăng nhập thất bại"</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.leobkdn.onthego;
+package com.leobkdn.onthego.ui.intro;
 
 // Data, in/out of each intro slides
 public class IntroItem {

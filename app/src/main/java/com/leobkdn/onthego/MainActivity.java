@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.material.button.MaterialButton;
+import com.leobkdn.onthego.ui.intro.IntroAdapter;
+import com.leobkdn.onthego.ui.intro.IntroItem;
 import com.leobkdn.onthego.ui.login.LoginActivity;
 
 import java.util.ArrayList;
