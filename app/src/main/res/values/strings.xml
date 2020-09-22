@@ -4,6 +4,9 @@
     <string name="prompt_password">Mật khẩu</string>
     <string name="log_in">Đăng nhập</string>
     <string name="sign_up">Đăng kí</string>
+    <string name="full_name">Họ và tên</string>
+    <string name="DOB">Ngày sinh</string>
+    <string name="address">Địa chỉ</string>
     <string name="welcome">"Xin chào "</string>
     <string name="invalid_username">Tên đăng nhập không hợp lệ</string>
     <string name="invalid_password">Mật khẩu phải có ít nhất 6 kí tự</string>
