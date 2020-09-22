@@ -23,7 +23,6 @@ public class SignUpActivity extends AppCompatActivity {
         loginSwitchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 finish();
             }
         });

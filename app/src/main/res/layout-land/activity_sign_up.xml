@@ -12,6 +12,7 @@
     tools:context=".ui.login.LoginActivity">
 
     <LinearLayout
+        android:padding="16dp"
         android:id="@+id/signUpLinear1"
         android:layout_width="364dp"
         android:layout_height="match_parent"
@@ -44,6 +45,7 @@
 
     <LinearLayout
         android:id="@+id/signUpLinear2"
+        android:padding="16dp"
         android:layout_width="364dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -108,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:enabled="false"
+        android:layout_marginStart="16dp"
         android:text="@string/log_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -118,6 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:enabled="false"
+        android:layout_marginEnd="16dp"
         android:text="@string/sign_up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
