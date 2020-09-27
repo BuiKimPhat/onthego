@@ -7,4 +7,8 @@
     <color name="colorTextSecondary">#757575</color>
     <color name="colorBackground">#FFFFFF</color>
     <color name="introIndicatorInactive">#72BCF7</color>
+    <color name="disabled">#BFBFBF</color>
+    <color name="sky">#C6E6FF</color>
+    <color name="warning">#ffb818</color>
+    <color name="success">#5cb85c</color>
 </resources>
