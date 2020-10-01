@@ -57,7 +57,7 @@
             android:id="@+id/home_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tìm kiếm"
+            android:hint="@string/search"
             android:inputType="text"
             android:selectAllOnFocus="true"
             android:textSize="14sp" />
@@ -126,7 +126,7 @@
             android:clickable="false"
             android:gravity="center|bottom"
             android:paddingBottom="36dp"
-            android:text="Điểm đến"
+            android:text="@string/destinations"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </FrameLayout>
@@ -159,7 +159,7 @@
             android:clickable="false"
             android:gravity="center|bottom"
             android:paddingBottom="40dp"
-            android:text="Phương tiện"
+            android:text="@string/transport"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </FrameLayout>
@@ -192,7 +192,7 @@
             android:clickable="false"
             android:gravity="center|bottom"
             android:paddingBottom="35dp"
-            android:text="Nơi ở"
+            android:text="@string/stay"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </FrameLayout>
@@ -225,7 +225,7 @@
             android:clickable="false"
             android:gravity="center|bottom"
             android:paddingBottom="34dp"
-            android:text="Ăn uống"
+            android:text="@string/food"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </FrameLayout>
@@ -265,7 +265,7 @@
             android:clickable="false"
             android:gravity="bottom|center"
             android:padding="25sp"
-            android:text="Go"
+            android:text="@string/go"
             android:textSize="20sp" />
     </FrameLayout>
 
@@ -277,7 +277,7 @@
         android:layout_marginBottom="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center|left"
+        android:gravity="center|start"
         android:orientation="vertical"
         android:clickable="true"
         android:focusable="true">

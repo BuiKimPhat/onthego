@@ -5,36 +5,45 @@ import androidx.annotation.Nullable;
 /**
  * Data validation state of the login form.
  */
-class LoginFormState {
+
+// Manage input error messages
+public class LoginFormState {
     @Nullable
-    private Integer usernameError;
+    private Integer emailError;
     @Nullable
     private Integer passwordError;
+    @Nullable
+    private Integer nameError;
     private boolean isDataValid;
 
-    LoginFormState(@Nullable Integer usernameError, @Nullable Integer passwordError) {
-        this.usernameError = usernameError;
+    LoginFormState(@Nullable Integer emailError, @Nullable Integer passwordError, @Nullable Integer nameError) {
+        this.emailError = emailError;
         this.passwordError = passwordError;
+        this.nameError = nameError;
         this.isDataValid = false;
     }
 
     LoginFormState(boolean isDataValid) {
-        this.usernameError = null;
+        this.emailError = null;
         this.passwordError = null;
+        this.nameError = null;
         this.isDataValid = isDataValid;
     }
 
     @Nullable
-    Integer getUsernameError() {
-        return usernameError;
+    public Integer getUsernameError() {
+        return emailError;
     }
 
     @Nullable
-    Integer getPasswordError() {
+    public Integer getPasswordError() {
         return passwordError;
     }
 
-    boolean isDataValid() {
+    @Nullable
+    public Integer getNameError(){ return nameError; }
+
+    public boolean isDataValid() {
         return isDataValid;
     }
 }

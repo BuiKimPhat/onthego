@@ -1,5 +1,7 @@
 package com.leobkdn.onthego.data;
 
+import android.content.SharedPreferences;
+
 import com.leobkdn.onthego.data.model.LoggedInUser;
 
 /**
@@ -39,6 +41,7 @@ public class LoginRepository {
 
     private void setLoggedInUser(LoggedInUser user) {
         this.user = user;
+        // TODO: set prefs
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
     }
@@ -46,6 +49,14 @@ public class LoginRepository {
     public Result<LoggedInUser> login(String username, String password) {
         // handle login
         Result<LoggedInUser> result = dataSource.login(username, password);
+        if (result instanceof Result.Success) {
+            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+        }
+        return result;
+    }
+    public Result<LoggedInUser> signUp(String email, String password, String name){
+        // handle signup
+        Result<LoggedInUser> result = dataSource.signUp(email, password, name);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }

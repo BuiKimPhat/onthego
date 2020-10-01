@@ -8,9 +8,17 @@
     <string name="DOB">Ngày sinh</string>
     <string name="address">Địa chỉ</string>
     <string name="welcome">"Xin chào "</string>
-    <string name="invalid_username">Tên đăng nhập không hợp lệ</string>
+    <string name="invalid_email">Email không hợp lệ</string>
     <string name="invalid_password">Mật khẩu phải có ít nhất 6 kí tự</string>
-    <string name="login_failed">"Đăng nhập thất bại"</string>
+    <string name="login_failed">Đăng nhập thất bại</string>
+    <string name="sign_up_failed">Đăng kí thất bại</string>
+    <string name="no_empty">Không được bỏ trống</string>
+    <string name="go">Go</string>
+    <string name="destinations">Điểm đến</string>
+    <string name="transport">Phương tiện</string>
+    <string name="stay">Nơi ở</string>
+    <string name="food">Ăn uống</string>
+    <string name="search">Tìm kiếm</string>
     <string-array name="cities">
         <item>Địa chỉ</item>
         <item>An Giang</item>

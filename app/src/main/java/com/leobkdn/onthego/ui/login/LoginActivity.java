@@ -1,17 +1,21 @@
 package com.leobkdn.onthego.ui.login;
 
+import android.Manifest;
 import android.app.Activity;
 
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -25,9 +29,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.LoginDataSource;
+import com.leobkdn.onthego.data.LoginRepository;
+import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -39,13 +51,36 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
+        //test connect db
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//        String hostName = "192.168.1.15";
+//        String server = "LEOTHESECOND";
+//        String port = "1433";
+//        String dbName = "OnTheGo";
+//        String dbUser = "sa";
+//        String dbPassword = "[]\\\\][[]\\";
+//        //String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";database=" + dbName + ";user=" + dbUser + "@" + server + ";password=" + dbPassword + ";encrypt=true;trustServerCertificate=false;loginTimeout=30;";
+//        String dbURI = "jdbc:jtds:sqlserver://192.168.1.15:1433;instance=LEOTHESECOND;user=user;password=userpass;databasename=OnTheGo;";
+//        try {
+//            Connection connection = DriverManager.getConnection(dbURI);
+//            if (connection != null) {
+//                Toast.makeText(getApplicationContext(), "connected to db", Toast.LENGTH_LONG).show();
+//                connection.close();
+//            } else {
+//                Toast.makeText(getApplicationContext(), "connect error", Toast.LENGTH_LONG).show();
+//            }
+//        } catch (SQLException e){
+//            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+//        }
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.loginButton);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         Button signUpButton = findViewById(R.id.signUpButton);
-
+        //switch to sign up page
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
