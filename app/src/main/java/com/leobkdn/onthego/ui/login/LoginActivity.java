@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -33,6 +34,7 @@ import com.leobkdn.onthego.data.LoginDataSource;
 import com.leobkdn.onthego.data.LoginRepository;
 import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
@@ -48,6 +50,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // if there is token stored, then switch to home
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        if (restorePrefsData("token") != null) {
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
+
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -114,13 +124,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
                 }
+                if (loginResult.getErr() != null) showLoginFailed(loginResult.getErr());
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
+                    setResult(Activity.RESULT_OK);
+                    //Complete and destroy login activity once successful
+                    finish();
                 }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -148,8 +158,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+                    loadingProgressBar.setVisibility(View.VISIBLE);
+                    loginButton.setEnabled(false);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loginViewModel.login(usernameEditText.getText().toString(),
+                                    passwordEditText.getText().toString());
+                        }
+                    }).start();
                 }
                 return false;
             }
@@ -159,19 +176,46 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                loginButton.setEnabled(false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loginViewModel.login(usernameEditText.getText().toString(),
+                                passwordEditText.getText().toString());
+                    }
+                }).start();
             }
         });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
+        savePrefsData("username",model.getDisplayName());
+        savePrefsData("email", model.getEmail());
+        savePrefsData("token",model.getToken());
+
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLoginFailed(String errorString) {
+        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    //save info into storage
+    private void savePrefsData(String key, String value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+    private String restorePrefsData(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        return prefs.getString(key, null);
     }
 }

@@ -19,6 +19,9 @@
     <string name="stay">Nơi ở</string>
     <string name="food">Ăn uống</string>
     <string name="search">Tìm kiếm</string>
+    <string name="exitDialog">Thoát chương trình?</string>
+    <string name="logOut">Đăng xuất</string>
+    <string name="exit">Thoát</string>
     <string-array name="cities">
         <item>Địa chỉ</item>
         <item>An Giang</item>

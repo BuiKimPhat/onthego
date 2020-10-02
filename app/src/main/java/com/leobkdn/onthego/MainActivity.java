@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
         }
+
         setContentView(R.layout.activity_main);
 
         setupIntroItems();

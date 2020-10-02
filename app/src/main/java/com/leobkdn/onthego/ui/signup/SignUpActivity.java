@@ -60,49 +60,6 @@ public class SignUpActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-//        String dbURI = "jdbc:jtds:sqlserver://192.168.1.15:1433;instance=LEOTHESECOND;user=user;password=userpass;databasename=OnTheGo;";
-//        try {
-//            Connection connection = DriverManager.getConnection(dbURI);
-//            if (connection != null) {
-//                //  insert data to db
-//                String sqlQuery = "insert into [User] (email,[password],[name], createdAt) values (?, ?, ?, CURRENT_TIMESTAMP)";
-//                PreparedStatement statement = connection.prepareStatement(sqlQuery);
-//                statement.setString(1, "Asdasd@asdasd.com");
-//                statement.setString(2, "Asdasdasd");
-//                statement.setString(3, "xcvxcv");
-//                int rowInserted = statement.executeUpdate();
-//                if (rowInserted > 0) {
-//                    //if insert success
-//                    //get last user id, name from database
-//                    sqlQuery = "select id, [name] from [User] where id = SCOPE_IDENTITY()";
-//                    statement = connection.prepareStatement(sqlQuery);
-//                    ResultSet result = statement.executeQuery();
-//                    Integer userID = result.getInt(1);
-//                    String username = result.getString(2);
-//
-//                    //insert new token to database
-//                    sqlQuery = "insert into [User_Token] (userId,token,createdAt) values (?, ?, CURRENT_TIMESTAMP)";
-//                    statement = connection.prepareStatement(sqlQuery);
-//                    statement.setInt(1, userID);
-//                    statement.setString(2,"vxcvxcv");
-//                    int tokenNewRow = statement.executeUpdate();
-//                    if (tokenNewRow > 0){
-//                        // if token inserted
-//                        // set LoggedInUser
-//                        Toast.makeText(getApplicationContext(),"inserted success",Toast.LENGTH_LONG);
-//                    } else {
-//                        //if token insert fails
-//                        throw new SQLException("Không thể thêm token mới");
-//                    }
-//                } else {
-//                    //if insert fails
-//                    throw new SQLException("Không thể tạo người dùng mới");
-//                }
-//                connection.close();
-//            }
-//        } catch (SQLException e){
-//            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-//        }
         signUpViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -124,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
         loginSwitchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                finish();
             }
         });
 
@@ -204,9 +161,15 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                signUpViewModel.signUp(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString(),
-                        nameEditText.getText().toString());
+                signUpButton.setEnabled(false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        signUpViewModel.signUp(emailEditText.getText().toString(),
+                                passwordEditText.getText().toString(),
+                                nameEditText.getText().toString());
+                    }
+                }).start();
             }
         });
     }
@@ -238,6 +201,6 @@ public class SignUpActivity extends AppCompatActivity {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 }

@@ -1,9 +1,11 @@
 package com.leobkdn.onthego.data;
 
 import android.Manifest;
+import android.accounts.AuthenticatorException;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -19,7 +21,11 @@ import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -66,15 +72,47 @@ public class LoginDataSource {
             throw exception;
         }
     }
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<LoggedInUser> login(String email, String password) {
         // TODO: handle loggedInUser authentication
         try {
-            LoggedInUser fakeUser =
-                    new LoggedInUser("Bạn của tôi", token);
-            return new Result.Success<>(fakeUser);
+            //Set connection
+            Connection connection = DriverManager.getConnection(dbURI);
+            if (connection != null) {
+
+                // check unique info
+                String sqlQuery = "select id, [password] from [User] where email = ?";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setString(1, email);
+                ResultSet creds = statement.executeQuery();
+                if (!creds.next()) throw new SQLException("Không tồn tại email này");
+                if (!BCrypt.checkpw(password, creds.getString(2))) throw new AuthenticatorException("Sai mật khẩu");
+                else {
+                    Integer userID = creds.getInt(1);
+                    // create token
+                    token = tokenGenerator(userID);
+                    //insert new token to database
+                    sqlQuery = "insert into [User_Token] (userId,token,createdAt) values (?, ?, CURRENT_TIMESTAMP)";
+                    statement = connection.prepareStatement(sqlQuery);
+                    statement.setInt(1, userID);
+                    statement.setString(2,token);
+                    int tokenNewRow = statement.executeUpdate();
+                    if (tokenNewRow > 0) {
+                        // if token inserted
+                        // set LoggedInUser
+                        sqlQuery = "select [name] from [User] where id = ?";
+                        statement = connection.prepareStatement(sqlQuery);
+                        statement.setInt(1, userID);
+                        ResultSet info = statement.executeQuery();
+                        info.next();
+                        newUser = new LoggedInUser(info.getString(1), email, token); // LOGIN SUCCESS
+                    }
+                }
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
         } catch (Exception e) {
-            return new Result.Error(new IOException("Lỗi đăng nhập", e));
+            return new Result.Error(e);
         }
+        return new Result.Success<>(newUser);
     }
 
     public Result<LoggedInUser> signUp(String email, String password, String fullName) {
