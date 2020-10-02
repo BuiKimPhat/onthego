@@ -46,7 +46,7 @@ public class LoginViewModel extends ViewModel {
         Result<LoggedInUser> result = loginRepository.signUp(email, password, name);
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken())));
         } else {
             loginResult.setValue(new LoginResult(result.toString()));
         }
@@ -93,4 +93,5 @@ public class LoginViewModel extends ViewModel {
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;
     }
+    
 }

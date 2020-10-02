@@ -135,9 +135,8 @@
         app:layout_constraintStart_toStartOf="@+id/signUpLinear2" />
     <ProgressBar
         android:id="@+id/loading"
-        android:layout_width="0dp"
-        android:layout_height="3dp"
-        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

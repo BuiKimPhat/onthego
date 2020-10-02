@@ -5,23 +5,24 @@ package com.leobkdn.onthego.data.model;
  */
 public class LoggedInUser {
 
-    private String userId;
     private String displayName;
+    private String email;
     private String token;
 
-    public LoggedInUser(String userId, String displayName, String token) {
-        this.userId = userId;
+    public LoggedInUser(String displayName, String token) {
         this.displayName = displayName;
         this.token = token;
     }
-    public LoggedInUser() {
-        this.userId = null;
-        this.displayName = null;
-        this.token = null;
+
+    public LoggedInUser(String displayName, String email, String token) {
+        this.displayName = displayName;
+        this.email = email;
+        this.token = token;
     }
 
-    public String getUserId() {
-        return userId;
+
+    public String getEmail() {
+        return email;
     }
 
     public String getToken() {

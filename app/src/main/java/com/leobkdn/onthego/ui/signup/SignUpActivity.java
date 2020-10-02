@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -154,11 +155,12 @@ public class SignUpActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) showLoginFailed(loginResult.getError());
                 if (loginResult.getErr() != null) showLoginFailed(loginResult.getErr());
-                if (loginResult.getSuccess() != null) updateUiWithUser(loginResult.getSuccess());
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy sign up activity once successful
-                finish();
+                if (loginResult.getSuccess() != null) {
+                    updateUiWithUser(loginResult.getSuccess());
+                    setResult(Activity.RESULT_OK);
+                    //Complete and destroy sign up activity once successful
+                    finish();
+                }
             }
         });
 
@@ -209,8 +211,14 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    //show quick noti toast on sign up success
+    // on success
     private void updateUiWithUser(LoggedInUserView model) {
+        //save user info to storage
+        savePrefsData("username",model.getDisplayName());
+        savePrefsData("email", model.getEmail());
+        savePrefsData("token",model.getToken());
+
+        // show quick noti toast on sign up success
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful signed in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
@@ -219,9 +227,17 @@ public class SignUpActivity extends AppCompatActivity {
 
     //show quick noti toast on sign up failure
     private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
     }
     private void showLoginFailed(String errorString){
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
+    }
+
+    //save info into storage
+    private void savePrefsData(String key, String value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
     }
 }

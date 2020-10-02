@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isIntroOpened", true);
         editor.commit();
-
     }
 
     private boolean restorePrefsData() {
