@@ -1,47 +1,25 @@
 package com.leobkdn.onthego.ui.login;
-
-import android.Manifest;
 import android.app.Activity;
-
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.LoginDataSource;
-import com.leobkdn.onthego.data.LoginRepository;
-import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.home.HomeActivity;
-import com.leobkdn.onthego.ui.login.LoginViewModel;
-import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -53,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // if there is token stored, then switch to home
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
-        if (restorePrefsData("token") != null) {
+        if (restorePrefsData("token") != null && !restorePrefsBool("isAdmin")) {
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         }
@@ -61,29 +39,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        //test connect db
-//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//        String hostName = "192.168.1.15";
-//        String server = "LEOTHESECOND";
-//        String port = "1433";
-//        String dbName = "OnTheGo";
-//        String dbUser = "sa";
-//        String dbPassword = "[]\\\\][[]\\";
-//        //String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";database=" + dbName + ";user=" + dbUser + "@" + server + ";password=" + dbPassword + ";encrypt=true;trustServerCertificate=false;loginTimeout=30;";
-//        String dbURI = "jdbc:jtds:sqlserver://192.168.1.15:1433;instance=LEOTHESECOND;user=user;password=userpass;databasename=OnTheGo;";
-//        try {
-//            Connection connection = DriverManager.getConnection(dbURI);
-//            if (connection != null) {
-//                Toast.makeText(getApplicationContext(), "connected to db", Toast.LENGTH_LONG).show();
-//                connection.close();
-//            } else {
-//                Toast.makeText(getApplicationContext(), "connect error", Toast.LENGTH_LONG).show();
-//            }
-//        } catch (SQLException e){
-//            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-//        }
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -124,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
                 }
-                if (loginResult.getErr() != null) showLoginFailed(loginResult.getErr());
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
                     setResult(Activity.RESULT_OK);
@@ -189,18 +143,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
+        // initiate successful logged in experience
+
         savePrefsData("username",model.getDisplayName());
         savePrefsData("email", model.getEmail());
         savePrefsData("token",model.getToken());
+        savePrefsData("isAdmin", model.getIsAdmin());
+        if (model.getBirthday() != null) savePrefsData("birthday", model.getBirthday().getTime());
+        if (model.getAddress() != null) savePrefsData("address", model.getAddress());
 
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-    }
-
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        if (!model.getIsAdmin()) {
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
     }
 
     private void showLoginFailed(String errorString) {
@@ -214,8 +171,24 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString(key, value);
         editor.apply();
     }
+    private void savePrefsData(String key, boolean value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+    private void savePrefsData(String key, long value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+    private boolean restorePrefsBool(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        return prefs.getBoolean(key, false);
     }
 }

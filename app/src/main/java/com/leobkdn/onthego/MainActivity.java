@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void savePrefsData() {
         // save if intro opened
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("introPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isIntroOpened", true);
         editor.commit();
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean restorePrefsData() {
         // check if intro opened
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("introPrefs", MODE_PRIVATE);
         Boolean introOpened = prefs.getBoolean("isIntroOpened", false);
         return introOpened;
     }

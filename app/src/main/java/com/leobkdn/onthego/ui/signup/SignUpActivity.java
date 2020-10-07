@@ -1,12 +1,7 @@
 package com.leobkdn.onthego.ui.signup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
@@ -14,43 +9,32 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginFormState;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private LoginViewModel signUpViewModel;
+    private Date birthday;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +94,8 @@ public class SignUpActivity extends AppCompatActivity {
             public void onChanged(LoginResult loginResult) {
                 if (loginResult == null) return;
                 loadingProgressBar.setVisibility(View.GONE);
+                signUpButton.setEnabled(true);
                 if (loginResult.getError() != null) showLoginFailed(loginResult.getError());
-                if (loginResult.getErr() != null) showLoginFailed(loginResult.getErr());
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
                     setResult(Activity.RESULT_OK);
@@ -135,6 +119,14 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+//                try {
+//                    String birthdayString = (birthdayEditText.getText().toString());
+//                    Log.w("birthdayString", birthdayString);
+//                    birthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayString);
+//                } catch (Exception e){
+//                    e.getStackTrace();
+//                    Log.w("convert date", e.toString());
+//                }
                 signUpViewModel.signUpDataChanged(emailEditText.getText().toString(),
                         passwordEditText.getText().toString(),
                         nameEditText.getText().toString());
@@ -162,12 +154,25 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 signUpButton.setEnabled(false);
+
+                // parse edittext string to date
+                if (birthdayEditText.getText() != null){
+                    try {
+                        String birthdayString = birthdayEditText.getText().toString();
+                        birthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayString);
+                    } catch (Exception e){
+                        e.getStackTrace();
+                        Log.w("convertDateError", e.toString());
+                    }
+                }
+
+                // new thread handling networking
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         signUpViewModel.signUp(emailEditText.getText().toString(),
                                 passwordEditText.getText().toString(),
-                                nameEditText.getText().toString());
+                                nameEditText.getText().toString(), birthday, addressSpinner.getSelectedItem().toString() == "Địa chỉ" ? null : addressSpinner.getSelectedItem().toString());
                     }
                 }).start();
             }
@@ -176,22 +181,23 @@ public class SignUpActivity extends AppCompatActivity {
 
     // on success
     private void updateUiWithUser(LoggedInUserView model) {
+        // initiate successful signed in experience
+
         //save user info to storage
         savePrefsData("username",model.getDisplayName());
         savePrefsData("email", model.getEmail());
         savePrefsData("token",model.getToken());
+        savePrefsData("isAdmin", model.getIsAdmin());
+        if (model.getBirthday() != null) savePrefsData("birthday", model.getBirthday().getTime());
+        if (model.getAddress() != null) savePrefsData("address", model.getAddress());
 
         // show quick noti toast on sign up success
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful signed in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        if (!model.getIsAdmin()) startActivity(new Intent(getApplicationContext(), HomeActivity.class));
     }
 
     //show quick noti toast on sign up failure
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
-    }
     private void showLoginFailed(String errorString){
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
     }
@@ -201,6 +207,18 @@ public class SignUpActivity extends AppCompatActivity {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
+        editor.apply();
+    }
+    private void savePrefsData(String key, boolean value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+    private void savePrefsData(String key, long value) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(key, value);
         editor.apply();
     }
 }

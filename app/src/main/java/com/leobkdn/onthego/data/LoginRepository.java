@@ -2,7 +2,12 @@ package com.leobkdn.onthego.data;
 
 import android.content.SharedPreferences;
 
+import androidx.annotation.Nullable;
+
 import com.leobkdn.onthego.data.model.LoggedInUser;
+
+import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -34,9 +39,12 @@ public class LoginRepository {
         return user != null;
     }
 
-    public void logout() {
+    public Result<String> logout(@Nullable String token) {
+        //handle logout
         user = null;
-        dataSource.logout();
+        if (token != null) {
+            return dataSource.logout(token);
+        } else return new Result.Error(new Exception("Không có token"));
     }
 
     private void setLoggedInUser(LoggedInUser user) {
@@ -53,9 +61,10 @@ public class LoginRepository {
         }
         return result;
     }
-    public Result<LoggedInUser> signUp(String email, String password, String name){
+
+    public Result<LoggedInUser> signUp(String email, String password, String name, @Nullable Date birthday, @Nullable String address) {
         // handle signup
-        Result<LoggedInUser> result = dataSource.signUp(email, password, name);
+        Result<LoggedInUser> result = dataSource.signUp(email, password, name, birthday, address);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }

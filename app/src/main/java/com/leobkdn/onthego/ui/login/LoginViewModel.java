@@ -1,9 +1,11 @@
 package com.leobkdn.onthego.ui.login;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import com.leobkdn.onthego.data.LoginRepository;
@@ -11,7 +13,10 @@ import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.R;
 
-// handle data on changed, call login, signup method (from repository), input validators, store result of login/sign up
+import java.time.LocalDate;
+import java.util.Date;
+
+// handle data on changed, call login, signup, logout method (from repository), input validators, store result of login/sign up
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>(); //error messages
@@ -36,17 +41,26 @@ public class LoginViewModel extends ViewModel {
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken())));
+            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
         } else {
             loginResult.postValue(new LoginResult(result.toString()));
         }
     }
 
-    public void signUp(String email, String password, String name){
-        Result<LoggedInUser> result = loginRepository.signUp(email, password, name);
+    public void signUp(String email, String password, String name, @Nullable Date birthday, @Nullable String address){
+        Result<LoggedInUser> result = loginRepository.signUp(email, password, name, birthday, address);
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken())));
+            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
+        } else {
+            loginResult.postValue(new LoginResult(result.toString()));
+        }
+    }
+
+    public void logOut(@Nullable String token){
+        Result<String> result = loginRepository.logout(token);
+        if (result instanceof Result.Success) {
+            loginResult.postValue(new LoginResult((Result.Success<String>) result));
         } else {
             loginResult.postValue(new LoginResult(result.toString()));
         }

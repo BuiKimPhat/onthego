@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
+            android:maxLines="1"
             android:inputType="textEmailAddress"
             android:selectAllOnFocus="true" />
 
@@ -38,9 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:hint="@string/prompt_password"
-            android:imeActionLabel="@string/log_in"
-            android:imeOptions="actionDone"
             android:inputType="textPassword"
+            android:maxLines="1"
             android:selectAllOnFocus="true" />
     </LinearLayout>
 
@@ -62,6 +62,7 @@
             android:layout_width="match_parent"
             android:hint="@string/full_name"
             android:selectAllOnFocus="true"
+            android:maxLines="1"
             tools:layout_editor_absoluteX="40dp"
             tools:layout_editor_absoluteY="129dp" />
 
@@ -72,6 +73,8 @@
             android:layout_width="match_parent"
             android:hint="@string/DOB"
             android:inputType="date"
+            android:selectAllOnFocus="true"
+            android:maxLines="1"
             tools:layout_editor_absoluteX="40dp"
             tools:layout_editor_absoluteY="210dp" />
 
@@ -150,9 +153,11 @@
         android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/white_circle"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

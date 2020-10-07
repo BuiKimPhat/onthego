@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">OnTheGo</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Mật khẩu</string>
+    <string name="prompt_email">Email *</string>
+    <string name="prompt_password">Mật khẩu *</string>
     <string name="log_in">Đăng nhập</string>
     <string name="sign_up">Đăng kí</string>
-    <string name="full_name">Họ và tên</string>
-    <string name="DOB">Ngày sinh</string>
+    <string name="full_name">Họ và tên *</string>
+    <string name="DOB">Ngày sinh (dd/mm/yyyy)</string>
     <string name="address">Địa chỉ</string>
     <string name="welcome">"Xin chào "</string>
     <string name="invalid_email">Email không hợp lệ</string>
