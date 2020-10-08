@@ -24,7 +24,7 @@ public class LoggedInUserView {
         this.displayName = displayName;
     }
 
-    public LoggedInUserView(String displayName, String email, String token, boolean isAdmin, @Nullable Date birthday, @Nullable String address) {
+    public LoggedInUserView(String displayName, String email, @Nullable String token, boolean isAdmin, @Nullable Date birthday, @Nullable String address) {
         this.displayName = displayName;
         this.email = email;
         this.token = token;

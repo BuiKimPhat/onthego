@@ -1,7 +1,6 @@
 package com.leobkdn.onthego.ui.home;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -12,21 +11,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.leobkdn.onthego.MainActivity;
+import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -39,10 +39,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"));
+        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),false,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
         ImageButton powerButton = findViewById(R.id.powerButton);
+        ImageButton settingButton = findViewById(R.id.settingButton);
         ProgressBar loading = findViewById(R.id.homeLoading);
+        LinearLayout profileSwitch = findViewById(R.id.linearLayout);
         //set avatar text
         TextView username = findViewById(R.id.home_username);
         username.setText(user.getDisplayName());
@@ -71,6 +73,31 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        // profile switch listener
+        profileSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.putExtra("name", user.getDisplayName());
+                intent.putExtra("email", user.getEmail());
+                intent.putExtra("birthday", user.getBirthday().getTime());
+                intent.putExtra("address", user.getAddress());
+                startActivity(intent);
+            }
+        });
+        settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.putExtra("name", user.getDisplayName());
+                intent.putExtra("email", user.getEmail());
+                intent.putExtra("birthday", user.getBirthday().getTime());
+                intent.putExtra("address", user.getAddress());
+                startActivity(intent);
+            }
+        });
+
+        // log out button listener
         powerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,5 +148,9 @@ public class HomeActivity extends AppCompatActivity {
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+    private long restorePrefsLong(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        return prefs.getLong(key, 0);
     }
 }
