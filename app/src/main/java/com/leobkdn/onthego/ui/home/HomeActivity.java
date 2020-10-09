@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -32,6 +33,25 @@ public class HomeActivity extends AppCompatActivity {
 
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
+    private boolean pressedOnce = false;
+
+    // double-tap to exit activity
+    @Override
+    public void onBackPressed() {
+        if (pressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+        this.pressedOnce = true;
+        Toast.makeText(this, "Nhấn một lần nữa để thoát", Toast.LENGTH_SHORT).show();
+        // reset pressedOnce to false after 2 seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pressedOnce = false;
+            }
+        }, 2000);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +98,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                intent.putExtra("name", user.getDisplayName());
-                intent.putExtra("email", user.getEmail());
-                intent.putExtra("birthday", user.getBirthday().getTime());
-                intent.putExtra("address", user.getAddress());
                 startActivity(intent);
             }
         });
@@ -89,10 +105,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                intent.putExtra("name", user.getDisplayName());
-                intent.putExtra("email", user.getEmail());
-                intent.putExtra("birthday", user.getBirthday().getTime());
-                intent.putExtra("address", user.getAddress());
                 startActivity(intent);
             }
         });

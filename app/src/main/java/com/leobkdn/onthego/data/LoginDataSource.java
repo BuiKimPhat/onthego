@@ -13,9 +13,11 @@ import androidx.core.app.ActivityCompat;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoginActivity;
@@ -44,6 +46,7 @@ import java.util.Date;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
+ * (Server class)
  */
 public class LoginDataSource {
 
@@ -57,7 +60,7 @@ public class LoginDataSource {
     private static final String dbPassword = "userpass";
     private static final String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";instance=" + instance + ";user=" + dbUser + ";password=" + dbPassword + ";databasename=" + dbName;
     private String token;
-    private String stringResult;
+    private String stringResult = "Done";
     private LoggedInUser newUser;
 
     private String tokenGenerator(Integer UID) {
@@ -79,7 +82,19 @@ public class LoginDataSource {
             throw exception;
         }
     }
-
+    private String tokenVerifier(String token){
+        // veirfy if token meets the claims
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .build(); //Reusable verifier instance
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getPayload();
+        } catch (JWTVerificationException exception){
+            //Invalid signature/claims
+            throw exception;
+        }
+    }
     public Result<LoggedInUser> login(String email, String password) {
         try {
             //Set connection
@@ -155,7 +170,7 @@ public class LoginDataSource {
                     statement = connection.prepareStatement(sqlQuery);
                     ResultSet result = statement.executeQuery();
                     result.next();
-                    Integer userID = result.getInt(1);
+                    int userID = result.getInt(1);
 //                    String username = result.getString(2);
 
                     // create token
@@ -184,21 +199,24 @@ public class LoginDataSource {
     public Result<String> logout(String token) {
         // revoke logout
         try {
-            DecodedJWT jwt = JWT.decode(token);
-            String base64payload = jwt.getPayload();
-            byte[] decoded = Base64.getDecoder().decode(base64payload);
-            String decodedString = new String(decoded);
-            JSONObject payload = new JSONObject(decodedString);
+            //decode jwt
+//            DecodedJWT jwt = JWT.decode(token);
+//            String base64payload = jwt.getPayload();
+//            byte[] decoded = Base64.getDecoder().decode(base64payload);
+//            String decodedString = new String(decoded);
+//            JSONObject payload = new JSONObject(decodedString);
+
+            //connect
             Connection connection = DriverManager.getConnection(dbURI);
             if (connection != null) {
 //                Log.w("logout", "start connect");
                 // delete token
-                String sqlQuery = "delete from [User_Token] where userId = ? and token = ?";
+                String sqlQuery = "delete from [User_Token] where token = ?";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
-                int userId = Integer.parseInt(payload.getString("uid"));
-                statement.setInt(1, userId);
-                statement.setString(2, token);
-                Integer tokenDeleted = statement.executeUpdate();
+//                int userId = Integer.parseInt(payload.getString("uid"));
+//                statement.setInt(1, userId);
+                statement.setString(1, token);
+                int tokenDeleted = statement.executeUpdate();
                 if (tokenDeleted > 0) {
                     // if token deleted
                     // return success
@@ -211,6 +229,81 @@ public class LoginDataSource {
         } catch (Exception exception) {
             //Invalid token
             return new Result.Error(exception);
+        }
+        return new Result.Success<>(stringResult);
+    }
+
+    public Result<String> editInfo(LoggedInUser user){
+        try {
+            //Set connection
+            Connection connection = DriverManager.getConnection(dbURI);
+            if (connection != null) {
+                // verify token
+                tokenVerifier(user.getToken());
+
+                String sqlQuery = "update [User] set [name] = ?, email = ?, birthday = ?, [address] = ? where id in (select userId from [User_Token] where token = ?)";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+//                int userId = Integer.parseInt(payload.getString("uid"));
+//                statement.setInt(1, userId);
+//                statement.setString(1, key);
+                statement.setString(1, user.getDisplayName());
+                statement.setString(2, user.getEmail());
+                statement.setDate(3, new java.sql.Date(user.getBirthday().getTime()));
+                statement.setString(4, user.getAddress());
+                statement.setString(5, user.getToken());
+                int recordUpdated = statement.executeUpdate();
+                if (recordUpdated > 0) {
+                    // if user updated
+                    // return success
+                    stringResult = "Cập nhật thành công!";
+                } else {
+                    stringResult = "Không tìm thấy người dùng!";
+                }
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
+        } catch (JWTVerificationException e){
+            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+        }  catch (Exception e) {
+            return new Result.Error(e);
+        }
+        return new Result.Success<>(stringResult);
+    }
+
+    public Result<String> changePassword(String token, String oldPassword, String newPassword){
+        try {
+            //Set connection
+            Connection connection = DriverManager.getConnection(dbURI);
+            if (connection != null) {
+                // verify token
+                tokenVerifier(token);
+
+                String sqlQuery = "select id, [password] from [User] where id in (select userId from [User_Token] where token = ?)";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setString(1, token);
+                ResultSet creds = statement.executeQuery();
+                if (!creds.next()) throw new SQLException("Không tìm thấy token này");
+                if (!BCrypt.checkpw(oldPassword, creds.getString(2))) throw new AuthenticatorException("Sai mật khẩu");
+                else {
+                    int userID = creds.getInt(1);
+                    sqlQuery = "update [User] set [password] = ? where id = ?";
+                    statement = connection.prepareStatement(sqlQuery);
+                    statement.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+                    statement.setInt(2, userID);
+                    int recordUpdated = statement.executeUpdate();
+                    if (recordUpdated > 0) {
+                        // if user updated
+                        // return success
+                        stringResult = "Đổi mật khẩu thành công!";
+                    } else {
+                        stringResult = "Không tìm thấy người dùng!";
+                    }
+                }
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
+        } catch (JWTVerificationException e){
+            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+        } catch (Exception e) {
+            return new Result.Error(e);
         }
         return new Result.Success<>(stringResult);
     }

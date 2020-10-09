@@ -15,15 +15,15 @@ public class LoginResult {
     @Nullable
     private Result.Success<String> successString;
 
-    LoginResult(@Nullable String error) {
+    public LoginResult(@Nullable String error) {
         this.error = error;
     }
 
-    LoginResult(@Nullable LoggedInUserView success) {
+    public LoginResult(@Nullable LoggedInUserView success) {
         this.success = success;
     }
 
-    LoginResult(@Nullable Result.Success<String> successString){
+    public LoginResult(@Nullable Result.Success<String> successString){
         this.successString = successString;
     }
 
@@ -38,5 +38,5 @@ public class LoginResult {
     }
 
     @Nullable
-    public String getSuccessString(){return successString.getData();}
+    public String getSuccessString(){ if (successString != null) return successString.getData(); return null;}
 }

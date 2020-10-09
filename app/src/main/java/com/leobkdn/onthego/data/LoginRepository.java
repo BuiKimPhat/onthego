@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 
 import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.ui.login.LoggedInUserView;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -44,7 +45,7 @@ public class LoginRepository {
         user = null;
         if (token != null) {
             return dataSource.logout(token);
-        } else return new Result.Error(new Exception("Không có token"));
+        } else return new Result.Error(new Exception("Không có token! Vui lòng đăng nhập lại!"));
     }
 
     private void setLoggedInUser(LoggedInUser user) {
@@ -54,7 +55,6 @@ public class LoginRepository {
     }
 
     public Result<LoggedInUser> login(String username, String password) {
-        // handle login
         Result<LoggedInUser> result = dataSource.login(username, password);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
@@ -63,11 +63,22 @@ public class LoginRepository {
     }
 
     public Result<LoggedInUser> signUp(String email, String password, String name, @Nullable Date birthday, @Nullable String address) {
-        // handle signup
         Result<LoggedInUser> result = dataSource.signUp(email, password, name, birthday, address);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
         }
+        return result;
+    }
+
+    public Result<String> editInfo(LoggedInUserView user) {
+        if (user == null) return new Result.Error(new Exception("Dữ liệu người dùng lỗi! Vui lòng đăng nhập lại!"));
+        Result<String> result = dataSource.editInfo(new LoggedInUser(user.getDisplayName(), user.getEmail(), user.getToken(), user.getIsAdmin(), user.getBirthday(), user.getAddress()));
+        return result;
+    }
+
+    public Result<String> changePassword(String token, String oldPassword, String newPassword){
+        if (token == null) return new Result.Error(new Exception("Không có token! Vui lòng đăng nhập lại!"));
+        Result<String> result = dataSource.changePassword(token, oldPassword, newPassword);
         return result;
     }
 }

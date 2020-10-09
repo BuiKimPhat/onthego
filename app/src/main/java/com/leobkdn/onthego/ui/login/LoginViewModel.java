@@ -57,7 +57,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    public void logOut(@Nullable String token){
+    public void logOut(String token){
         Result<String> result = loginRepository.logout(token);
         if (result instanceof Result.Success) {
             loginResult.postValue(new LoginResult((Result.Success<String>) result));
@@ -65,6 +65,25 @@ public class LoginViewModel extends ViewModel {
             loginResult.postValue(new LoginResult(result.toString()));
         }
     }
+
+    public void editInfo(LoggedInUserView user){
+        Result<String> result = loginRepository.editInfo(user);
+        if (result instanceof Result.Success) {
+            loginResult.postValue(new LoginResult((Result.Success<String>) result));
+        } else {
+            loginResult.postValue(new LoginResult(result.toString()));
+        }
+    }
+
+    public void changePassword(String token, String oldPassword, String newPassword){
+        Result<String> result = loginRepository.changePassword(token, oldPassword, newPassword);
+        if (result instanceof Result.Success) {
+            loginResult.postValue(new LoginResult((Result.Success<String>) result));
+        } else {
+            loginResult.postValue(new LoginResult(result.toString()));
+        }
+    }
+
     public void loginDataChanged(String email, String password) {
         if (!isUserNameValid(email)) {
             loginFormState.setValue(new LoginFormState(R.string.invalid_email, null, null));
