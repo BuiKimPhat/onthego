@@ -33,7 +33,8 @@
             android:layout_marginBottom="16dp"
             android:clickable="false"
             android:text="Bùi Kim Phát"
-            android:textSize="16sp" />
+            android:textStyle="bold"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -114,16 +115,17 @@
             android:background="@drawable/custom_home_button_1"
             tools:layout_editor_absoluteX="70dp" />
         <ImageView
+            android:id="@+id/home_button_1_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="39dp"
             android:layout_marginTop="21dp"
             android:layout_marginEnd="39dp"
-            android:src="@drawable/place_white" />
+            app:srcCompat="@drawable/ic_baseline_place_24" />
         <TextView
+            android:id="@+id/home_button_1_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="false"
             android:gravity="center|bottom"
             android:paddingBottom="36dp"
             android:text="@string/destinations"
@@ -147,13 +149,15 @@
             android:layout_height="match_parent"
             android:background="@drawable/custom_home_button_1" />
         <ImageView
+            android:id="@+id/home_button_2_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="40dp"
             android:layout_marginTop="18dp"
             android:layout_marginEnd="40dp"
-            android:src="@drawable/ic_baseline_flight_24" />
+            app:srcCompat="@drawable/ic_baseline_flight_24" />
         <TextView
+            android:id="@+id/home_button_2_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
@@ -180,13 +184,15 @@
             android:background="@drawable/custom_home_button_1" />
 
         <ImageView
+            android:id="@+id/home_button_3_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="39dp"
             android:layout_marginTop="23dp"
             android:layout_marginEnd="39dp"
-            android:src="@drawable/ic_baseline_home_24" />
+            app:srcCompat="@drawable/ic_baseline_home_24" />
         <TextView
+            android:id="@+id/home_button_3_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
@@ -213,13 +219,15 @@
             android:background="@drawable/custom_home_button_1" />
 
         <ImageView
+            android:id="@+id/home_button_4_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="39dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="39dp"
-            android:src="@drawable/ic_baseline_fastfood_24" />
+            app:srcCompat="@drawable/ic_baseline_fastfood_24" />
         <TextView
+            android:id="@+id/home_button_4_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
@@ -252,14 +260,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/home_button_0_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="36dp"
-            android:src="@drawable/onthego_logo" />
+            app:srcCompat="@drawable/onthego_logo" />
 
         <TextView
+            android:id="@+id/home_button_0_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
@@ -321,7 +331,7 @@
                 android:layout_margin="8dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/ic_baseline_place_24"/>
+                android:background="@drawable/ic_baseline_place_24_black"/>
 <!--            <TextView-->
 <!--                android:layout_width="wrap_content"-->
 <!--                android:layout_height="wrap_content"-->

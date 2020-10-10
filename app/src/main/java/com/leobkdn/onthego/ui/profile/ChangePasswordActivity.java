@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.ui.login.LoginFormState;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
@@ -26,7 +29,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private EditText newPassword;
     private EditText confirmPassword;
     private Button changePwdButton;
-    private LoginViewModel loginViewModel;
+    private LoginViewModel changePwdViewModel;
     private ProgressBar progressBar;
 
     @Override
@@ -34,7 +37,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
+        changePwdViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
         oldPassword = findViewById(R.id.changePwd_oldPassword_edit);
@@ -52,13 +55,31 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        loginViewModel.changePassword(getIntent().getStringExtra("token"), oldPassword.getText().toString(), newPassword.getText().toString());
+                        changePwdViewModel.changePassword(getIntent().getStringExtra("token"), oldPassword.getText().toString(), newPassword.getText().toString());
                     }
                 }).start();
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
+        changePwdViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+            @Override
+            public void onChanged(LoginFormState changePwdFormState) {
+                if (changePwdFormState == null) {
+                    return;
+                }
+                changePwdButton.setEnabled(changePwdFormState.isDataValid());
+                if (changePwdFormState.getUsernameError() != null) {
+                    oldPassword.setError(getString(changePwdFormState.getUsernameError()));
+                }
+                if (changePwdFormState.getPasswordError() != null) {
+                    newPassword.setError(getString(changePwdFormState.getPasswordError()));
+                }
+                if (changePwdFormState.getNameError() != null) {
+                    confirmPassword.setError(getString(changePwdFormState.getNameError()));
+                }
+            }
+        });
+        changePwdViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(LoginResult loginResult) {
                 changePwdButton.setEnabled(true);
@@ -68,15 +89,34 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
                 if (loginResult.getError() != null) {
                     Toast.makeText(getApplicationContext(), loginResult.getError(), Toast.LENGTH_LONG).show();
-                    Log.w("chagepw", "err");
                 }
                 if (loginResult.getSuccessString() != null) {
-                    Log.w("chagepw", "succ");
                     Toast.makeText(getApplicationContext(), loginResult.getSuccessString(), Toast.LENGTH_LONG).show();
                     setResult(Activity.RESULT_OK);
                     finish();
                 }
             }
         });
+
+        // listener to call functions on text changed
+        TextWatcher afterTextChangedListener = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // ignore
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                changePwdViewModel.pwdDataChanged(oldPassword.getText().toString(), newPassword.getText().toString(), confirmPassword.getText().toString());
+            }
+        };
+        oldPassword.addTextChangedListener(afterTextChangedListener);
+        newPassword.addTextChangedListener(afterTextChangedListener);
+        confirmPassword.addTextChangedListener(afterTextChangedListener);
     }
 }

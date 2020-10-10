@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,13 +13,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.leobkdn.onthego.ui.destination.DestinationActivity;
+import com.leobkdn.onthego.ui.food.FoodActivity;
+import com.leobkdn.onthego.ui.go.GoActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
@@ -26,6 +32,8 @@ import com.leobkdn.onthego.ui.login.LoginActivity;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+import com.leobkdn.onthego.ui.stay.StayActivity;
+import com.leobkdn.onthego.ui.transport.TransportActivity;
 
 import java.util.Date;
 
@@ -34,6 +42,12 @@ public class HomeActivity extends AppCompatActivity {
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
+    private ImageButton destination;
+    private ImageButton transport;
+    private ImageButton stay;
+    private ImageButton food;
+    private ImageButton goButton;
+    private ImageButton userAvatar;
 
     // double-tap to exit activity
     @Override
@@ -61,9 +75,15 @@ public class HomeActivity extends AppCompatActivity {
                 .get(LoginViewModel.class);
         user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),false,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
+        goButton = findViewById(R.id.home_button_0);
+        destination = findViewById(R.id.home_button_1);
+        transport = findViewById(R.id.home_button_2);
+        stay = findViewById(R.id.home_button_3);
+        food = findViewById(R.id.home_button_4);
         ImageButton powerButton = findViewById(R.id.powerButton);
         ImageButton settingButton = findViewById(R.id.settingButton);
         ProgressBar loading = findViewById(R.id.homeLoading);
+        userAvatar = findViewById(R.id.userAvatar);
         LinearLayout profileSwitch = findViewById(R.id.linearLayout);
         //set avatar text
         TextView username = findViewById(R.id.home_username);
@@ -101,13 +121,13 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        settingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                startActivity(intent);
-            }
-        });
+        setupActivityButtons(userAvatar, new Intent(getApplicationContext(), ProfileActivity.class));
+        setupActivityButtons(settingButton, new Intent(getApplicationContext(), ProfileActivity.class));
+        setupActivityButtons(goButton, new Intent(getApplicationContext(), GoActivity.class));
+        setupActivityButtons(destination, new Intent(getApplicationContext(), DestinationActivity.class));
+        setupActivityButtons(transport, new Intent(getApplicationContext(), TransportActivity.class));
+        setupActivityButtons(stay, new Intent(getApplicationContext(), StayActivity.class));
+        setupActivityButtons(food, new Intent(getApplicationContext(), FoodActivity.class));
 
         // log out button listener
         powerButton.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +160,16 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setupActivityButtons(ImageButton button, Intent intent){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
+    }
+
     private void updateUi() {
         // initiate successful logout in experience
         clearPrefs("userPrefs");

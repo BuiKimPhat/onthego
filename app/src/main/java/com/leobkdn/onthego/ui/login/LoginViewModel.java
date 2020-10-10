@@ -104,6 +104,17 @@ public class LoginViewModel extends ViewModel {
             loginFormState.setValue(new LoginFormState(true));
         }
     }
+    public void pwdDataChanged(String oldPwd, String newPwd, String confirmPwd){
+        if (!isPasswordValid(oldPwd)){
+            loginFormState.setValue(new LoginFormState(R.string.invalid_password, null, null));
+        } else if (!isPasswordValid(newPwd)){
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null));
+        } else if (!isConfirmValid(newPwd, confirmPwd)) {
+            loginFormState.setValue(new LoginFormState(null, null, R.string.password_confirm_invalid));
+        } else {
+            loginFormState.setValue(new LoginFormState(true));
+        }
+    }
 
     // A placeholder username validation check
     private boolean isUserNameValid(String username) {
@@ -125,6 +136,9 @@ public class LoginViewModel extends ViewModel {
     // A placeholder password validation check
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;
+    }
+    private boolean isConfirmValid(String newPassword, String confirmPassword){
+        return newPassword.equals(confirmPassword);
     }
     
 }

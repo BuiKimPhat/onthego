@@ -87,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
                     nameEditText.setError(getString(signUpFormState.getNameError()));
                 }
             }
+            // TODO: check name validation
         });
         // Observe Signup form state on submitted, update UI if success, show error if error
         signUpViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
@@ -119,14 +120,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-//                try {
-//                    String birthdayString = (birthdayEditText.getText().toString());
-//                    Log.w("birthdayString", birthdayString);
-//                    birthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayString);
-//                } catch (Exception e){
-//                    e.getStackTrace();
-//                    Log.w("convert date", e.toString());
-//                }
                 signUpViewModel.signUpDataChanged(emailEditText.getText().toString(),
                         passwordEditText.getText().toString(),
                         nameEditText.getText().toString());

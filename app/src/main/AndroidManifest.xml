@@ -12,6 +12,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.go.GoActivity"
+            android:label="@string/go"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity
+            android:name=".ui.transport.TransportActivity"
+            android:label="@string/transport"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity
+            android:name=".ui.stay.StayActivity"
+            android:label="@string/stay"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity
+            android:name=".ui.food.FoodActivity"
+            android:label="@string/food"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity
+            android:name=".ui.destination.DestinationActivity"
+            android:label="@string/destinations"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity
             android:name=".ui.profile.ChangePasswordActivity"
             android:label="@string/change_password"
             android:parentActivityName=".ui.profile.ProfileActivity"

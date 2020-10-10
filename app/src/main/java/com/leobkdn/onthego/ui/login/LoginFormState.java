@@ -22,7 +22,6 @@ public class LoginFormState {
         this.nameError = nameError;
         this.isDataValid = false;
     }
-
     LoginFormState(boolean isDataValid) {
         this.emailError = null;
         this.passwordError = null;
