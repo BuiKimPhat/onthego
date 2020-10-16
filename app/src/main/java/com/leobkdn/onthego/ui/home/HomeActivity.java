@@ -48,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton food;
     private ImageButton goButton;
     private ImageButton userAvatar;
+    private TextView currentTrip;
 
     // double-tap to exit activity
     @Override
@@ -88,6 +89,9 @@ public class HomeActivity extends AppCompatActivity {
         //set avatar text
         TextView username = findViewById(R.id.home_username);
         username.setText(user.getDisplayName());
+        // current trip
+        currentTrip = findViewById(R.id.home_currentTrip);
+        currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
 
         // Log Out Result listener
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
@@ -194,5 +198,9 @@ public class HomeActivity extends AppCompatActivity {
     private long restorePrefsLong(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getLong(key, 0);
+    }
+    private String restoreCurrentTripData(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("currentTrip", MODE_PRIVATE);
+        return prefs.getString(key, null);
     }
 }

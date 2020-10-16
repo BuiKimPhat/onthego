@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.go.GoActivity"
-            android:label="@string/go"
+            android:label="@string/trip"
             android:parentActivityName=".ui.home.HomeActivity"
             android:theme="@style/withActionBar" />
         <activity

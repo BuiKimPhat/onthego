@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/home_gradient_background"
     tools:context=".ui.food.FoodActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

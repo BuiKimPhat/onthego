@@ -20,6 +20,7 @@
     <string name="sign_up_failed">Đăng kí thất bại</string>
     <string name="no_empty">Không được bỏ trống</string>
     <string name="go">Go</string>
+    <string name="trip">Chuyến đi của bạn</string>
     <string name="destinations">Điểm đến</string>
     <string name="transport">Phương tiện</string>
     <string name="stay">Nơi ở</string>
@@ -29,6 +30,10 @@
     <string name="logOut">Đăng xuất</string>
     <string name="exit">Thoát</string>
     <string name="forgotPassword">Quên mật khẩu</string>
+    <string name="empty_trip">Bạn chưa có chuyến đi nào</string>
+    <string name="new_trip">Chuyến đi mới</string>
+    <string name="exist_trip">Chuyến đi có sẵn</string>
+
     <string-array name="cities">
         <item>Địa chỉ</item>
         <item>An Giang</item>
