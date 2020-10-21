@@ -1,7 +1,7 @@
 package com.leobkdn.onthego.ui.go;
 
-import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +12,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.ui.go.info.TripInfo;
 
 import java.util.ArrayList;
 
@@ -75,6 +74,13 @@ public class TripListAdapter extends BaseAdapter {
                     if (oldActive != null) oldActive.setVisibility(View.GONE);
                     activeImg.setVisibility(View.VISIBLE);
                     oldActive = activeImg;
+                }
+            });
+            tripMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, TripInfo.class);
+                    context.startActivity(intent);
                 }
             });
         }

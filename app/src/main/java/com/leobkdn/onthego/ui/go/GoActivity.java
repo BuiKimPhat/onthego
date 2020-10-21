@@ -3,8 +3,8 @@ package com.leobkdn.onthego.ui.go;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.data.TripDataSource;
+import com.leobkdn.onthego.ui.go.info.TripInfo;
 
 import java.util.ArrayList;
 
@@ -28,7 +28,9 @@ public class GoActivity extends AppCompatActivity {
     private TextView existTripLabel;
     private FloatingActionButton addBtn;
     private LinearLayout newTrip;
+    private FloatingActionButton newTripBtn;
     private LinearLayout existTrip;
+    private FloatingActionButton existTripBtn;
     private ProgressBar progressBar;
     private ListView tripView;
     private ArrayList<Trip> trips;
@@ -43,7 +45,9 @@ public class GoActivity extends AppCompatActivity {
         existTripLabel = findViewById(R.id.existTripLabel);
         addBtn = findViewById(R.id.addTripFab);
         newTrip = findViewById(R.id.newTrip);
+        newTripBtn = findViewById(R.id.newTripBtn);
         existTrip = findViewById(R.id.existTrip);
+        existTripBtn = findViewById(R.id.existTripBtn);
         tripView = findViewById(R.id.trip_listView);
         Context actCon = this;
         tripResult.getTripResult().observe(this, new Observer<Result>() {
@@ -81,7 +85,13 @@ public class GoActivity extends AppCompatActivity {
                 }
             }
         });
-
+        newTripBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(actCon, TripInfo.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

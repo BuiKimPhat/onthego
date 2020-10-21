@@ -91,7 +91,7 @@ public class TripDataSource {
                 // verify token
                 tokenVerifier(token);
 
-                String sqlQuery = "select Trip.id, Trip.[name], cUser.[name] as [owner], Trip.createdAt from Trip join (select id, [name] from [User] where id in (select id from [User_Token] where token = ?)) as cUser on ownerId = cUser.id";
+                String sqlQuery = "select Trip.id, Trip.[name], cUser.[name] as [owner], Trip.createdAt from Trip join (select id, [name] from [User] where id in (select userId from [User_Token] where token = ?)) as cUser on ownerId = cUser.id";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setString(1, token);
                 ResultSet res = statement.executeQuery();

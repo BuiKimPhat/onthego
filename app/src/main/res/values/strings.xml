@@ -21,6 +21,7 @@
     <string name="no_empty">Không được bỏ trống</string>
     <string name="go">Go</string>
     <string name="trip">Chuyến đi của bạn</string>
+    <string name="trip_info">Thông tin chuyến đi</string>
     <string name="destinations">Điểm đến</string>
     <string name="transport">Phương tiện</string>
     <string name="stay">Nơi ở</string>

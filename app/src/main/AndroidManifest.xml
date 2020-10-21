@@ -6,11 +6,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/onthego_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/onthego_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.go.info.TripInfo"
+            android:label="@string/trip_info"
+            android:parentActivityName=".ui.go.GoActivity"
+            android:theme="@style/withActionBar"/>
         <activity
             android:name=".ui.go.GoActivity"
             android:label="@string/trip"
