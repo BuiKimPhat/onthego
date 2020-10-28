@@ -1,6 +1,6 @@
 package com.leobkdn.onthego.ui.go;
 
-import com.leobkdn.onthego.ui.destination.Destination;
+import com.leobkdn.onthego.data.model.Destination;
 
 import java.util.ArrayList;
 import java.util.Date;

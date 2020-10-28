@@ -5,6 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.leobkdn.onthego.data.model.Destination;
+import com.leobkdn.onthego.data.model.TripDestination;
 import com.leobkdn.onthego.ui.go.Trip;
 
 import java.sql.Connection;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
  * Class that handles trip CRUD.
  * (Server class)
  */
-public class TripDataSource {
+public class DestinationDataSource {
 
     // server credentials
     private static final String secret = "@M1@j0K37oU?";
@@ -30,7 +32,7 @@ public class TripDataSource {
     private static final String dbPassword = "userpass";
     private static final String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";instance=" + instance + ";user=" + dbUser + ";password=" + dbPassword + ";databasename=" + dbName;
     private String stringResult = "Error";
-    private ArrayList<Trip> result = new ArrayList<Trip>();
+    private ArrayList<TripDestination> result = new ArrayList<TripDestination>();
 
     private String tokenVerifier(String token){
         // verify if token meets the claims
@@ -45,12 +47,12 @@ public class TripDataSource {
             throw exception;
         }
     }
-//    public Result<String> addUserTrip(String token, int tripId){
+    //    public Result<String> addUserTrip(String token, int tripId){
 //
 //    }
 //    public Result<String> addUserTrip(String token, String name, ArrayList<Destination> destinations){
 //    }
-    public Result<ArrayList<Trip>> fetchUserTrip(String token){
+    public Result<ArrayList<TripDestination>> fetchTripDestination(String token, int tripId){
         try {
             //Set connection
             Connection connection = DriverManager.getConnection(dbURI);
@@ -58,14 +60,14 @@ public class TripDataSource {
                 // verify token
                 tokenVerifier(token);
 
-                String sqlQuery = "select Trip.id, Trip.[name], cUser.[name] as [owner], Trip.createdAt from Trip join User_Trip on Trip.id = User_Trip.tripId join (select id, [name] from [User] where id in (select userId from [User_Token] where token = ?)) as cUser on User_Trip.userId = cUser.id";
+                String sqlQuery = "select id, [name], startTime, finishTime from Destination join Trip_Destination on Destination.id = Trip_Destination.destinationId where Trip_Destination.tripId = ?";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
-                statement.setString(1, token);
+                statement.setInt(1, tripId);
                 ResultSet res = statement.executeQuery();
-                if (!res.next()) throw new SQLException("Không tìm thấy trip");
+                if (!res.next()) throw new SQLException("Không tìm thấy điểm đến");
                 else {
                     do {
-                        result.add(new Trip(res.getInt(1), res.getString(2), res.getString(3), res.getDate(4)));
+                        result.add(new TripDestination(res.getInt(1), res.getString(2), res.getDate(3), res.getDate(4)));
                     } while (res.next());
                 }
                 connection.close();

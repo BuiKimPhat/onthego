@@ -8,20 +8,8 @@
         android:id="@+id/trip_info_group_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="24dp"
         android:padding="10dp"
         android:textStyle="bold"
-        android:hint="@string/trip"/>
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        app:srcCompat="@drawable/ic_baseline_add_24"
-        android:tint="@color/colorTextPrimary"
-        android:background="@android:color/transparent"/>
+        android:hint="@string/trip" />
 </LinearLayout>

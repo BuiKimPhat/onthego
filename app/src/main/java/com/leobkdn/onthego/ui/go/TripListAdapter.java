@@ -80,6 +80,9 @@ public class TripListAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, TripInfo.class);
+                    intent.putExtra("tripId", trips.get(position).getId());
+                    intent.putExtra("tripName", trips.get(position).getName());
+                    intent.putExtra("tripOwner", trips.get(position).getOwner());
                     context.startActivity(intent);
                 }
             });
