@@ -177,6 +177,7 @@ public class HomeActivity extends AppCompatActivity {
     private void updateUi() {
         // initiate successful logout in experience
         clearPrefs("userPrefs");
+        clearPrefs("currentTrip");
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 

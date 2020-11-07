@@ -22,7 +22,7 @@ public class TripDataSource {
 
     // server credentials
     private static final String secret = "@M1@j0K37oU?";
-    private static final String hostName = "192.168.1.15";
+    private static final String hostName = "192.168.43.245";
     private static final String instance = "LEOTHESECOND";
     private static final String port = "1433";
     private static final String dbName = "OnTheGo";
@@ -32,7 +32,7 @@ public class TripDataSource {
     private String stringResult = "Error";
     private ArrayList<Trip> result = new ArrayList<Trip>();
 
-    private String tokenVerifier(String token){
+    private String tokenVerifier(String token) {
         // verify if token meets the claims
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -40,25 +40,26 @@ public class TripDataSource {
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getPayload();
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException exception) {
             //Invalid signature/claims
             throw exception;
         }
     }
-//    public Result<String> addUserTrip(String token, int tripId){
+
+    //    public Result<String> addUserTrip(String token, int tripId){
 //
 //    }
 //    public Result<String> addUserTrip(String token, String name, ArrayList<Destination> destinations){
 //    }
-    public Result<ArrayList<Trip>> fetchUserTrip(String token){
+    public Result<ArrayList<Trip>> fetchUserTrip(String token) {
         try {
             //Set connection
             Connection connection = DriverManager.getConnection(dbURI);
             if (connection != null) {
                 // verify token
                 tokenVerifier(token);
-
-                String sqlQuery = "select Trip.id, Trip.[name], cUser.[name] as [owner], Trip.createdAt from Trip join User_Trip on Trip.id = User_Trip.tripId join (select id, [name] from [User] where id in (select userId from [User_Token] where token = ?)) as cUser on User_Trip.userId = cUser.id";
+                result = new ArrayList<Trip>();
+                String sqlQuery = "select Trip.id, Trip.[name], [User].[name] as [owner], Trip.createdAt from Trip join (select tripId from User_Trip where userId in (select userId from [User_Token] where token = ?)) as cUser on Trip.id = cUser.tripId join [User] on Trip.ownerId = [User].id";
                 PreparedStatement statement = connection.prepareStatement(sqlQuery);
                 statement.setString(1, token);
                 ResultSet res = statement.executeQuery();
@@ -70,11 +71,45 @@ public class TripDataSource {
                 }
                 connection.close();
             } else throw new SQLException("Lỗi kết nối");
-        } catch (JWTVerificationException e){
+        } catch (JWTVerificationException e) {
             return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
         } catch (Exception e) {
             return new Result.Error(e);
         }
+        return new Result.Success<>(result);
+    }
+
+    public Result<ArrayList<Trip>> addUserTrip(String token, int tripId) {
+        try {
+            //Set connection
+            Connection connection = DriverManager.getConnection(dbURI);
+            if (connection != null) {
+                // verify token
+                tokenVerifier(token);
+
+                // check unique info
+                String sqlQuery = "select userId from [User_Token] where token = ?";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setString(1, token);
+                ResultSet creds = statement.executeQuery();
+                if (!creds.next()) throw new SQLException("Không tồn tại token");
+                sqlQuery = "insert into User_Trip values (?,?)";
+                statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, creds.getInt(1));
+                statement.setInt(2, tripId);
+                int count = statement.executeUpdate();
+                if (count <= 0) throw new SQLException("Không thể thêm trip");
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
+        } catch (JWTVerificationException e) {
+            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+        return fetchUserTrip(token);
+    }
+
+    public Result<ArrayList<Trip>> addUserTrip(String token, Trip newTrip) {
         return new Result.Success<>(result);
     }
 }

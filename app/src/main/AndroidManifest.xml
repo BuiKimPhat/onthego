@@ -11,10 +11,15 @@
         android:roundIcon="@drawable/onthego_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.go.info.TripInfo"
+        <activity android:name=".ui.destination.info.DestinationInfo"
+            android:label="Thông tin điểm đến"
+            android:theme="@style/withActionBar"/>
+        <activity
+            android:name=".ui.go.info.TripInfo"
             android:label="@string/trip_info"
             android:parentActivityName=".ui.go.GoActivity"
-            android:theme="@style/withActionBar"/>
+            android:theme="@style/withActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.go.GoActivity"
             android:label="@string/trip"

@@ -1,6 +1,7 @@
 package com.leobkdn.onthego.ui.go;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 
 import android.content.Context;
@@ -89,10 +90,17 @@ public class GoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(actCon, TripInfo.class);
+                intent.putExtra("isNew", true);
                 startActivity(intent);
             }
         });
-
+        existTripBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialog = new ExistTripAddDialog(restorePrefsData("token"),tripResult);
+                dialog.show(getSupportFragmentManager(), "existTripAdd");
+            }
+        });
     }
 
     private void showFABMenu(){

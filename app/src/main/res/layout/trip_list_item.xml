@@ -10,13 +10,14 @@
         android:layout_width="70dp"
         android:layout_height="match_parent"
         android:padding="16dp"
+        android:visibility="gone"
         app:srcCompat="@drawable/ic_baseline_done_24" />
 
     <LinearLayout
         android:id="@+id/trip_listItem_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center|start"
         android:orientation="vertical">
 
         <TextView
@@ -27,7 +28,7 @@
             android:gravity="center|start"
             android:maxLines="2"
             android:paddingStart="8dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elitasdasdad"
+            android:hint="Lorem ipsum dolor sit amet, consectetur adipiscing elitasdasdad"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -41,7 +42,13 @@
             android:maxLines="1"
             android:paddingStart="8dp"
             android:textStyle="italic"
-            android:text="Bùi Kim Phát"/>
+            android:hint="Info"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            android:hint="Giá tiền"/>
     </LinearLayout>
     <View
         android:layout_width="0dp"

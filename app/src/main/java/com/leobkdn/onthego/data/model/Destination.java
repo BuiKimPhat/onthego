@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 public class Destination {
     private int id;
     private String name;
+    private String address;
+    private String phone;
     private String description;
     private String category;
     private int inCost;
@@ -13,9 +15,24 @@ public class Destination {
     private String city;
     private String position;
 
-    public Destination(int id, String name, String description, String category, int inCost, int avgCost, float rating, String city, String position) {
+    public Destination(int id, String name, String city) {
         this.id = id;
         this.name = name;
+        this.city = city;
+    }
+
+    public Destination(int id, String name, String city, float rating) {
+        this.id = id;
+        this.name = name;
+        this.city = city;
+        this.rating = rating;
+    }
+
+    public Destination(int id, String name, String address, String phone, String description, String category, int inCost, int avgCost, float rating, String city, String position) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
         this.description = description;
         this.category = category;
         this.inCost = inCost;
@@ -24,7 +41,8 @@ public class Destination {
         this.city = city;
         this.position = position;
     }
-    public Destination(int id, String name, @Nullable String description, @Nullable String category, @Nullable String city, @Nullable String position) {
+
+    public Destination(int id, String name, @Nullable String address, @Nullable String phone, @Nullable String description, @Nullable String category, @Nullable String city, @Nullable String position) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,6 +52,8 @@ public class Destination {
         this.rating = rating;
         this.city = city;
         this.position = position;
+        this.address = address;
+        this.phone = phone;
     }
 
     public int getId() {
@@ -70,5 +90,13 @@ public class Destination {
 
     public String getPosition() {
         return position;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 }

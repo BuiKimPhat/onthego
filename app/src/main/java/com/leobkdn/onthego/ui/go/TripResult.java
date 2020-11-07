@@ -25,4 +25,13 @@ public class TripResult {
         Result<ArrayList<Trip>> result = tripDataSource.fetchUserTrip(token);
         tripResult.postValue(result);
     }
+
+    public void addUserTrip(String token, int tripId){
+        Result<ArrayList<Trip>> result = tripDataSource.addUserTrip(token, tripId);
+        tripResult.postValue(result);
+    }
+    public void addUserTrip(String token, Trip newTrip){
+        Result<ArrayList<Trip>> result = tripDataSource.addUserTrip(token, newTrip);
+        tripResult.postValue(result);
+    }
 }

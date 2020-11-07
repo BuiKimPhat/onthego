@@ -1,46 +1,24 @@
 package com.leobkdn.onthego.data;
 
-import android.Manifest;
 import android.accounts.AuthenticatorException;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.StrictMode;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.core.app.ActivityCompat;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.leobkdn.onthego.data.model.LoggedInUser;
-import com.leobkdn.onthego.ui.login.LoginActivity;
-import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
-import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -52,7 +30,7 @@ public class LoginDataSource {
 
     // server credentials
     private static final String secret = "@M1@j0K37oU?";
-    private static final String hostName = "192.168.1.15";
+    private static final String hostName = "192.168.43.245";
     private static final String instance = "LEOTHESECOND";
     private static final String port = "1433";
     private static final String dbName = "OnTheGo";
