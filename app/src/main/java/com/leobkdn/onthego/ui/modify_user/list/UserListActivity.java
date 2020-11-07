@@ -10,7 +10,7 @@ import com.leobkdn.onthego.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserListAdapter extends AppCompatActivity {
+public class UserListActivity extends AppCompatActivity {
     ListView listView;
     User_adapter adapter;
     List<Users_class> Users;
