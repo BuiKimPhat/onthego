@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -63,6 +65,11 @@ public class TripInfo extends AppCompatActivity {
         Context actCon = this;
         if (getIntent().getBooleanExtra("isNew", false)) {
             progressBar.setVisibility(View.GONE);
+            confirmButton.setVisibility(View.VISIBLE);
+            tripName.setVisibility(View.GONE);
+            tripNameEdit.setVisibility(View.VISIBLE);
+            tripNameBtn.setVisibility(View.GONE);
+            tripNameEdit.requestFocus();
         } else {
             new Thread(new Runnable() {
                 @Override
@@ -91,37 +98,54 @@ public class TripInfo extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(actCon, DestinationActivity.class);
                 intent.putExtra("mode", "add");
-                LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
                 startActivity(intent);
             }
+        });
+
+        tripNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!isTextValid(tripNameEdit.getText().toString())) tripNameEdit.setError("Không được bỏ trống");
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                progressBar.setVisibility(View.VISIBLE);
+                if (!isTextValid(tripNameEdit.getText().toString())) {
+                    tripNameEdit.setError("Không được bỏ trống");
+                    return;
+                }
+                tripNameBtn.setVisibility(View.VISIBLE);
                 confirmButton.setVisibility(View.GONE);
                 tripNameEdit.setVisibility(View.GONE);
                 tripName.setText(tripNameEdit.getText());
                 tripName.setVisibility(View.VISIBLE);
-                for (int i = 0; i < adapter.getChildrenCount(0); i++) {
-                    View child = adapter.getChildView(0, i);
-                    EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
-                    TextView date = child.findViewById(R.id.trip_destination_date);
-                    TextView startTime = child.findViewById(R.id.trip_destination_startTime);
-                    EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
-                    TextView endTime = child.findViewById(R.id.trip_destination_endTime);
-                    EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                    ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
-                    timeEdit.setVisibility(View.VISIBLE);
-                    date.setText(dateEdit.getText());
-                    date.setVisibility(View.VISIBLE);
-                    dateEdit.setVisibility(View.GONE);
-                    startTime.setText(startTimeEdit.getText());
-                    startTime.setVisibility(View.VISIBLE);
-                    startTimeEdit.setVisibility(View.GONE);
-                    endTime.setText(endTimeEdit.getText());
-                    endTime.setVisibility(View.VISIBLE);
-                    endTimeEdit.setVisibility(View.GONE);
+                if (adapter != null) {
+                    for (int i = 0; i < adapter.getChildrenCount(0); i++) {
+                        View child = adapter.getChildView(0, i);
+                        EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
+                        TextView date = child.findViewById(R.id.trip_destination_date);
+                        TextView startTime = child.findViewById(R.id.trip_destination_startTime);
+                        EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
+                        TextView endTime = child.findViewById(R.id.trip_destination_endTime);
+                        EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
+                        ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
+                        timeEdit.setVisibility(View.VISIBLE);
+                        date.setText(dateEdit.getText());
+                        date.setVisibility(View.VISIBLE);
+                        dateEdit.setVisibility(View.GONE);
+                        startTime.setText(startTimeEdit.getText());
+                        startTime.setVisibility(View.VISIBLE);
+                        startTimeEdit.setVisibility(View.GONE);
+                        endTime.setText(endTimeEdit.getText());
+                        endTime.setVisibility(View.VISIBLE);
+                        endTimeEdit.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -151,5 +175,10 @@ public class TripInfo extends AppCompatActivity {
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+
+    private boolean isTextValid(String text){
+        if (text == null) return false;
+        return !text.trim().isEmpty();
     }
 }

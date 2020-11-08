@@ -18,14 +18,17 @@ public class TripDestinationResult {
     TripDestinationResult(DestinationDataSource destinationDataSource) {
         this.destinationDataSource = destinationDataSource;
     }
-    TripDestinationResult(){}
+
+    TripDestinationResult() {
+    }
 
     public LiveData<Result> getDestinationResult() {
         return destinationResult;
     }
 
-    public void fetchTripDestination(String token, int tripId){
+    public void fetchTripDestination(String token, int tripId) {
         Result<ArrayList<TripDestination>> result = destinationDataSource.fetchTripDestination(token, tripId);
         destinationResult.postValue(result);
     }
+
 }

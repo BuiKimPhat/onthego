@@ -22,7 +22,7 @@ public class TripDataSource {
 
     // server credentials
     private static final String secret = "@M1@j0K37oU?";
-    private static final String hostName = "192.168.43.245";
+    private static final String hostName = "192.168.1.62";
     private static final String instance = "LEOTHESECOND";
     private static final String port = "1433";
     private static final String dbName = "OnTheGo";
