@@ -34,6 +34,9 @@
     <string name="empty_trip">Bạn chưa có chuyến đi nào</string>
     <string name="new_trip">Chuyến đi mới</string>
     <string name="exist_trip">Chuyến đi có sẵn</string>
+    <string name="admin">Bạn là admin!</string>
+    <string name="trip_change">Chuyến đi</string>
+    <string name="users">Người dùng</string>
 
     <string-array name="cities">
         <item>Địa chỉ</item>
