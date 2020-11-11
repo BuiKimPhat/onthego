@@ -30,5 +30,8 @@ public class TripDestinationResult {
         Result<ArrayList<TripDestination>> result = destinationDataSource.fetchTripDestination(token, tripId);
         destinationResult.postValue(result);
     }
-
+    public void addTripDestination(String token, int tripID, int destinationID){
+        Result<String> result = destinationDataSource.addTripDestination(token, tripID, destinationID);
+        destinationResult.postValue(result);
+    }
 }

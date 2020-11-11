@@ -7,9 +7,8 @@
     android:padding="10dp">
     <ImageView
         android:id="@+id/trip_listItem_active"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:padding="16dp"
         android:visibility="gone"
         app:srcCompat="@drawable/ic_baseline_done_24" />
 
@@ -23,32 +22,26 @@
         <TextView
             android:id="@+id/trip_listItem_name"
             android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center|start"
             android:maxLines="2"
             android:paddingStart="8dp"
-            android:hint="Lorem ipsum dolor sit amet, consectetur adipiscing elitasdasdad"
+            android:hint="@string/hint_name"
             android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/trip_listItem_owner"
             android:layout_width="200dp"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:gravity="center|start"
             android:textSize="15sp"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingStart="8dp"
             android:textStyle="italic"
-            android:hint="Info"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:visibility="gone"
-            android:hint="Giá tiền"/>
+            android:hint="@string/hint_empty"/>
     </LinearLayout>
     <View
         android:layout_width="0dp"

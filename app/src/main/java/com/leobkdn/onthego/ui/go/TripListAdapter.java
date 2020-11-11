@@ -1,5 +1,6 @@
 package com.leobkdn.onthego.ui.go;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -57,25 +58,39 @@ public class TripListAdapter extends BaseAdapter {
         LinearLayout tripText = convertView.findViewById(R.id.trip_listItem_text);
         ImageButton tripMore = convertView.findViewById(R.id.trip_listItem_more);
 
-        if (getItem(position) != null){
+        if (getItem(position) != null) {
             tripName.setText(trips.get(position).getName());
             tripOwner.setText(trips.get(position).getOwner());
-            if (trips.get(position).getId() == restorePrefsInt("id")){
+            if (trips.get(position).getId() == restorePrefsInt("id")) {
                 activeImg.setVisibility(View.VISIBLE);
                 oldActive = activeImg;
             } else {
                 activeImg.setVisibility(View.GONE);
             }
-            tripText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    savePrefsData("id", trips.get(position).getId());
-                    savePrefsData("name", trips.get(position).getName());
-                    if (oldActive != null) oldActive.setVisibility(View.GONE);
-                    activeImg.setVisibility(View.VISIBLE);
-                    oldActive = activeImg;
-                }
-            });
+            Intent reqIntent = ((Activity) context).getIntent();
+            if (reqIntent.getStringExtra("mode") != null && reqIntent.getStringExtra("mode").equals("add")) {
+                tripText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent resIntent = new Intent();
+                        resIntent.putExtra("tripID", trips.get(position).getId());
+                        resIntent.putExtra("destinationID", reqIntent.getStringExtra("destinationID"));
+                        ((Activity) context).setResult(Activity.RESULT_OK, resIntent);
+                        ((Activity) context).finish();
+                    }
+                });
+            } else {
+                tripText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        savePrefsData("id", trips.get(position).getId());
+                        savePrefsData("name", trips.get(position).getName());
+                        if (oldActive != null) oldActive.setVisibility(View.GONE);
+                        activeImg.setVisibility(View.VISIBLE);
+                        oldActive = activeImg;
+                    }
+                });
+            }
             tripMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -89,16 +104,19 @@ public class TripListAdapter extends BaseAdapter {
         }
         return convertView;
     }
+
     private int restorePrefsInt(String key) {
         SharedPreferences prefs = context.getSharedPreferences("currentTrip", MODE_PRIVATE);
         return prefs.getInt(key, -1);
     }
+
     private void savePrefsData(String key, int value) {
         SharedPreferences prefs = context.getSharedPreferences("currentTrip", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
         editor.apply();
     }
+
     private void savePrefsData(String key, String value) {
         SharedPreferences prefs = context.getSharedPreferences("currentTrip", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
