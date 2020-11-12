@@ -35,6 +35,7 @@ public class GoActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ListView tripView;
     private ArrayList<Trip> trips;
+    private Context actCon = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +51,19 @@ public class GoActivity extends AppCompatActivity {
         existTrip = findViewById(R.id.existTrip);
         existTripBtn = findViewById(R.id.existTripBtn);
         tripView = findViewById(R.id.trip_listView);
-        Context actCon = this;
+
         tripResult.getTripResult().observe(this, new Observer<Result>() {
             @Override
             public void onChanged(Result result) {
                 progressBar.setVisibility(View.GONE);
                 if (result instanceof Result.Success) {
                     trips = ((Result.Success<ArrayList<Trip>>) result).getData();
-                    if (trips != null){
+                    if (trips != null) {
                         TextView emptyWarning = findViewById(R.id.trip_empty);
                         emptyWarning.setVisibility(View.GONE);
                         tripView.setAdapter(new TripListAdapter(actCon, trips));
                     }
-                }
-                else {
+                } else {
                     trips = new ArrayList<>();
                     Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
                 }
@@ -76,42 +76,47 @@ public class GoActivity extends AppCompatActivity {
             }
         }).start();
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isFABOpen){
-                    showFABMenu();
-                } else {
-                    closeFABMenu();
+        if (getIntent().getStringExtra("mode") != null && getIntent().getStringExtra("mode").equals("add")){
+            addBtn.setVisibility(View.GONE);
+        } else {
+            addBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!isFABOpen) {
+                        showFABMenu();
+                    } else {
+                        closeFABMenu();
+                    }
                 }
-            }
-        });
-        newTripBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(actCon, TripInfo.class);
-                intent.putExtra("isNew", true);
-                startActivity(intent);
-            }
-        });
-        existTripBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment dialog = new ExistTripAddDialog(restorePrefsData("token"),tripResult);
-                dialog.show(getSupportFragmentManager(), "existTripAdd");
-            }
-        });
+            });
+            newTripBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(actCon, TripInfo.class);
+                    intent.putExtra("isNew", true);
+                    startActivity(intent);
+                }
+            });
+            existTripBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogFragment dialog = new ExistTripAddDialog(restorePrefsData("token"), tripResult);
+                    dialog.show(getSupportFragmentManager(), "existTripAdd");
+                }
+            });
+        }
     }
 
-    private void showFABMenu(){
+    private void showFABMenu() {
         isFABOpen = true;
-        addBtn.animate().rotationBy(45);
+        addBtn.animate().rotationBy(45).setDuration(100);
         newTrip.animate().translationY(-350);
         existTrip.animate().translationY(-190);
         newTripLabel.setVisibility(View.VISIBLE);
         existTripLabel.setVisibility(View.VISIBLE);
     }
-    private void closeFABMenu(){
+
+    private void closeFABMenu() {
         isFABOpen = false;
         addBtn.animate().rotationBy(-45);
         newTrip.animate().translationY(0);
@@ -119,6 +124,7 @@ public class GoActivity extends AppCompatActivity {
         newTripLabel.setVisibility(View.GONE);
         existTripLabel.setVisibility(View.GONE);
     }
+
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);

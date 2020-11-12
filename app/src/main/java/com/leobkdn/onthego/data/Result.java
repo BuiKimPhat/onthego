@@ -21,7 +21,6 @@ public class Result<T> {
         }
         return "";
     }
-
     // Success sub-class
     public final static class Success<T> extends Result {
         private T data;
@@ -32,6 +31,11 @@ public class Result<T> {
 
         public T getData() {
             return this.data;
+        }
+
+        public boolean checkTypeString(){
+            if (data instanceof String) return true;
+            return false;
         }
     }
 

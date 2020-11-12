@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.TripDataSource;
+import com.leobkdn.onthego.data.model.TripDestination;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class TripResult {
     TripResult(TripDataSource tripDataSource) {
         this.tripDataSource = tripDataSource;
     }
-    TripResult(){}
+    public TripResult(){}
 
     public LiveData<Result> getTripResult() {
         return tripResult;
@@ -30,8 +31,8 @@ public class TripResult {
         Result<ArrayList<Trip>> result = tripDataSource.addUserTrip(token, tripId);
         tripResult.postValue(result);
     }
-    public void addUserTrip(String token, Trip newTrip){
-        Result<ArrayList<Trip>> result = tripDataSource.addUserTrip(token, newTrip);
+    public void newTrip(String token, String newTripName, ArrayList<TripDestination> destinations){
+        Result<String> result = tripDataSource.newTrip(token, newTripName, destinations);
         tripResult.postValue(result);
     }
 }

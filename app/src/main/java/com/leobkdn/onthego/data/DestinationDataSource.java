@@ -25,7 +25,7 @@ public class DestinationDataSource {
 
     // server credentials
     private static final String secret = "@M1@j0K37oU?";
-    private static final String hostName = "192.168.43.245";
+    private static final String hostName = "10.20.2.181";
     private static final String instance = "LEOTHESECOND";
     private static final String port = "1433";
     private static final String dbName = "OnTheGo";
@@ -36,7 +36,7 @@ public class DestinationDataSource {
     private ArrayList<TripDestination> result = new ArrayList<TripDestination>();
     private ArrayList<Destination> result1 = new ArrayList<>();
 
-    private String tokenVerifier(String token){
+    private String tokenVerifier(String token) {
         // verify if token meets the claims
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -44,17 +44,18 @@ public class DestinationDataSource {
                     .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getPayload();
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException exception) {
             //Invalid signature/claims
             throw exception;
         }
     }
+
     //    public Result<String> addUserTrip(String token, int tripId){
 //
 //    }
 //    public Result<String> addUserTrip(String token, String name, ArrayList<Destination> destinations){
 //    }
-    public Result<ArrayList<TripDestination>> fetchTripDestination(String token, int tripId){
+    public Result<ArrayList<TripDestination>> fetchTripDestination(String token, int tripId) {
         try {
             //Set connection
             Connection connection = DriverManager.getConnection(dbURI);
@@ -74,7 +75,7 @@ public class DestinationDataSource {
                 }
                 connection.close();
             } else throw new SQLException("Lỗi kết nối");
-        } catch (JWTVerificationException e){
+        } catch (JWTVerificationException e) {
             return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
         } catch (Exception e) {
             return new Result.Error(e);
@@ -82,7 +83,7 @@ public class DestinationDataSource {
         return new Result.Success<>(result);
     }
 
-    public Result<ArrayList<Destination>> fetchDestinations(String token, @Nullable String category){
+    public Result<ArrayList<Destination>> fetchDestinations(String token, @Nullable String category) {
         try {
             //Set connection
             Connection connection = DriverManager.getConnection(dbURI);
@@ -91,7 +92,7 @@ public class DestinationDataSource {
                 tokenVerifier(token);
                 String sqlQuery;
                 PreparedStatement statement;
-                if (category == null){
+                if (category == null) {
                     sqlQuery = "select id, [name], address, phone, description, city from Destination where category is null";
                     statement = connection.prepareStatement(sqlQuery);
                 } else {
@@ -108,11 +109,36 @@ public class DestinationDataSource {
                 }
                 connection.close();
             } else throw new SQLException("Lỗi kết nối");
-        } catch (JWTVerificationException e){
+        } catch (JWTVerificationException e) {
             return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
         } catch (Exception e) {
             return new Result.Error(e);
         }
         return new Result.Success<>(result1);
+    }
+
+    public Result<String> addTripDestination(String token, int tripID, int destinationID) {
+        try {
+            //Set connection
+            Connection connection = DriverManager.getConnection(dbURI);
+            if (connection != null) {
+                // verify token
+                tokenVerifier(token);
+
+                String sqlQuery = "insert into Trip_Destination(tripId, destinationId) values (?,?)";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+                statement.setInt(1, tripID);
+                statement.setInt(2, destinationID);
+                int res = statement.executeUpdate();
+                if (res > 0) stringResult = "Thêm địa điểm vào chuyến đi thành công";
+                else stringResult = "Không thể thêm địa điểm vào chuyến đi";
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
+        } catch (JWTVerificationException e) {
+            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+        return new Result.Success<>(stringResult);
     }
 }

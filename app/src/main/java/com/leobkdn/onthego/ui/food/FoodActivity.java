@@ -51,7 +51,7 @@ public class FoodActivity extends AppCompatActivity {
                 if (result instanceof Result.Success) {
                     destinations = ((Result.Success<ArrayList<Destination>>) result).getData();
                     if (destinations != null) {
-                        destinationList.setAdapter(new DestinationListAdapter(context, destinations));
+                        destinationList.setAdapter(new DestinationListAdapter(context, getIntent(), destinations));
                     }
                 } else {
                     destinations = new ArrayList<>();
