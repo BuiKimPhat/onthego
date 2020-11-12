@@ -103,7 +103,7 @@ public class AdminHomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        persons.findViewById(R.id.changePwd_loading);
 
 
     }
