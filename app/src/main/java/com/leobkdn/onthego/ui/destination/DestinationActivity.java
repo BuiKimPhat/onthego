@@ -8,20 +8,19 @@ import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.ui.go.Trip;
-import com.leobkdn.onthego.ui.go.TripListAdapter;
-import com.leobkdn.onthego.ui.go.TripResult;
 
 import java.util.ArrayList;
 
@@ -48,12 +47,12 @@ public class DestinationActivity extends AppCompatActivity {
         if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
                 progressBar.setVisibility(View.VISIBLE);
-                new Thread(new Runnable() {
+                AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
                         destinationResult.addTripDestination(restorePrefsData("token"), data.getIntExtra("tripID", -1), data.getIntExtra("destinationID", -1));
                     }
-                }).start();
+                });
             }
         }
     }
@@ -62,6 +61,8 @@ public class DestinationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_destination);
+        HttpResponseCache httpCache = HttpResponseCache.getInstalled();
+        Log.w("HTTP cache", "cache hits: " + httpCache.getHitCount());
         progressBar = findViewById(R.id.destinationsLoading);
         destinationList = findViewById(R.id.destinations_listView);
         destinationResult.getDestinationResult().observe(this, new Observer<Result>() {

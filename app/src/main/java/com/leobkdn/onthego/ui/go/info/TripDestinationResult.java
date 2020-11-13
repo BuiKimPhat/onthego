@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.leobkdn.onthego.data.DestinationDataSource;
 import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.data.TripDataSource;
 import com.leobkdn.onthego.data.model.TripDestination;
-import com.leobkdn.onthego.ui.go.Trip;
 
 import java.util.ArrayList;
 

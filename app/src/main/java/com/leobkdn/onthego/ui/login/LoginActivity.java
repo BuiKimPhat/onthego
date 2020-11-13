@@ -24,6 +24,8 @@ import com.leobkdn.onthego.ui.signup.SignUpActivity;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    private ProgressBar loadingProgressBar;
+    private Button loginButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
-        final Button loginButton = findViewById(R.id.loginButton);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        loginButton = findViewById(R.id.loginButton);
+        loadingProgressBar = findViewById(R.id.loading);
         Button signUpButton = findViewById(R.id.signUpButton);
         //switch to sign up page
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoginFailed(String errorString) {
+        loginButton.setEnabled(true);
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 

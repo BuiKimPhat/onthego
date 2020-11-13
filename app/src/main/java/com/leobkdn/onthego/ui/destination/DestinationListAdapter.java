@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,7 +15,6 @@ import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.ui.destination.info.DestinationInfo;
 import com.leobkdn.onthego.ui.go.GoActivity;
-import com.leobkdn.onthego.ui.go.Trip;
 
 import java.util.ArrayList;
 
