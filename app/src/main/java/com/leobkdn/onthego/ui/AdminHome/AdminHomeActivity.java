@@ -1,6 +1,8 @@
 package com.leobkdn.onthego.ui.AdminHome;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,12 +20,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
+import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
 import java.util.Date;
 
@@ -35,6 +40,7 @@ public class AdminHomeActivity extends AppCompatActivity {
     private ImageButton trip;
     private ImageButton persons;
     private ImageButton userAvatar;
+    private TextView tv1,tv2,tv3;
     @Override
     public void onBackPressed() {
         if (pressedOnce) {
@@ -63,6 +69,9 @@ public class AdminHomeActivity extends AppCompatActivity {
         destination = findViewById(R.id.destination_button);
         trip = findViewById(R.id.trip_button);
         persons = findViewById(R.id.person_button);
+        tv1 = findViewById(R.id.infor_users);
+        tv2 = findViewById(R.id.info_trip);
+        tv3 = findViewById(R.id.infor_destination);
         ImageButton powerButton = findViewById(R.id.powerButton);
         ImageButton settingButton = findViewById(R.id.settingButton);
         ProgressBar loading = findViewById(R.id.homeLoading);
@@ -71,6 +80,20 @@ public class AdminHomeActivity extends AppCompatActivity {
         //set avatar text
         TextView username = findViewById(R.id.home_username);
         username.setText(user.getDisplayName());
+
+        //setButtons
+        persons.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), UserListActivity.class));
+            }
+        });
+
+        //set db info
+        tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
+        tv2.setText(String.format("Tổng số chuyến đi : " + "Unknown"));
+        tv3.setText(String.format("Tổng số điểm đến :" + "Unknown"));
+
         // Log Out Result listener
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
@@ -103,8 +126,36 @@ public class AdminHomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        persons.findViewById(R.id.changePwd_loading);
 
+        powerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog alertDialog = new AlertDialog.Builder(AdminHomeActivity.this).create();
+                alertDialog.setTitle("Thoát");
+                alertDialog.setMessage("Bạn muốn đăng xuất hay thoát chương trình?");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Đăng xuất",
+                        new DialogInterface.OnClickListener() {
+
+                            //Log out
+                            public void onClick(DialogInterface dialog, int which) {
+                                loading.setVisibility(View.VISIBLE);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loginViewModel.logOut(user.getToken());
+                                    }
+                                }).start();
+                            }
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Thoát",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
 
     }
 

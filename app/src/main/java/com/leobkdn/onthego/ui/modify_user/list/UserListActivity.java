@@ -17,7 +17,7 @@ public class UserListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_modify_user);
 
         Users = new ArrayList<Users_class>();
         // tu phat sinh
