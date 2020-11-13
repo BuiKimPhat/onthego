@@ -1,4 +1,4 @@
-package com.leobkdn.onthego.ui.go;
+package com.leobkdn.onthego.data.model;
 
 import com.leobkdn.onthego.data.model.Destination;
 

@@ -41,9 +41,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         //test insert db
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
         signUpViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
@@ -165,7 +165,7 @@ public class SignUpActivity extends AppCompatActivity {
                     public void run() {
                         signUpViewModel.signUp(emailEditText.getText().toString(),
                                 passwordEditText.getText().toString(),
-                                nameEditText.getText().toString(), birthday, addressSpinner.getSelectedItem().toString() == "Địa chỉ" ? null : addressSpinner.getSelectedItem().toString());
+                                nameEditText.getText().toString(), birthday, addressSpinner.getSelectedItem().toString().equals("Địa chỉ") ? null : addressSpinner.getSelectedItem().toString());
                     }
                 }).start();
             }

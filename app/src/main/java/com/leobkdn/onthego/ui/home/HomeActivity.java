@@ -11,8 +11,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,6 +37,8 @@ import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.stay.StayActivity;
 import com.leobkdn.onthego.ui.transport.TransportActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
@@ -72,6 +76,15 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        // install http cache
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            long httpCacheSize = 1024 * 1024; // 1 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
+        }
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
         user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),false,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
@@ -163,6 +176,15 @@ public class HomeActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
+        }
     }
 
     private void setupActivityButtons(ImageButton button, Intent intent){

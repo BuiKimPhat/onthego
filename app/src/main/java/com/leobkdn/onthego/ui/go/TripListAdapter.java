@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.model.Trip;
 import com.leobkdn.onthego.ui.go.info.TripInfo;
 
 import java.util.ArrayList;
