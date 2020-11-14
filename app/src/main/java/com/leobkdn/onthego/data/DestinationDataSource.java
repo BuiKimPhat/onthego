@@ -50,6 +50,7 @@ public class DestinationDataSource extends ServerData {
 //    private static final String dbPassword = "userpass";
 //    private static final String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";instance=" + instance + ";user=" + dbUser + ";password=" + dbPassword + ";databasename=" + dbName;
     private String stringResult = "Error";
+    private int sum = 0; // lưu số điểm đến query đc
     private ArrayList<TripDestination> result = new ArrayList<TripDestination>();
     private ArrayList<Destination> result1 = new ArrayList<>();
 
@@ -98,6 +99,7 @@ public class DestinationDataSource extends ServerData {
                     while (jsonReader.hasNext()) {
                         if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
                             id = jsonReader.nextInt();
+                            sum++;
                         } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
                             name = jsonReader.nextString();
@@ -122,6 +124,11 @@ public class DestinationDataSource extends ServerData {
             return new Result.Error(e);
         }
         return new Result.Success<>(result);
+    }
+
+    //An
+    public int getSum() {
+        return sum;
     }
 
     public Result<ArrayList<Destination>> fetchDestinations(String token, @Nullable String category) {

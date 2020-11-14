@@ -20,6 +20,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.DestinationDataSource;
+import com.leobkdn.onthego.data.ListUserDataSource;
+import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
@@ -27,9 +30,12 @@ import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
+import com.leobkdn.onthego.ui.modify_user.list.Users_class;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class AdminHomeActivity extends AppCompatActivity {
@@ -90,7 +96,16 @@ public class AdminHomeActivity extends AppCompatActivity {
         });
 
         //set db info
+        try { ListUserDataSource a = new ListUserDataSource();
+        a.getListUsers();
+        a.getSum();
         tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
+        }catch (Exception e){}
+        try{
+            DestinationDataSource a = new DestinationDataSource();
+            a.fetchDestinations(user.getToken(),"*");
+            tv2.setText(String.format("Tổng số chuyến đi : " + "Unknown"));
+        }catch (Exception e){}
         tv2.setText(String.format("Tổng số chuyến đi : " + "Unknown"));
         tv3.setText(String.format("Tổng số điểm đến :" + "Unknown"));
 
@@ -156,6 +171,7 @@ public class AdminHomeActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+
 
     }
 
