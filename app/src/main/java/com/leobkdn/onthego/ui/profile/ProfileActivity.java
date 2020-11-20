@@ -111,18 +111,22 @@ public class ProfileActivity extends AppCompatActivity {
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(LoginResult loginResult) {
-                nameView.setText(nameEdit.getText().toString());
-                emailView.setText(emailEdit.getText().toString());
-                birthdayView.setText(birthdayEdit.getText().toString());
-                addressView.setText(addressSpinner.getSelectedItem().toString());
                 reinitEditUI();
                 if (loginResult == null) {
                     return;
                 }
                 if (loginResult.getError() != null) {
+                    nameEdit.setText(nameView.getText().toString());
+                    emailEdit.setText(emailView.getText().toString());
+                    birthdayEdit.setText(birthdayView.getText().toString());
+                    addressSpinner.setSelection(addressSpinnerAdapter.getPosition(addressView.getText()));
                     Toast.makeText(getApplicationContext(), loginResult.getError(), Toast.LENGTH_LONG).show();
                 }
                 if (loginResult.getSuccessString() != null) {
+                    nameView.setText(nameEdit.getText().toString());
+                    emailView.setText(emailEdit.getText().toString());
+                    birthdayView.setText(birthdayEdit.getText().toString());
+                    addressView.setText(addressSpinner.getSelectedItem().toString());
                     Toast.makeText(getApplicationContext(), loginResult.getSuccessString(), Toast.LENGTH_LONG).show();
                     savePrefsData("username", nameEdit.getText().toString());
                     savePrefsData("email", emailEdit.getText().toString());
@@ -170,6 +174,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void reinitEditUI() {
         progressBar.setVisibility(View.GONE);
+        editConfirm.setEnabled(true);
         editConfirm.setVisibility(View.GONE);
         nameEditButton.setVisibility(View.VISIBLE);
         emailEditButton.setVisibility(View.VISIBLE);

@@ -36,33 +36,6 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="14dp"
-        android:padding="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/ic_baseline_search_24" />
-
-        <EditText
-            android:id="@+id/home_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tìm kiếm"
-            android:inputType="text"
-            android:selectAllOnFocus="true"
-            android:textSize="14sp" />
-    </LinearLayout>
-
     <FrameLayout
         android:id="@+id/framePower"
         android:layout_width="50dp"

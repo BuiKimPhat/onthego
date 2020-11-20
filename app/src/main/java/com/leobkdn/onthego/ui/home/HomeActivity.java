@@ -53,6 +53,13 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton goButton;
     private ImageButton userAvatar;
     private TextView currentTrip;
+    @Override
+    public void onRestart()
+    {
+        // back button pressed and return to this activity
+        super.onRestart();
+        currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
+    }
 
     // double-tap to exit activity
     @Override

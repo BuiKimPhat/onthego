@@ -13,6 +13,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.data.model.Trip;
 
@@ -141,7 +142,7 @@ public class LoginDataSource extends ServerData {
             connection.setDoOutput(true);
             // Write the data
             connection.getOutputStream().write(postData.getBytes());
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -250,7 +251,9 @@ public class LoginDataSource extends ServerData {
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
             // Create the data
-            String postData = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\",\"name\":\"" + fullName + "\",\"birthday\":" + (birthday != null ? birthday.getTime() : "null") + ",\"address\":" + (address != null ? "\"" + address + "\"" : "null") + "}";
+            String postData = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\",\"name\":\""
+                    + fullName + "\",\"birthday\":" + (birthday != null ? birthday.getTime() : "null") + ",\"address\":"
+                    + (address != null ? "\"" + address + "\"" : "null") + "}";
 //            Log.w("httpReq",postData);
             // Enable writing
             connection.setDoOutput(true);
@@ -291,6 +294,7 @@ public class LoginDataSource extends ServerData {
                     } else jsonReader.skipValue();
                 }
                 jsonReader.endObject();
+                connection.disconnect();
                 throw new Exception(error);
             }
         } catch (Exception e) {
@@ -328,11 +332,44 @@ public class LoginDataSource extends ServerData {
 //                }
 //                connection.close();
 //            } else throw new SQLException("Lỗi kết nối");
+            // Create URL
+            URL endPoint = new URL(server + "/user/logout");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                throw new Exception(error);
+            }
         } catch (Exception exception) {
             //Invalid token
             return new Result.Error(exception);
         }
-        return new Result.Success<>(stringResult);
     }
 
     public Result<String> editInfo(LoggedInUser user) {
@@ -365,10 +402,50 @@ public class LoginDataSource extends ServerData {
 //            } else throw new SQLException("Lỗi kết nối");
 //        } catch (JWTVerificationException e) {
 //            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+            // Create URL
+            URL endPoint = new URL(server + "/user/edit");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + user.getToken());
+            connection.setRequestProperty("Content-Type", "application/json");
+            String postData = "{\"email\":\"" + user.getEmail() + "\",\"name\":\""
+                    + user.getDisplayName() + "\",\"birthday\":" + (user.getBirthday() != null ? user.getBirthday().getTime() : "null") + ",\"address\":"
+                    + (user.getAddress() != null ? "\"" + user.getAddress() + "\"" : "null") + "}";
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                throw new Exception(error);
+            }
         } catch (Exception e) {
             return new Result.Error(e);
         }
-        return new Result.Success<>(stringResult);
     }
 
     public Result<String> changePassword(String token, String oldPassword, String newPassword) {
@@ -405,9 +482,47 @@ public class LoginDataSource extends ServerData {
 //            } else throw new SQLException("Lỗi kết nối");
 //        } catch (JWTVerificationException e) {
 //            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+            // Create URL
+            URL endPoint = new URL(server + "/user/edit/pwd");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Content-Type", "application/json");
+            String postData = "{\"oldPwd\":\"" + oldPassword + "\",\"newPwd\":\"" + newPassword + "\"}";
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                throw new Exception(error);
+            }
         } catch (Exception e) {
             return new Result.Error(e);
         }
-        return new Result.Success<>(stringResult);
     }
 }

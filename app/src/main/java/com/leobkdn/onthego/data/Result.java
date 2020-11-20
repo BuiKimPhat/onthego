@@ -12,7 +12,7 @@ public class Result<T> {
     public String toString() {
         if (this instanceof Result.Success) {
             Result.Success success = (Result.Success) this;
-            return "Thành công: [" + success.getData().toString() + "]";
+            return success.getData().toString();
         } else if (this instanceof Result.Error) {
             Result.Error error = (Result.Error) this;
             if (error.getErrMessage() != null)  return error.getErrMessage();

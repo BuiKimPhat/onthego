@@ -15,6 +15,20 @@ public class Destination {
     private String city;
     private String position;
 
+    public Destination(Destination x){
+        this.id = x.id;
+        this.name = x.name;
+        this.address = x.address;
+        this.phone = x.phone;
+        this.description = x.description;
+        this.category = x.category;
+        this.inCost = x.inCost;
+        this.avgCost = x.avgCost;
+        this.rating = x.rating;
+        this.city = x.city;
+        this.position = x.position;
+    }
+
     public Destination(int id, String name, String city) {
         this.id = id;
         this.name = name;
