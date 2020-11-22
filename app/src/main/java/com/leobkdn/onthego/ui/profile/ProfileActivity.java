@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.FormatException;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -31,9 +33,11 @@ import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -100,6 +104,28 @@ public class ProfileActivity extends AppCompatActivity {
         addressEditButton = findViewById(R.id.profile_address_edit_button);
         editConfirm = findViewById(R.id.profile_edit_confirm);
         changePwdButton = findViewById(R.id.profile_change_password);
+
+        birthdayEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Date Select Listener.
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        birthdayEdit.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    }
+                };
+                Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR);
+                int mMonth = c.get(Calendar.MONTH);
+                int mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dialog = new DatePickerDialog(ProfileActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                        dateSetListener, mYear, mMonth, mDay);
+                dialog.show();
+            }
+        });
+
 
         // button listeners
         setupEditButtons(nameEditButton, nameView, nameEdit);
