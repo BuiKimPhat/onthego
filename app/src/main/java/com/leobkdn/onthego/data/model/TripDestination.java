@@ -14,6 +14,7 @@ public class TripDestination extends Destination {
         this.startTime = startTime;
         this.finishTime = finishTime;
     }
+
     public TripDestination(int id, String name, @Nullable Timestamp startTime, @Nullable Timestamp finishTime) {
         super(id, name, null, null, null, null, null, null);
         this.startTime = startTime;
@@ -26,5 +27,13 @@ public class TripDestination extends Destination {
 
     public Timestamp getFinishTime() {
         return finishTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setFinishTime(Timestamp finishTime) {
+        this.finishTime = finishTime;
     }
 }

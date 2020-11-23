@@ -28,12 +28,20 @@ public class TripResult {
         tripResult.postValue(result);
     }
 
-    public void addUserTrip(String token, int tripId){
-        Result<ArrayList<Trip>> result = tripDataSource.addUserTrip(token, tripId);
+    public void addTrip(String token, int tripId){
+        Result<String> result = tripDataSource.addTrip(token, tripId);
         tripResult.postValue(result);
     }
-    public void newTrip(String token, String newTripName, ArrayList<TripDestination> destinations){
-        Result<String> result = tripDataSource.newTrip(token, newTripName, destinations);
+    public void addTrip(String token, String newTripName, ArrayList<TripDestination> destinations){
+        Result<String> result = tripDataSource.addTrip(token, newTripName, destinations);
+        tripResult.postValue(result);
+    }
+    public void editTrip(String token, int tripId, String newTripName, ArrayList<TripDestination> destinations){
+        Result<String> result = tripDataSource.editTrip(token, tripId, newTripName, destinations);
+        tripResult.postValue(result);
+    }
+    public void deleteTrip(String token, int tripId){
+        Result<String> result = tripDataSource.deleteTrip(token, tripId);
         tripResult.postValue(result);
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,7 @@ public class TripListAdapter extends BaseAdapter {
                     public void onClick(View v) {
                         Intent resIntent = new Intent();
                         resIntent.putExtra("tripID", trips.get(position).getId());
-                        resIntent.putExtra("destinationID", reqIntent.getStringExtra("destinationID"));
+                        resIntent.putExtra("destinationID", reqIntent.getIntExtra("destinationID", -1));
                         ((Activity) context).setResult(Activity.RESULT_OK, resIntent);
                         ((Activity) context).finish();
                     }
@@ -99,7 +100,7 @@ public class TripListAdapter extends BaseAdapter {
                     intent.putExtra("tripId", trips.get(position).getId());
                     intent.putExtra("tripName", trips.get(position).getName());
                     intent.putExtra("tripOwner", trips.get(position).getOwner());
-                    context.startActivity(intent);
+                    ((Activity) context).startActivityForResult(intent, 3);
                 }
             });
         }

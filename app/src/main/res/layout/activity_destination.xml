@@ -33,7 +33,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/destination_sort"
+        android:id="@+id/destination_sort_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/spinner_background"
@@ -44,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@id/destination_search_linear">
 
         <Spinner
-            android:id="@+id/userAddress"
+            android:id="@+id/destination_sort"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

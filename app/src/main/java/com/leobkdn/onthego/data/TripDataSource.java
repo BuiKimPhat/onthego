@@ -79,12 +79,12 @@ public class TripDataSource extends ServerData {
 //        } catch (JWTVerificationException e) {
 //            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
             // Create URL
-            URL endPoint = new URL(server + "/user/trip");
+            URL endPoint = new URL(server + "/trip");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -115,10 +115,10 @@ public class TripDataSource extends ServerData {
                 }
                 jsonReader.endArray();
                 connection.disconnect();
-            } else if (connection.getResponseCode() == 401) {
-                throw new JWTVerificationException("Token đã hết hạn, vui lòng đăng nhập lại!");
+                return new Result.Success<>(result);
             } else {
-                InputStream responseBody = connection.getInputStream();
+//                Log.w("httpRes","error");
+                InputStream responseBody = connection.getErrorStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
                 String error = "Lỗi không xác định";
@@ -130,18 +130,17 @@ public class TripDataSource extends ServerData {
                 }
                 jsonReader.endObject();
                 throw new Exception(error);
-            };
+            }
         } catch (Exception e) {
             return new Result.Error(e);
         }
-        return new Result.Success<>(result);
     }
     // An
     public int getSum() {
         return sum;
     }
 
-    public Result<ArrayList<Trip>> addUserTrip(String token, int tripId) {
+    public Result<String> addTrip(String token, int tripId) {
         try {
             //Set connection
 //            Connection connection = DriverManager.getConnection(dbURI);
@@ -165,13 +164,51 @@ public class TripDataSource extends ServerData {
 //            } else throw new SQLException("Lỗi kết nối");
 //        } catch (JWTVerificationException e) {
 //            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+            // Create URL
+            URL endPoint = new URL(server + "/trip/add");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"tripId\":" + tripId + "}";
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+//                Log.w("httpRes","error");
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
         } catch (Exception e) {
             return new Result.Error(e);
         }
-        return fetchUserTrip(token);
     }
 
-    public Result<String> newTrip(String token, String newTripName, ArrayList<TripDestination> destinations) {
+    public Result<String> addTrip(String token, String newTripName, ArrayList<TripDestination> destinations) {
         try {
             //Set connection
 //            Connection connection = DriverManager.getConnection(dbURI);
@@ -214,9 +251,172 @@ public class TripDataSource extends ServerData {
 //            } else throw new SQLException("Lỗi kết nối");
 //        } catch (JWTVerificationException e) {
 //            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+            // Create URL
+            URL endPoint = new URL(server + "/trip/add");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"name\":\"" + newTripName + "\"}";
+            if (!destinations.isEmpty()) {
+                postData = "{\"name\":\"" + newTripName + "\",\"destinations\": [";
+                for (int i = 0; i < destinations.size() - 1; i++) {
+                    postData += "{\"id\":" + destinations.get(i).getId()
+                            + ",\"startTime\":"
+                            + (destinations.get(i).getStartTime() != null ? destinations.get(i).getStartTime().getTime() : "null")
+                            + ",\"finishTime\":"
+                            + (destinations.get(i).getFinishTime() != null ? destinations.get(i).getFinishTime().getTime() : "null")
+                            + "},";
+                }
+                postData += "{\"id\":" + destinations.get(destinations.size() - 1).getId()
+                        + ",\"startTime\":"
+                        + (destinations.get(destinations.size() - 1).getStartTime() != null ? destinations.get(destinations.size() - 1).getStartTime().getTime() : "null")
+                        + ",\"finishTime\":"
+                        + (destinations.get(destinations.size() - 1).getFinishTime() != null ? destinations.get(destinations.size() - 1).getFinishTime().getTime() : "null")
+                        + "}]}";
+            }
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+//                Log.w("httpRes","error");
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
         } catch (Exception e) {
             return new Result.Error(e);
         }
-        return new Result.Success<>(stringResult);
+    }
+
+    public Result<String> editTrip(String token, int tripId, String newTripName, ArrayList<TripDestination> destinations) {
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/trip/edit");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"id\":" + tripId + ",\"name\":\"" + newTripName + "\"}";
+            if (!destinations.isEmpty()) {
+                postData = "{\"id\":" + tripId + ",\"name\":\"" + newTripName + "\",\"destinations\": [";
+                for (int i = 0; i < destinations.size() - 1; i++) {
+                    postData += "{\"id\":" + destinations.get(i).getId()
+                            + ",\"startTime\":"
+                            + (destinations.get(i).getStartTime() != null ? destinations.get(i).getStartTime().getTime() : "null")
+                            + ",\"finishTime\":"
+                            + (destinations.get(i).getFinishTime() != null ? destinations.get(i).getFinishTime().getTime() : "null")
+                            + "},";
+                }
+                postData += "{\"id\":" + destinations.get(destinations.size() - 1).getId()
+                        + ",\"startTime\":"
+                        + (destinations.get(destinations.size() - 1).getStartTime() != null ? destinations.get(destinations.size() - 1).getStartTime().getTime() : "null")
+                        + ",\"finishTime\":"
+                        + (destinations.get(destinations.size() - 1).getFinishTime() != null ? destinations.get(destinations.size() - 1).getFinishTime().getTime() : "null")
+                        + "}]}";
+            }
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else {
+//                Log.w("httpRes","error");
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+    }
+
+    public Result<String> deleteTrip(String token, int tripId) {
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/trip/delete");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"tripId\":" + tripId + "}";
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success(stringResult);
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
     }
 }

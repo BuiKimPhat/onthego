@@ -10,7 +10,14 @@ public class Trip {
     private String name;
     private String owner;
     private Date createdAt;
-    private ArrayList<Destination> destinations;
+    private ArrayList<TripDestination> destinations;
+
+    public Trip(Trip x){
+        this.id = x.id;
+        this.name = x.name;
+        this.owner = x.owner;
+        this.createdAt = x.createdAt;
+    }
 
     public Trip(int id, String name, String owner, Date createdAt) {
         this.id = id;
@@ -19,7 +26,7 @@ public class Trip {
         this.createdAt = createdAt;
     }
 
-    public Trip(int id, String name, String owner, Date createdAt, ArrayList<Destination> destinations) {
+    public Trip(int id, String name, String owner, Date createdAt, ArrayList<TripDestination> destinations) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -27,7 +34,7 @@ public class Trip {
         this.destinations = destinations;
     }
 
-    public ArrayList<Destination> getDestinations() {
+    public ArrayList<TripDestination> getDestinations() {
         return destinations;
     }
 

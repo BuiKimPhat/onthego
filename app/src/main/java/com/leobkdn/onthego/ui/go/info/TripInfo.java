@@ -1,5 +1,6 @@
 package com.leobkdn.onthego.ui.go.info;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -7,9 +8,12 @@ import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +30,11 @@ import com.leobkdn.onthego.data.model.TripDestination;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
 import com.leobkdn.onthego.ui.go.TripResult;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class TripInfo extends AppCompatActivity {
@@ -43,7 +51,19 @@ public class TripInfo extends AppCompatActivity {
     private TripDestinationResult tripDestinationResult = new TripDestinationResult();
     private TripResult tripResult = new TripResult();
     private TripInfoAdapter adapter;
+    private int tripID = -1;
+    private boolean isNew = false;
     private Context actCon = this;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -70,6 +90,8 @@ public class TripInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_info);
+        tripID = getIntent().getIntExtra("tripId", -1);
+        isNew = getIntent().getBooleanExtra("isNew", false);
         progressBar = findViewById(R.id.trip_info_loading);
         tripName = findViewById(R.id.trip_name);
         tripNameEdit = findViewById(R.id.trip_name_edit);
@@ -82,18 +104,140 @@ public class TripInfo extends AppCompatActivity {
         confirmButton = findViewById(R.id.trip_info_confirm);
         listDestinations = findViewById(R.id.trip_destinations_listView);
         addDestination = findViewById(R.id.trip_info_add_destination_fab);
-        if (getIntent().getBooleanExtra("isNew", false)) {
+        if (isNew) {
+            deleteTrip.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             confirmButton.setVisibility(View.VISIBLE);
             tripName.setVisibility(View.GONE);
             tripNameEdit.setVisibility(View.VISIBLE);
             tripNameBtn.setVisibility(View.GONE);
             tripNameEdit.requestFocus();
+
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    if (!isTextValid(tripNameEdit.getText().toString())) {
+                        tripNameEdit.setError("Không được bỏ trống");
+                        return;
+                    }
+                    tripNameBtn.setVisibility(View.VISIBLE);
+                    confirmButton.setVisibility(View.GONE);
+                    tripNameEdit.setVisibility(View.GONE);
+                    tripName.setText(tripNameEdit.getText());
+                    tripName.setVisibility(View.VISIBLE);
+                    if (adapter != null) {
+                        for (int i = 0; i < adapter.getChildrenCount(0); i++) {
+                            View child = adapter.getChildView(0, i);
+                            EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
+                            TextView date = child.findViewById(R.id.trip_destination_date);
+                            TextView startTime = child.findViewById(R.id.trip_destination_startTime);
+                            EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
+                            TextView endTime = child.findViewById(R.id.trip_destination_endTime);
+                            EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
+                            ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
+                            timeEdit.setVisibility(View.VISIBLE);
+
+                            date.setText(dateEdit.getText());
+                            date.setVisibility(View.VISIBLE);
+                            dateEdit.setVisibility(View.GONE);
+
+                            startTime.setText(startTimeEdit.getText());
+                            startTime.setVisibility(View.VISIBLE);
+                            startTimeEdit.setVisibility(View.GONE);
+
+                            endTime.setText(endTimeEdit.getText());
+                            endTime.setVisibility(View.VISIBLE);
+                            endTimeEdit.setVisibility(View.GONE);
+
+                            if (dateEdit.getText().toString().equals("")) {
+                                destinations.get(i).setStartTime(null);
+                                destinations.get(i).setFinishTime(null);
+                            } else {
+                                try {
+                                    String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
+                                    String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
+                                    destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
+                                    destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tripResult.addTrip(restorePrefsData("token"), tripNameEdit.getText().toString(), destinations);
+                        }
+                    }).start();
+                }
+            });
         } else {
+            confirmButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    if (!isTextValid(tripNameEdit.getText().toString())) {
+                        tripNameEdit.setError("Không được bỏ trống");
+                        return;
+                    }
+                    tripNameBtn.setVisibility(View.VISIBLE);
+                    confirmButton.setVisibility(View.GONE);
+                    tripNameEdit.setVisibility(View.GONE);
+                    tripName.setText(tripNameEdit.getText());
+                    tripName.setVisibility(View.VISIBLE);
+                    if (adapter != null) {
+                        for (int i = 0; i < adapter.getChildrenCount(0); i++) {
+                            View child = adapter.getChildView(0, i);
+                            EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
+                            TextView date = child.findViewById(R.id.trip_destination_date);
+                            TextView startTime = child.findViewById(R.id.trip_destination_startTime);
+                            EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
+                            TextView endTime = child.findViewById(R.id.trip_destination_endTime);
+                            EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
+                            ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
+                            timeEdit.setVisibility(View.VISIBLE);
+
+                            date.setText(dateEdit.getText());
+                            date.setVisibility(View.VISIBLE);
+                            dateEdit.setVisibility(View.GONE);
+
+                            startTime.setText(startTimeEdit.getText());
+                            startTime.setVisibility(View.VISIBLE);
+                            startTimeEdit.setVisibility(View.GONE);
+
+                            endTime.setText(endTimeEdit.getText());
+                            endTime.setVisibility(View.VISIBLE);
+                            endTimeEdit.setVisibility(View.GONE);
+
+                            if (dateEdit.getText().toString().equals("")) {
+                                destinations.get(i).setStartTime(null);
+                                destinations.get(i).setFinishTime(null);
+                            } else {
+                                try {
+                                    String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
+                                    String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
+                                    destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
+                                    destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations);
+                        }
+                    }).start();
+                }
+            });
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    tripDestinationResult.fetchTripDestination(restorePrefsData("token"), getIntent().getIntExtra("tripId", -1));
+                    tripDestinationResult.fetchTripDestination(restorePrefsData("token"), tripID);
                 }
             }).start();
         }
@@ -109,46 +253,21 @@ public class TripInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        tripResult.deleteTrip(restorePrefsData("token"), tripID);
+                    }
+                });
+                setResult(RESULT_OK);
                 finish();
             }
         });
         addDestination.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(actCon, DestinationActivity.class);
-                intent.putExtra("mode", "add");
-                startActivityForResult(intent, 1);
-            }
-        });
-        // TODO: text listener for start and finish time to change destinations
-        tripNameEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!isTextValid(tripNameEdit.getText().toString()))
-                    tripNameEdit.setError("Không được bỏ trống");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                if (!isTextValid(tripNameEdit.getText().toString())) {
-                    tripNameEdit.setError("Không được bỏ trống");
-                    return;
-                }
-                tripNameBtn.setVisibility(View.VISIBLE);
-                confirmButton.setVisibility(View.GONE);
-                tripNameEdit.setVisibility(View.GONE);
-                tripName.setText(tripNameEdit.getText());
-                tripName.setVisibility(View.VISIBLE);
+                //update edit date/time
                 if (adapter != null) {
                     for (int i = 0; i < adapter.getChildrenCount(0); i++) {
                         View child = adapter.getChildView(0, i);
@@ -158,28 +277,51 @@ public class TripInfo extends AppCompatActivity {
                         EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
                         TextView endTime = child.findViewById(R.id.trip_destination_endTime);
                         EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                        ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
-                        timeEdit.setVisibility(View.VISIBLE);
                         date.setText(dateEdit.getText());
-                        date.setVisibility(View.VISIBLE);
-                        dateEdit.setVisibility(View.GONE);
                         startTime.setText(startTimeEdit.getText());
-                        startTime.setVisibility(View.VISIBLE);
-                        startTimeEdit.setVisibility(View.GONE);
                         endTime.setText(endTimeEdit.getText());
-                        endTime.setVisibility(View.VISIBLE);
-                        endTimeEdit.setVisibility(View.GONE);
+                        if (dateEdit.getText().toString().equals("")) {
+                            destinations.get(i).setStartTime(null);
+                            destinations.get(i).setFinishTime(null);
+                        } else {
+                            try {
+                                String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
+                                String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
+                                destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
+                                destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tripResult.newTrip(restorePrefsData("token"), tripNameEdit.getText().toString(), destinations);
-                    }
-                }).start();
+
+                Intent intent = new Intent(actCon, DestinationActivity.class);
+                intent.putExtra("mode", "add");
+                startActivityForResult(intent, 1);
             }
         });
+        if (!isTextValid(tripNameEdit.getText().toString())) {
+            tripNameEdit.setError("Không được bỏ trống");
+            confirmButton.setEnabled(false);
+        } else confirmButton.setEnabled(true);
+        tripNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!isTextValid(tripNameEdit.getText().toString())) {
+                    tripNameEdit.setError("Không được bỏ trống");
+                    confirmButton.setEnabled(false);
+                } else confirmButton.setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         tripDestinationResult.getDestinationResult().observe(this, new Observer<Result>() {
             @Override
             public void onChanged(Result result) {
@@ -206,6 +348,73 @@ public class TripInfo extends AppCompatActivity {
             @Override
             public void onChanged(Result result) {
                 progressBar.setVisibility(View.GONE);
+                if (result instanceof Result.Success){
+                    if (isNew){
+                        isNew = false;
+                        deleteTrip.setVisibility(View.VISIBLE);
+                        tripID = Integer.parseInt(result.toString().substring(34));
+                        confirmButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                progressBar.setVisibility(View.VISIBLE);
+                                if (!isTextValid(tripNameEdit.getText().toString())) {
+                                    tripNameEdit.setError("Không được bỏ trống");
+                                    return;
+                                }
+                                tripNameBtn.setVisibility(View.VISIBLE);
+                                confirmButton.setVisibility(View.GONE);
+                                tripNameEdit.setVisibility(View.GONE);
+                                tripName.setText(tripNameEdit.getText());
+                                tripName.setVisibility(View.VISIBLE);
+                                if (adapter != null) {
+                                    for (int i = 0; i < adapter.getChildrenCount(0); i++) {
+                                        View child = adapter.getChildView(0, i);
+                                        EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
+                                        TextView date = child.findViewById(R.id.trip_destination_date);
+                                        TextView startTime = child.findViewById(R.id.trip_destination_startTime);
+                                        EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
+                                        TextView endTime = child.findViewById(R.id.trip_destination_endTime);
+                                        EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
+                                        ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
+                                        timeEdit.setVisibility(View.VISIBLE);
+
+                                        date.setText(dateEdit.getText());
+                                        date.setVisibility(View.VISIBLE);
+                                        dateEdit.setVisibility(View.GONE);
+
+                                        startTime.setText(startTimeEdit.getText());
+                                        startTime.setVisibility(View.VISIBLE);
+                                        startTimeEdit.setVisibility(View.GONE);
+
+                                        endTime.setText(endTimeEdit.getText());
+                                        endTime.setVisibility(View.VISIBLE);
+                                        endTimeEdit.setVisibility(View.GONE);
+
+                                        if (dateEdit.getText().toString().equals("")) {
+                                            destinations.get(i).setStartTime(null);
+                                            destinations.get(i).setFinishTime(null);
+                                        } else {
+                                            try {
+                                                String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
+                                                String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
+                                                destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
+                                                destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations);
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                }
                 Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
             }
         });
@@ -221,4 +430,6 @@ public class TripInfo extends AppCompatActivity {
         if (text == null) return false;
         return !text.trim().isEmpty();
     }
+
+    //TODO: write functions for init UI and listeners
 }

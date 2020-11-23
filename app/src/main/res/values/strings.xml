@@ -26,7 +26,7 @@
     <string name="transport">Phương tiện</string>
     <string name="stay">Nơi ở</string>
     <string name="food">Ăn uống</string>
-    <string name="search">Tìm kiếm</string>
+    <string name="search">Tìm kiếm theo tên</string>
     <string name="exitDialog">Thoát chương trình?</string>
     <string name="logOut">Đăng xuất</string>
     <string name="exit">Thoát</string>
@@ -106,5 +106,17 @@
         <item>Vĩnh Long</item>
         <item>Vĩnh Phúc</item>
         <item>Yên Bái</item>
+    </string-array>
+    <string-array name="sortDestinations">
+        <item>Theo đánh giá: Cao -> thấp</item>
+        <item>Theo đánh giá: Thấp -> cao</item>
+        <item>Theo tên: A -> Z</item>
+        <item>Theo tên: Z -> A</item>
+    </string-array>
+    <string-array name="sortTrips">
+        <item>Theo ngày thêm: Gần -> xa</item>
+        <item>Theo ngày thêm: Xa -> gần</item>
+        <item>Theo tên: A -> Z</item>
+        <item>Theo tên: Z -> A</item>
     </string-array>
 </resources>
