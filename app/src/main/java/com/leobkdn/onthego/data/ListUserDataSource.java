@@ -41,6 +41,8 @@ public class ListUserDataSource extends ServerData {
             URL endPoint = new URL(server + "/admin_User");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             if (connection.getResponseCode() == 200) {
@@ -86,7 +88,7 @@ public class ListUserDataSource extends ServerData {
         try{
             URL url = new URL(server + "/getUserInfor");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
@@ -143,7 +145,31 @@ public class ListUserDataSource extends ServerData {
         }
         return newUser;
     }
+    public boolean deleteUser(int id,String token){
+        try{
+        URL url = new URL(server + "/deleteUser/"+id);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("User-Agent", "On The Go");
+        connection.addRequestProperty("Authorization", "Bearer " + token);
+        if (connection.getResponseCode() == 200){
+            String result;
+            InputStream responseBody = connection.getInputStream();
+            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+            JsonReader jsonReader = new JsonReader(responseBodyReader);
+            if (jsonReader.hasNext())
+                if (jsonReader.nextName().equals("Delete") && jsonReader.peek() != JsonToken.NULL){
+                    result = jsonReader.nextString();
+                    if(result.equals("success")) return true;
+                    else return false;
+                }
+        }
+        }catch (Exception e){}
+        return false;
+    }
 }
+
 
 //    public Result<String> editInfo(LoggedInUser user) {
 //        try {
