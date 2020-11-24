@@ -41,8 +41,6 @@ public class ListUserDataSource extends ServerData {
             URL endPoint = new URL(server + "/admin_User");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             if (connection.getResponseCode() == 200) {
@@ -83,7 +81,7 @@ public class ListUserDataSource extends ServerData {
         return sum;
     }
     //lấy thông tin user
-    public LoggedInUser getInfoUser(int id,String token){
+    public LoggedInUser getInfoUser(int id){
         LoggedInUser newUser = null;
         try{
             URL url = new URL(server + "/getUserInfor");
@@ -91,7 +89,7 @@ public class ListUserDataSource extends ServerData {
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
-            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.addRequestProperty("Authorization", "Bearer " );
 
             String postData = "{\"id\":\""+ id +"}";
             connection.setDoOutput(true);
@@ -99,7 +97,7 @@ public class ListUserDataSource extends ServerData {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
-                String name = null, address = null,email = null; token = null;
+                String name = null, address = null,email = null; String token = null;
                 boolean isAdmin = false;
                 Date birthday = null;
                 jsonReader.beginObject();

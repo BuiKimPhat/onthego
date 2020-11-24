@@ -22,31 +22,22 @@ import androidx.lifecycle.ViewModelProviders;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.DestinationDataSource;
 import com.leobkdn.onthego.data.ListUserDataSource;
-import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
-import com.leobkdn.onthego.ui.modify_user.list.Users_class;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
-import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class AdminHomeActivity extends AppCompatActivity {
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
-    private ImageButton destination;
-    private ImageButton trip;
-    private ImageButton persons;
-    private ImageButton userAvatar;
     private TextView tv1,tv2,tv3;
+
     @Override
     public void onBackPressed() {
         if (pressedOnce) {
@@ -70,34 +61,37 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), true, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
-        destination = findViewById(R.id.destination_button);
-        trip = findViewById(R.id.trip_button);
-        persons = findViewById(R.id.person_button);
+        ImageButton destination = findViewById(R.id.destination_button);
+        ImageButton trip = findViewById(R.id.trip_button);
+        ImageButton persons = findViewById(R.id.person_button);
         tv1 = findViewById(R.id.infor_users);
         tv2 = findViewById(R.id.info_trip);
         tv3 = findViewById(R.id.infor_destination);
         ImageButton powerButton = findViewById(R.id.powerButton);
         ImageButton settingButton = findViewById(R.id.settingButton);
         ProgressBar loading = findViewById(R.id.homeLoading);
-        userAvatar = findViewById(R.id.userAvatar);
+        ImageButton userAvatar = findViewById(R.id.userAvatar);
         LinearLayout profileSwitch = findViewById(R.id.linearLayout);
         //set avatar text
         TextView username = findViewById(R.id.home_username);
         username.setText(user.getDisplayName());
 
-        //setButtons
-        persons.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), UserListActivity.class));
-            }
-        });
+        //setButton
+        setupActivityButtons(persons,new Intent(AdminHomeActivity.this, UserListActivity.class));
+//        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
+//        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
+//        persons.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(AdminHomeActivity.this,"aaaaa",Toast.LENGTH_LONG).show();
+//            }
+//        });
 
         //set db info
         try { ListUserDataSource a = new ListUserDataSource();
-        a.getListUsers();
+        a.getListUsers(user.getToken());
         a.getSum();
         tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
         }catch (Exception e){}
