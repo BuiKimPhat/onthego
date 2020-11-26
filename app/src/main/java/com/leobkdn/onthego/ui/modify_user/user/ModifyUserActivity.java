@@ -19,6 +19,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.ListUserDataSource;
+import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
@@ -47,26 +49,31 @@ public class ModifyUserActivity extends AppCompatActivity {
     private Button editConfirm;
     private Button changePwdButton;
     private ProgressBar progressBar;
+    private int Position = 0;
+    private LoggedInUser ex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
-        setContentView(R.layout.activity_profile);
+        Position = restorePrefsInt("Positon");
+        setContentView(R.layout.activity_modify_user);
+        ListUserDataSource us = new ListUserDataSource();
+        ex = us.getInfoUser(Position,user.getToken());
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        progressBar = findViewById(R.id.profile_loading);
-        nameView = findViewById(R.id.profile_name);
-        nameEdit = findViewById(R.id.profile_name_edit);
-        emailView = findViewById(R.id.profile_email);
-        emailEdit = findViewById(R.id.profile_email_edit);
-        birthdayView = findViewById(R.id.profile_birthday);
-        birthdayEdit = findViewById(R.id.profile_birthday_edit);
-        addressView = findViewById(R.id.profile_address);
-        addressSpinner = findViewById(R.id.profile_address_edit);
-        addressSpinnerWrapper = findViewById(R.id.addressSpinnerWrapper);
+        progressBar = findViewById(R.id.profile_loading2);
+        nameView = findViewById(R.id.profile_name2);
+        nameEdit = findViewById(R.id.profile_name_edit2);
+        emailView = findViewById(R.id.profile_email2);
+        emailEdit = findViewById(R.id.profile_email_edit2);
+        birthdayView = findViewById(R.id.profile_birthday2);
+        birthdayEdit = findViewById(R.id.profile_birthday_edit2);
+        addressView = findViewById(R.id.profile_address2);
+        addressSpinner = findViewById(R.id.profile_address_edit2);
+        addressSpinnerWrapper = findViewById(R.id.addressSpinnerWrapper2);
         // Create an ArrayAdapter using the cities string array and a default spinner layout
         ArrayAdapter<CharSequence> addressSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -75,22 +82,22 @@ public class ModifyUserActivity extends AppCompatActivity {
         addressSpinner.setAdapter(addressSpinnerAdapter);
 
         // fill user info into UI
-        nameView.setText(user.getDisplayName());
-        nameEdit.setText(user.getDisplayName());
-        emailView.setText(user.getEmail());
-        emailEdit.setText(user.getEmail());
-        birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(user.getBirthday()));
-        birthdayEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(user.getBirthday()));
-        addressView.setText(user.getAddress());
-        addressSpinner.setSelection(addressSpinnerAdapter.getPosition(user.getAddress()));
+        nameView.setText(ex.getDisplayName());
+        nameEdit.setText(ex.getDisplayName());
+        emailView.setText(ex.getEmail());
+        emailEdit.setText(ex.getEmail());
+        birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
+        birthdayEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
+        addressView.setText(ex.getAddress());
+        addressSpinner.setSelection(addressSpinnerAdapter.getPosition(ex.getAddress()));
 
         // edit, done buttons
-        nameEditButton = findViewById(R.id.profile_name_edit_button);
-        emailEditButton = findViewById(R.id.profile_email_edit_button);
-        birthdayEditButton = findViewById(R.id.profile_birthday_edit_button);
-        addressEditButton = findViewById(R.id.profile_address_edit_button);
-        editConfirm = findViewById(R.id.profile_edit_confirm);
-        changePwdButton = findViewById(R.id.profile_change_password);
+        nameEditButton = findViewById(R.id.profile_name_edit_button2);
+        emailEditButton = findViewById(R.id.profile_email_edit_button2);
+        birthdayEditButton = findViewById(R.id.profile_birthday_edit_button2);
+        addressEditButton = findViewById(R.id.profile_address_edit_button2);
+        editConfirm = findViewById(R.id.profile_edit_confirm2);
+        changePwdButton = findViewById(R.id.profile_delete2);
         delete_user = findViewById(R.id.profile_delete);
 
         // button listeners
@@ -118,7 +125,7 @@ public class ModifyUserActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), loginResult.getSuccessString(), Toast.LENGTH_LONG).show();
                     savePrefsData("username", nameEdit.getText().toString());
                     savePrefsData("email", emailEdit.getText().toString());
-                    Date newBirthday = user.getBirthday();
+                    Date newBirthday = ex.getBirthday();
                     try {
                         newBirthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayEdit.getText().toString());
                     } catch (Exception e) {
@@ -138,14 +145,14 @@ public class ModifyUserActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Date newBirthday = user.getBirthday();
+                        Date newBirthday = ex.getBirthday();
                         try {
                             newBirthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayEdit.getText().toString());
                         } catch (Exception e) {
                             Log.w("edit", e.getMessage());
                         }
-                        loginViewModel.editInfo(new LoggedInUserView(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
-                    }
+                        loginViewModel.editInfo(new LoggedInUserView(nameEdit.getText().toString(), emailEdit.getText().toString(), ex.getToken(), ex.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
+                    } //not sure
                 }).start();
             }
         });
@@ -215,5 +222,9 @@ public class ModifyUserActivity extends AppCompatActivity {
     private long restorePrefsLong(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getLong(key, 0);
+    }
+    private int restorePrefsInt(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        return prefs.getInt(key, 0);
     }
 }

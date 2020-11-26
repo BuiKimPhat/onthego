@@ -42,7 +42,7 @@
 
     <Button
         android:id="@+id/detail_button"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="48dp"
         android:text="Chi tiết"
         android:textSize="16dp"

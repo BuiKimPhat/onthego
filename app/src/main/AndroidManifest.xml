@@ -68,6 +68,10 @@
             android:label="@string/list_user"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar"/>
+        <activity android:name=".ui.modify_user.user.ModifyUserActivity"
+            android:label="Chỉnh sửa thông tin người dùng"
+            android:parentActivityName=".ui.modify_user.list.UserListActivity"
+            android:theme="@style/withActionBar"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

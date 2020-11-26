@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -33,11 +35,16 @@ public class UserListActivity extends AppCompatActivity {
     private List<Users_class> Users;
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
-
+    private int Position =0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_user);
+        //fix exception
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         //install http cache
         try {
             File httpCacheDir = new File(getCacheDir(), "http");
@@ -53,12 +60,11 @@ public class UserListActivity extends AppCompatActivity {
         Users = new ArrayList<Users_class>();
         //Lấy thông tin user
         try {
-        //ListUserDataSource a = new ListUserDataSource();
-        //Users = a.getListUsers(user.getToken());
-            for(int i=0;i<=50;i++){
-                Users.add(new Users_class("nguoi"+i,"email"+i,i));
-            }
-        }catch (Exception e){}
+        ListUserDataSource a = new ListUserDataSource();
+        Users = a.getListUsers(user.getToken());
+        }catch (Exception e){
+            Toast.makeText(UserListActivity.this," "+e,Toast.LENGTH_LONG).show();
+        }
         // Ném thông tin vào list view
         listView = findViewById(R.id.user_list_view);
         User_adapter adapters= new User_adapter(Users,this);
@@ -69,7 +75,9 @@ public class UserListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView < ? > parent, View view,
             int position, long id){
-                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt());
+                Position = position;
+                Position = Users.get(Position).getStt();
+//                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt(),user.getToken());
                 Intent intent= new Intent(getApplicationContext() , ProfileActivity.class);
                 startActivity(intent);
             }

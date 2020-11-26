@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.modify_user.user.ModifyUserActivity;
@@ -40,7 +42,7 @@ public class User_adapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView tv_name,tv_email,tv_stt;
+        Button detailButton ;
         View view;
         if(convertView == null){
             view = View.inflate(parent.getContext(), R.layout.user_list_item,null);
@@ -48,8 +50,15 @@ public class User_adapter extends BaseAdapter {
         //bind date
         Users_class user = (Users_class)getItem(position);
         ((TextView) view.findViewById(R.id.tv_stt)).setText(String.format(" %d ", user.getStt()));
-       ((TextView) view.findViewById(R.id.tv_name)).setText(String.format("Tên : %s", user.getName()));
+        ((TextView) view.findViewById(R.id.tv_name)).setText(String.format("Tên : %s", user.getName()));
         ((TextView) view.findViewById(R.id.tv_email)).setText(String.format("Email: %s", user.getEmail()));
+        detailButton = view.findViewById(R.id.detail_button);
+        detailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context," "+user.getStt()+". "+user.getName(),Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 }

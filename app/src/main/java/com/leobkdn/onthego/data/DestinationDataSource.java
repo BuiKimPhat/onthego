@@ -205,12 +205,6 @@ public class DestinationDataSource extends ServerData {
                         if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL)
                             description = jsonReader.nextString();
                         else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("inCost") && jsonReader.peek() != JsonToken.NULL)
-                            inCost = jsonReader.nextInt();
-                        else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
-                            avgCost = jsonReader.nextInt();
-                        else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
                             rating = (float) jsonReader.nextDouble();
                         else jsonReader.skipValue();
@@ -223,7 +217,7 @@ public class DestinationDataSource extends ServerData {
                     }
                     jsonReader.endObject();
                     if (id > 0 && name != null)
-                        result1.add(new Destination(id, name, address, phone, description, category, inCost, avgCost, rating, city, position));
+                        result1.add(new Destination(id, name, address, phone, description, category, 0, 0, rating, city, position));
                 }
                 jsonReader.endArray();
                 connection.disconnect();

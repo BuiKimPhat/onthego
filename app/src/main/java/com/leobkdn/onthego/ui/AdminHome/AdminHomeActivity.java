@@ -5,8 +5,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -30,9 +33,11 @@ import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
-public class AdminHomeActivity extends AppCompatActivity {
+public class  AdminHomeActivity extends AppCompatActivity {
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
@@ -58,6 +63,18 @@ public class AdminHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_home);
+        //fix exception
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        try {
+            File httpCacheDir = new File(getCacheDir(), "http");
+            long httpCacheSize = 1024 * 1024; // 1 MiB
+            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+        } catch (IOException e) {
+            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
+        }
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -92,17 +109,23 @@ public class AdminHomeActivity extends AppCompatActivity {
         //set db info
         try { ListUserDataSource a = new ListUserDataSource();
         a.getListUsers(user.getToken());
-        a.getSum();
-        tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
-        }catch (Exception e){}
+        tv1.setText(String.format("Tổng số tài khoản : "+ a.getSum(user.getToken())));
+        Toast.makeText(AdminHomeActivity.this," "+  a.getSum(user.getToken()),Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
+        }
         try{
-            DestinationDataSource a = new DestinationDataSource();
-            a.fetchDestinations(user.getToken(),"*");
-            tv2.setText(String.format("Tổng số chuyến đi : " + "Unknown"));
-        }catch (Exception e){}
-        tv2.setText(String.format("Tổng số chuyến đi : " + "Unknown"));
-        tv3.setText(String.format("Tổng số điểm đến :" + "Unknown"));
-
+            ListUserDataSource a = new ListUserDataSource();
+            tv2.setText(String.format("Tổng số chuyến đi : " + a.getTripCount(user.getToken())));
+        }catch (Exception e){
+            Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
+        }
+        try{
+            ListUserDataSource a = new ListUserDataSource();
+            tv3.setText(String.format("Tổng số điểm đến : " + a.getDestinationCount(user.getToken())));
+        }catch (Exception e){
+            Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
+        }
         // Log Out Result listener
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
@@ -165,8 +188,6 @@ public class AdminHomeActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-
-
     }
 
         private void setupActivityButtons(ImageButton button, Intent intent){
