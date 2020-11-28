@@ -97,7 +97,7 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         //set db info
         try { ListUserDataSource a = new ListUserDataSource();
-        a.getListUsers();
+//        a.getListUsers();
         a.getSum();
         tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
         }catch (Exception e){}
