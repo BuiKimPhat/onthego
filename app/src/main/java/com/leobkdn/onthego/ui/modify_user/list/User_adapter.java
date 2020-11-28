@@ -1,6 +1,7 @@
 package com.leobkdn.onthego.ui.modify_user.list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.ui.modify_user.user.ModifyUserActivity;
 
 import java.util.List;
 

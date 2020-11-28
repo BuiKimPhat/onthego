@@ -39,6 +39,7 @@
     <string name="admin">Bạn là admin!</string>
     <string name="trip_change">Chuyến đi</string>
     <string name="users">Người dùng</string>
+    <string name="list_user">Danh sách người dùng</string>
 
     <string-array name="cities">
         <item>Địa chỉ</item>

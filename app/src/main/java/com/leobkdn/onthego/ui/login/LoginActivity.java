@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.ui.AdminHome.AdminHomeActivity;
 import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
@@ -158,6 +159,10 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
         if (!model.getIsAdmin()) {
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
+        }
+        else {
+            startActivity(new Intent(getApplicationContext(), AdminHomeActivity.class));
             finish();
         }
     }
