@@ -44,7 +44,7 @@ public class ModifyUserActivity extends AppCompatActivity {
     private ImageButton birthdayEditButton;
     private ImageButton addressEditButton;
     private Button editConfirm;
-    private Button changePwdButton;
+    private Button deleteButton;
     private ProgressBar progressBar;
 
     @Override
@@ -89,7 +89,7 @@ public class ModifyUserActivity extends AppCompatActivity {
         birthdayEditButton = findViewById(R.id.profile_birthday_edit_button);
         addressEditButton = findViewById(R.id.profile_address_edit_button);
         editConfirm = findViewById(R.id.profile_edit_confirm);
-        changePwdButton = findViewById(R.id.profile_change_password);
+        deleteButton = findViewById(R.id.profile_change_password);
 
         // button listeners
         setupEditButtons(nameEditButton, nameView, nameEdit);
