@@ -51,6 +51,17 @@ public class TripInfoAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
+    public int getChildType(int groupPosition, int childPosition) {
+        if (groupPosition == 0) return 0;
+        else return 1;
+    }
+
+    @Override
+    public int getChildTypeCount() {
+        return 2;
+    }
+
+    @Override
     public int getGroupCount() {
         return groupTitle.size();
     }
@@ -102,16 +113,25 @@ public class TripInfoAdapter extends BaseExpandableListAdapter {
         TripDestination item = (TripDestination) getChild(groupPosition, childPosition);
         Log.w("getChildView", groupPosition + " " + childPosition);
         if (convertView == null){
-            if (groupPosition == 0) {
-                convertView = layoutInflater.inflate(R.layout.trip_info_list_item_editable, parent, false);
-            } else {
-                convertView = layoutInflater.inflate(R.layout.trip_info_list_item, parent, false);
+            switch(getChildType(groupPosition, childPosition)){
+                case 0:
+                    //inflate type 1
+                    if (convertView == null) {
+                        convertView = layoutInflater.inflate(R.layout.trip_info_list_item_editable, parent, false);
+                    }
+                    break;
+                case 1:
+                    //inflate type 2
+                    if (convertView == null) {
+                        convertView = layoutInflater.inflate(R.layout.trip_info_list_item, parent, false);
+                    }
+                    break;
             }
         }
         if (groupPosition == 0) {
-            if (convertView == null) {
-                convertView = layoutInflater.inflate(R.layout.trip_info_list_item_editable, parent, false);
-            }
+//            if (convertView == null) {
+//                convertView = layoutInflater.inflate(R.layout.trip_info_list_item_editable, parent, false);
+//            }
             TextView destination = convertView.findViewById(R.id.destination_name);
             destination.setText(item.getName());
             EditText dateEdit = convertView.findViewById(R.id.trip_destination_date_edit);
@@ -232,7 +252,9 @@ public class TripInfoAdapter extends BaseExpandableListAdapter {
 //                }
 //            });
         } else {
-
+//            if (convertView == null) {
+//                convertView = layoutInflater.inflate(R.layout.trip_info_list_item, parent, false);
+//            }
             TextView destination = convertView.findViewById(R.id.destination_name);
             destination.setText(item.getName());
             TextView startTime = convertView.findViewById(R.id.trip_destination_startTime);
