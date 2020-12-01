@@ -57,7 +57,7 @@ public class DestinationListAdapter extends BaseAdapter {
         LinearLayout textLayout = convertView.findViewById(R.id.trip_listItem_text);
         ImageButton moreBtn = convertView.findViewById(R.id.trip_listItem_more);
         name.setText(destinations.get(position).getName());
-        city.setText(destinations.get(position).getCity());
+        city.setText("Đánh giá: "+ destinations.get(position).getRating() +" / 5.0");
         if (intent.getStringExtra("mode") != null && intent.getStringExtra("mode").equals("add")) {
             moreBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -65,7 +65,7 @@ public class DestinationListAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, DestinationInfo.class);
                     intent.putExtra("name", destinations.get(position).getName());
                     intent.putExtra("address", destinations.get(position).getAddress());
-                    intent.putExtra("phone", destinations.get(position).getPhone());
+                    intent.putExtra("rating", destinations.get(position).getRating());
                     intent.putExtra("description", destinations.get(position).getDescription());
                     context.startActivity(intent);
                 }
@@ -87,7 +87,7 @@ public class DestinationListAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, DestinationInfo.class);
                     intent.putExtra("name", destinations.get(position).getName());
                     intent.putExtra("address", destinations.get(position).getAddress());
-                    intent.putExtra("phone", destinations.get(position).getPhone());
+                    intent.putExtra("rating", destinations.get(position).getRating());
                     intent.putExtra("description", destinations.get(position).getDescription());
                     context.startActivity(intent);
                 }

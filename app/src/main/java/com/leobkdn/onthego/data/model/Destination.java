@@ -6,68 +6,40 @@ public class Destination {
     private int id;
     private String name;
     private String address;
-    private String phone;
     private String description;
     private String category;
-    private int inCost;
-    private int avgCost;
     private float rating;
-    private String city;
-    private String position;
+    private int rateNum;
+    private float lat;
+    private float lon;
 
-    public Destination(Destination x){
+    public Destination(Destination x) {
         this.id = x.id;
         this.name = x.name;
         this.address = x.address;
-        this.phone = x.phone;
         this.description = x.description;
         this.category = x.category;
-        this.inCost = x.inCost;
-        this.avgCost = x.avgCost;
         this.rating = x.rating;
-        this.city = x.city;
-        this.position = x.position;
+        this.rateNum = x.rateNum;
+        this.lat = x.lat;
+        this.lon = x.lon;
     }
 
-    public Destination(int id, String name, String city) {
+    public Destination(int id, String name) {
         this.id = id;
         this.name = name;
-        this.city = city;
     }
 
-    public Destination(int id, String name, String city, float rating) {
-        this.id = id;
-        this.name = name;
-        this.city = city;
-        this.rating = rating;
-    }
-
-    public Destination(int id, String name, String address, String phone, String description, String category, int inCost, int avgCost, float rating, String city, String position) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.description = description;
-        this.category = category;
-        this.inCost = inCost;
-        this.avgCost = avgCost;
-        this.rating = rating;
-        this.city = city;
-        this.position = position;
-    }
-
-    public Destination(int id, String name, @Nullable String address, @Nullable String phone, @Nullable String description, @Nullable String category, @Nullable String city, @Nullable String position) {
+    public Destination(int id, String name, @Nullable String address, @Nullable String description, @Nullable String category, float rating, int rateNum, float lat, float lon) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.category = category;
-        this.inCost = inCost;
-        this.avgCost = avgCost;
         this.rating = rating;
-        this.city = city;
-        this.position = position;
         this.address = address;
-        this.phone = phone;
+        this.rateNum = rateNum;
+        this.lat = lat;
+        this.lon = lon;
     }
 
     public int getId() {
@@ -86,31 +58,23 @@ public class Destination {
         return category;
     }
 
-    public int getInCost() {
-        return inCost;
-    }
-
-    public int getAvgCost() {
-        return avgCost;
-    }
-
     public float getRating() {
         return rating;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getPosition() {
-        return position;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public String getPhone() {
-        return phone;
+    public int getRateNum() {
+        return rateNum;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public float getLon() {
+        return lon;
     }
 }
