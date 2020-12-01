@@ -33,7 +33,7 @@ public class DestinationInfo extends AppCompatActivity {
         description = findViewById(R.id.destination_info_description);
         name.setText(getIntent().getStringExtra("name"));
         address.setText(getIntent().getStringExtra("address"));
-        phone.setText("Đánh giá: "+ getIntent().getIntExtra("rating",0) + " / 5.0");
+        phone.setText("Đánh giá: "+ getIntent().getFloatExtra("rating",0) + " / 5.0");
         description.setText(getIntent().getStringExtra("description"));
     }
 }
