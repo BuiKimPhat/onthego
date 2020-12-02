@@ -110,7 +110,6 @@ public class  AdminHomeActivity extends AppCompatActivity {
         try { ListUserDataSource a = new ListUserDataSource();
         a.getListUsers(user.getToken());
         tv1.setText(String.format("Tổng số tài khoản : "+ a.getSum(user.getToken())));
-        Toast.makeText(AdminHomeActivity.this," "+  a.getSum(user.getToken()),Toast.LENGTH_LONG).show();
         }catch (Exception e){
             Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
         }

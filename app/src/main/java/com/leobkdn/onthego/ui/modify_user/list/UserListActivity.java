@@ -21,6 +21,7 @@ import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+import com.leobkdn.onthego.ui.modify_user.user.ModifyUserActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class UserListActivity extends AppCompatActivity {
                 Position = position;
                 Position = Users.get(Position).getStt();
 //                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt(),user.getToken());
-                Intent intent= new Intent(getApplicationContext() , ProfileActivity.class);
+                Intent intent= new Intent(UserListActivity.this , ModifyUserActivity.class);
                 startActivity(intent);
             }
         });

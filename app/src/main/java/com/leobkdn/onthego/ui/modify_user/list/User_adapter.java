@@ -52,13 +52,6 @@ public class User_adapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.tv_stt)).setText(String.format(" %d ", user.getStt()));
         ((TextView) view.findViewById(R.id.tv_name)).setText(String.format("Tên : %s", user.getName()));
         ((TextView) view.findViewById(R.id.tv_email)).setText(String.format("Email: %s", user.getEmail()));
-        detailButton = view.findViewById(R.id.detail_button);
-        detailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context," "+user.getStt()+". "+user.getName(),Toast.LENGTH_SHORT).show();
-            }
-        });
         return view;
     }
 }
