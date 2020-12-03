@@ -266,6 +266,14 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_linear_address"/>
+        <Button
+            android:id="@+id/profile_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xóa người dùng"
+            android:layout_margin="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_edit_confirm"/>
         <ProgressBar
             android:id="@+id/profile_loading"
             android:layout_width="wrap_content"

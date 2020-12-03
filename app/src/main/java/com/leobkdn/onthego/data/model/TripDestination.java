@@ -9,14 +9,14 @@ public class TripDestination extends Destination {
     private Timestamp startTime;
     private Timestamp finishTime;
 
-    public TripDestination(int id, String name, @Nullable String address, @Nullable String phone, @Nullable String description, @Nullable String category, @Nullable String city, @Nullable String position, @Nullable Timestamp startTime, @Nullable Timestamp finishTime) {
-        super(id, name, address, phone, description, category, city, position);
-        this.startTime = startTime;
-        this.finishTime = finishTime;
-    }
+//    public TripDestination(int id, String name, @Nullable String address, @Nullable String phone, @Nullable String description, @Nullable String category, @Nullable String city, @Nullable String position, @Nullable Timestamp startTime, @Nullable Timestamp finishTime) {
+//        super(id, name, address, phone, description, category, city, position);
+//        this.startTime = startTime;
+//        this.finishTime = finishTime;
+//    }
 
     public TripDestination(int id, String name, @Nullable Timestamp startTime, @Nullable Timestamp finishTime) {
-        super(id, name, null, null, null, null, null, null);
+        super(id, name);
         this.startTime = startTime;
         this.finishTime = finishTime;
     }

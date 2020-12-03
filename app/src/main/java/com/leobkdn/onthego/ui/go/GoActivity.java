@@ -304,6 +304,7 @@ public class GoActivity extends AppCompatActivity {
     }
 
     private ArrayList<Trip> linearSearch(ArrayList<Trip> source, String str){
+        // TODO: include search owner
         ArrayList<Trip> result = new ArrayList<>();
         for (int i=0;i<source.size();i++){
             if (VNCharacterUtils.removeAccent(source.get(i).getName().toLowerCase()).contains(VNCharacterUtils.removeAccent(str.toLowerCase())))

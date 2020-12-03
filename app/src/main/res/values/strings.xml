@@ -11,7 +11,7 @@
     <string name="log_in">Đăng nhập</string>
     <string name="sign_up">Đăng kí</string>
     <string name="full_name">Họ và tên *</string>
-    <string name="DOB">Ngày sinh (dd/mm/yyyy)</string>
+    <string name="DOB">Ngày sinh</string>
     <string name="address">Địa chỉ</string>
     <string name="welcome">"Xin chào "</string>
     <string name="invalid_email">Email không hợp lệ</string>
@@ -39,6 +39,7 @@
     <string name="admin">Bạn là admin!</string>
     <string name="trip_change">Chuyến đi</string>
     <string name="users">Người dùng</string>
+    <string name="list_user">Danh sách người dùng</string>
 
     <string-array name="cities">
         <item>Địa chỉ</item>

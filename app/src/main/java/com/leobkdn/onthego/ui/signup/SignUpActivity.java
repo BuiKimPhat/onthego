@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -28,6 +30,8 @@ import com.leobkdn.onthego.ui.login.LoginFormState;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
@@ -66,6 +70,26 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        birthdayEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Date Select Listener.
+                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        birthdayEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    }
+                };
+                Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR);
+                int mMonth = c.get(Calendar.MONTH);
+                int mDay = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog dialog = new DatePickerDialog(SignUpActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                        dateSetListener, mYear, mMonth, mDay);
+                dialog.show();
             }
         });
 

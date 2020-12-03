@@ -34,6 +34,7 @@ public class TripDataSource extends ServerData {
 //    private static final String dbPassword = "userpass";
 //    private static final String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";instance=" + instance + ";user=" + dbUser + ";password=" + dbPassword + ";databasename=" + dbName;
     private String stringResult = "Error";
+    private int sum = 0 ; //Lưu số trip quey đươc
     private ArrayList<Trip> result = new ArrayList<Trip>();
 
 //    private String tokenVerifier(String token) {
@@ -96,6 +97,7 @@ public class TripDataSource extends ServerData {
                     while (jsonReader.hasNext()) {
                         if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
                             id = jsonReader.nextInt();
+                            sum++;
                         } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
                             name = jsonReader.nextString();
@@ -132,6 +134,10 @@ public class TripDataSource extends ServerData {
         } catch (Exception e) {
             return new Result.Error(e);
         }
+    }
+    // An
+    public int getSum() {
+        return sum;
     }
 
     public Result<String> addTrip(String token, int tripId) {
