@@ -29,14 +29,6 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/trip_destination_edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_baseline_edit_24" />
-
-        <ImageButton
             android:id="@+id/trip_destination_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:hint="dd/MM/yyyy"
+            android:hint="Ngày xuất phát"
             android:maxWidth="150dp"
             android:maxLines="1"
             android:padding="5dp"
@@ -66,12 +58,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:hint="dd/MM/yyyy"
-            android:imeOptions="actionNext"
-            android:inputType="date"
+            android:hint="Ngày xuất phát"
             android:maxWidth="150dp"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -93,12 +85,12 @@
             android:id="@+id/trip_destination_startTime_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="HH:mm"
-            android:imeOptions="actionNext"
-            android:inputType="time"
+            android:hint="Bắt đầu"
             android:maxWidth="120dp"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -120,12 +112,12 @@
             android:id="@+id/trip_destination_endTime_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="HH:mm"
-            android:imeOptions="actionDone"
-            android:inputType="time"
+            android:hint="Kết thúc"
             android:maxWidth="120dp"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textSize="16sp"
             android:visibility="gone" />
 

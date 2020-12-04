@@ -380,7 +380,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="27'C Cloudy"
+            android:text="27\u00B0C Cloudy"
             android:textSize="16sp" />
     </LinearLayout>
 

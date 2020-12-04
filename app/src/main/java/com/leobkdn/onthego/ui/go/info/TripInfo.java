@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +45,7 @@ public class TripInfo extends AppCompatActivity {
     private EditText tripNameEdit;
     private ImageButton tripNameBtn;
     private TextView tripOwner;
+    private ImageButton tripCopy;
     private Button deleteTrip;
     private Button confirmButton;
     private FloatingActionButton addDestination;
@@ -70,6 +73,7 @@ public class TripInfo extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
+                confirmButton.setVisibility(View.VISIBLE);
                 int destinationID = data.getIntExtra("destinationID", -1);
                 String destinationName = data.getStringExtra("destinationName");
                 for (int i = 0; i < destinations.size(); i++)
@@ -77,9 +81,9 @@ public class TripInfo extends AppCompatActivity {
                 destinations.add(new TripDestination(destinationID, destinationName, null, null));
                 if (destinations != null) {
                     LinkedHashMap<String, ArrayList<TripDestination>> map = new TripInfoDataPump(destinations).getData();
-                    adapter = new TripInfoAdapter(actCon, new ArrayList<String>(map.keySet()), map);
+                    adapter = new TripInfoAdapter(actCon, new ArrayList<String>(map.keySet()), map, destinations);
                     listDestinations.setAdapter(adapter);
-                    for (int i = 0; i < map.keySet().size(); i++)
+                    for (int i = 0; i < map.keySet().size() - 1; i++)
                         listDestinations.expandGroup(i);
                 }
             }
@@ -104,7 +108,23 @@ public class TripInfo extends AppCompatActivity {
         confirmButton = findViewById(R.id.trip_info_confirm);
         listDestinations = findViewById(R.id.trip_destinations_listView);
         addDestination = findViewById(R.id.trip_info_add_destination_fab);
+        tripCopy = findViewById(R.id.trip_copy_id);
+        tripCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Gets a handle to the clipboard service.
+                ClipboardManager clipboard = (ClipboardManager)
+                        getSystemService(Context.CLIPBOARD_SERVICE);
+                // Creates a new text clip to put on the clipboard
+                ClipData clip = ClipData.newPlainText("tripID", String.valueOf(tripID));
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(actCon, "Đã copy trip ID " + tripID + " vào clipboard!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //setup data, time change data
         if (isNew) {
+            tripCopy.setVisibility(View.GONE);
             deleteTrip.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             confirmButton.setVisibility(View.VISIBLE);
@@ -121,14 +141,15 @@ public class TripInfo extends AppCompatActivity {
                         tripNameEdit.setError("Không được bỏ trống");
                         return;
                     }
+                    //reinit UI
                     tripNameBtn.setVisibility(View.VISIBLE);
                     confirmButton.setVisibility(View.GONE);
                     tripNameEdit.setVisibility(View.GONE);
                     tripName.setText(tripNameEdit.getText());
                     tripName.setVisibility(View.VISIBLE);
-                    if (adapter != null) {
-                        for (int i = 0; i < adapter.getChildrenCount(0); i++) {
-                            View child = adapter.getChildView(0, i);
+                    if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
+                        for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
+                            View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
                             EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
                             TextView date = child.findViewById(R.id.trip_destination_date);
                             TextView startTime = child.findViewById(R.id.trip_destination_startTime);
@@ -149,7 +170,7 @@ public class TripInfo extends AppCompatActivity {
                             endTime.setText(endTimeEdit.getText());
                             endTime.setVisibility(View.VISIBLE);
                             endTimeEdit.setVisibility(View.GONE);
-
+                            // set edited time
                             if (dateEdit.getText().toString().equals("")) {
                                 destinations.get(i).setStartTime(null);
                                 destinations.get(i).setFinishTime(null);
@@ -182,14 +203,15 @@ public class TripInfo extends AppCompatActivity {
                         tripNameEdit.setError("Không được bỏ trống");
                         return;
                     }
+                    //Reinit UI
                     tripNameBtn.setVisibility(View.VISIBLE);
                     confirmButton.setVisibility(View.GONE);
                     tripNameEdit.setVisibility(View.GONE);
                     tripName.setText(tripNameEdit.getText());
                     tripName.setVisibility(View.VISIBLE);
-                    if (adapter != null) {
-                        for (int i = 0; i < adapter.getChildrenCount(0); i++) {
-                            View child = adapter.getChildView(0, i);
+                    if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
+                        for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
+                            View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
                             EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
                             TextView date = child.findViewById(R.id.trip_destination_date);
                             TextView startTime = child.findViewById(R.id.trip_destination_startTime);
@@ -211,6 +233,7 @@ public class TripInfo extends AppCompatActivity {
                             endTime.setVisibility(View.VISIBLE);
                             endTimeEdit.setVisibility(View.GONE);
 
+                            //set edited time
                             if (dateEdit.getText().toString().equals("")) {
                                 destinations.get(i).setStartTime(null);
                                 destinations.get(i).setFinishTime(null);
@@ -232,6 +255,8 @@ public class TripInfo extends AppCompatActivity {
                             tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations);
                         }
                     }).start();
+//                    for (int i=0;i<destinations.size();i++)
+//                        Log.w("confirm", destinations.get(i).getStartTime() != null ? destinations.get(i).getStartTime().toString() : "null");
                 }
             });
             new Thread(new Runnable() {
@@ -268,9 +293,9 @@ public class TripInfo extends AppCompatActivity {
             public void onClick(View v) {
 
                 //update edit date/time
-                if (adapter != null) {
-                    for (int i = 0; i < adapter.getChildrenCount(0); i++) {
-                        View child = adapter.getChildView(0, i);
+                if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
+                    for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
+                        View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
                         EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
                         TextView date = child.findViewById(R.id.trip_destination_date);
                         TextView startTime = child.findViewById(R.id.trip_destination_startTime);
@@ -333,10 +358,17 @@ public class TripInfo extends AppCompatActivity {
                         destinations = ((Result.Success<ArrayList<TripDestination>>) result).getData();
                         if (destinations != null) {
                             LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
-                            adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data);
+                            adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
                             listDestinations.setAdapter(adapter);
-                            for (int i = 0; i < data.keySet().size(); i++)
+                            for (int i = 0; i < data.keySet().size() - 1; i++)
                                 listDestinations.expandGroup(i);
+//                            View child = listDestinations.getChildAt(0);
+//                            child.findViewById(R.id.trip_destination_delete).setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    listDestinations.removeViewAt(0);
+//                                }
+//                            });
                         }
                     }
                 } else {
@@ -348,11 +380,12 @@ public class TripInfo extends AppCompatActivity {
             @Override
             public void onChanged(Result result) {
                 progressBar.setVisibility(View.GONE);
-                if (result instanceof Result.Success){
-                    if (isNew){
+                if (result instanceof Result.Success) {
+                    if (isNew) {
                         isNew = false;
                         deleteTrip.setVisibility(View.VISIBLE);
                         tripID = Integer.parseInt(result.toString().substring(34));
+                        tripCopy.setVisibility(View.VISIBLE);
                         confirmButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -366,9 +399,9 @@ public class TripInfo extends AppCompatActivity {
                                 tripNameEdit.setVisibility(View.GONE);
                                 tripName.setText(tripNameEdit.getText());
                                 tripName.setVisibility(View.VISIBLE);
-                                if (adapter != null) {
-                                    for (int i = 0; i < adapter.getChildrenCount(0); i++) {
-                                        View child = adapter.getChildView(0, i);
+                                if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
+                                    for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
+                                        View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
                                         EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
                                         TextView date = child.findViewById(R.id.trip_destination_date);
                                         TextView startTime = child.findViewById(R.id.trip_destination_startTime);
@@ -416,10 +449,19 @@ public class TripInfo extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
+                // refresh elistview
+                if (destinations != null) {
+                    LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
+                    adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
+                    listDestinations.setAdapter(adapter);
+                    for (int i = 0; i < data.keySet().size() - 1; i++)
+                        listDestinations.expandGroup(i);
+                }
             }
         });
 
     }
+
 
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);

@@ -72,9 +72,10 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:hint="@string/DOB"
-            android:inputType="date"
-            android:selectAllOnFocus="true"
-            android:maxLines="1"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             tools:layout_editor_absoluteX="40dp"
             tools:layout_editor_absoluteY="210dp" />
 

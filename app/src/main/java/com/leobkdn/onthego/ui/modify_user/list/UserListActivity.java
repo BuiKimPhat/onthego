@@ -62,10 +62,12 @@ public class UserListActivity extends AppCompatActivity {
         //Lấy thông tin user
         try {
         ListUserDataSource a = new ListUserDataSource();
-        Users = a.getListUsers(user.getToken());
-        }catch (Exception e){
-            Toast.makeText(UserListActivity.this," "+e,Toast.LENGTH_LONG).show();
-        }
+//        Users = a.getListUsers(user.getToken());
+//        }catch (Exception e){
+//            Toast.makeText(UserListActivity.this," "+e,Toast.LENGTH_LONG).show();
+//        }
+//        Users = a.getListUsers();
+        }catch (Exception e){}
         // Ném thông tin vào list view
         listView = findViewById(R.id.user_list_view);
         User_adapter adapters= new User_adapter(Users,this);
@@ -76,10 +78,14 @@ public class UserListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView < ? > parent, View view,
             int position, long id){
-                Position = position;
-                Position = Users.get(Position).getStt();
-//                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt(),user.getToken());
-                Intent intent= new Intent(UserListActivity.this , ModifyUserActivity.class);
+
+//                Position = position;
+//                Position = Users.get(Position).getStt();
+////                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt(),user.getToken());
+//                Intent intent= new Intent(UserListActivity.this , ModifyUserActivity.class);
+
+//                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt());
+                Intent intent= new Intent(getApplicationContext() , ProfileActivity.class);
                 startActivity(intent);
             }
         });

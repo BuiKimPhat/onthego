@@ -5,8 +5,11 @@ import android.content.Context;
 import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.data.model.TripDestination;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
@@ -19,19 +22,27 @@ public class TripInfoDataPump {
 
     public LinkedHashMap<String, ArrayList<TripDestination>> getData() {
         LinkedHashMap<String, ArrayList<TripDestination>> listData = new LinkedHashMap<String, ArrayList<TripDestination>>();
-        listData.put("Chuyến đi của bạn", data);
+        ArrayList<Date> dates = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             Date startDate = data.get(i).getStartTime();
-            String startString = null;
             if (startDate != null) {
-                startString = new SimpleDateFormat("dd/MM/yyyy").format(startDate);
-            }
-            if (startString != null){
-                if (!listData.containsKey(startString)) listData.put(startString, new ArrayList<TripDestination>());
-                listData.get(startString).add(data.get(i));
+                if (!dates.contains(startDate)) dates.add(startDate);
             }
         }
-        // TODO: Tuyến đi khuyên dùng
+        Collections.sort(dates);
+        for (int i = 0; i < dates.size(); i++) {
+            String groupString = new SimpleDateFormat("dd/MM/yyyy").format(dates.get(i));
+            for (int j = 0; j < data.size(); j++) {
+                Date startDate = data.get(j).getStartTime();
+                if (startDate == dates.get(i)){
+                    if (!listData.containsKey(groupString)) listData.put(groupString, new ArrayList<>());
+                    listData.get(groupString).add(data.get(j));
+                }
+            }
+        }
+        if (data.size() > 0) listData.put("Chỉnh sửa chuyến đi", data);
+
+        // TODO: Tuyến đi khuyên dùng (TSP)
         return listData;
     }
 }

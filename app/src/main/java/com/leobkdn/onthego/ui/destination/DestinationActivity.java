@@ -72,8 +72,8 @@ public class DestinationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_destination);
-        HttpResponseCache httpCache = HttpResponseCache.getInstalled();
-        Log.w("HTTP cache", "cache hits: " + httpCache.getHitCount());
+//        HttpResponseCache httpCache = HttpResponseCache.getInstalled();
+//        Log.w("HTTP cache", "cache hits: " + httpCache.getHitCount());
         progressBar = findViewById(R.id.destinationsLoading);
         destinationList = findViewById(R.id.destinations_listView);
         search = findViewById(R.id.destination_search);
@@ -230,9 +230,10 @@ public class DestinationActivity extends AppCompatActivity {
             }
         }
     }
-    private ArrayList<Destination> linearSearch(ArrayList<Destination> source, String str){
+    private ArrayList<Destination> linearSearch(ArrayList<Destination> source, String str) {
+        // TODO: include search city
         ArrayList<Destination> result = new ArrayList<>();
-        for (int i=0;i<source.size();i++){
+        for (int i = 0; i < source.size(); i++) {
             if (VNCharacterUtils.removeAccent(source.get(i).getName().toLowerCase()).contains(VNCharacterUtils.removeAccent(str.toLowerCase())))
                 result.add(source.get(i));
         }

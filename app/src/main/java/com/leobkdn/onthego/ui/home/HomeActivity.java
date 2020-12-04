@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
         // back button pressed and return to this activity
         super.onRestart();
         currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
+        // TODO: openweathermap api
     }
 
     // double-tap to exit activity
@@ -137,6 +138,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: click to switch to trip info
         // profile switch listener
         profileSwitch.setOnClickListener(new View.OnClickListener() {
             @Override

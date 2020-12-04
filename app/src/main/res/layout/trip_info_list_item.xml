@@ -16,6 +16,7 @@
                 android:maxLines="2"
                 android:padding="5dp"
                 android:textSize="16sp" />
+            <View android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1"/>
 
             <TextView
                 android:id="@+id/trip_destination_date"
@@ -31,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="  --  " />
+                android:text=" --  " />
 
             <TextView
                 android:id="@+id/trip_destination_startTime"
@@ -45,13 +46,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="  -->  " />
+                android:text="-->  " />
 
             <TextView
                 android:id="@+id/trip_destination_endTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Kết thúc"
+                android:layout_marginEnd="8dp"
                 android:maxWidth="120dp"
                 android:maxLines="1"
                 android:textSize="16sp" />

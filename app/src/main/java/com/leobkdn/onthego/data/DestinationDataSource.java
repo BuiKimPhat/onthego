@@ -185,9 +185,9 @@ public class DestinationDataSource extends ServerData {
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
                 jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
-                    int id = -1, inCost = -1, avgCost = -1;
-                    float rating = -1;
-                    String name = null, address = null, phone = null, description = null, city = null, position = null;
+                    int id = -1, rateNum = 0;
+                    float rating = 0, lat = 0, lon = 0;
+                    String name = null, address = null, description = null;
                     jsonReader.beginObject();
                     while (jsonReader.hasNext()) {
                         if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
@@ -199,25 +199,32 @@ public class DestinationDataSource extends ServerData {
                         if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
                             address = jsonReader.nextString();
                         else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("phone") && jsonReader.peek() != JsonToken.NULL)
-                            phone = jsonReader.nextString();
-                        else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL)
                             description = jsonReader.nextString();
                         else jsonReader.skipValue();
+//                        if (jsonReader.nextName().equals("inCost") && jsonReader.peek() != JsonToken.NULL)
+//                            inCost = jsonReader.nextInt();
+//                        else jsonReader.skipValue();
+//                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
+//                            avgCost = jsonReader.nextInt();
+//                        else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
                             rating = (float) jsonReader.nextDouble();
                         else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("city") && jsonReader.peek() != JsonToken.NULL)
-                            city = jsonReader.nextString();
+                        if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
+                            rateNum = jsonReader.nextInt();
                         else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("position") && jsonReader.peek() != JsonToken.NULL)
-                            position = jsonReader.nextString();
+                        if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL)
+                            lat = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL)
+                            lon = (float) jsonReader.nextDouble();
                         else jsonReader.skipValue();
                     }
                     jsonReader.endObject();
                     if (id > 0 && name != null)
-                        result1.add(new Destination(id, name, address, phone, description, category, 0, 0, rating, city, position));
+                        result1.add(new Destination(id, name, address, description, category, rating, rateNum, lat, lon));
+                    //TODO: remake Class without inCost and avgCost
                 }
                 jsonReader.endArray();
                 connection.disconnect();

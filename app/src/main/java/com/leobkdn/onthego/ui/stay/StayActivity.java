@@ -1,11 +1,14 @@
 package com.leobkdn.onthego.ui.stay;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,6 +50,22 @@ public class StayActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
+                progressBar.setVisibility(View.VISIBLE);
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        destinationResult.addTripDestination(restorePrefsData("token"), data.getIntExtra("tripID", -1), data.getIntExtra("destinationID", -1));
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -97,10 +116,14 @@ public class StayActivity extends AppCompatActivity {
             public void onChanged(Result result) {
                 progressBar.setVisibility(View.GONE);
                 if (result instanceof Result.Success) {
-                    destinations = ((Result.Success<ArrayList<Destination>>) result).getData();
-                    display = new ArrayList<>(destinations);
-                    if (destinations != null) {
-                        destinationList.setAdapter(new DestinationListAdapter(context, getIntent(), display));
+                    if (((Result.Success) result).checkTypeString()) {
+                        Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
+                    } else {
+                        destinations = ((Result.Success<ArrayList<Destination>>) result).getData();
+                        display = new ArrayList<>(destinations);
+                        if (destinations != null) {
+                            destinationList.setAdapter(new DestinationListAdapter(context, getIntent(), display));
+                        }
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
