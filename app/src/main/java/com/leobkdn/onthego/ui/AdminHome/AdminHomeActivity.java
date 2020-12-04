@@ -108,18 +108,17 @@ public class  AdminHomeActivity extends AppCompatActivity {
 
         //set db info
         try { ListUserDataSource a = new ListUserDataSource();
-<<<<<<< HEAD
-        a.getListUsers(user.getToken());
-        tv1.setText(String.format("Tổng số tài khoản : "+ a.getSum(user.getToken())));
-        }catch (Exception e){
-            Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
-        }
-=======
+
+//        a.getListUsers(user.getToken());
+//        tv1.setText(String.format("Tổng số tài khoản : "+ a.getSum(user.getToken())));
+//        }catch (Exception e){
+//            Toast.makeText(AdminHomeActivity.this," "+ e,Toast.LENGTH_LONG).show();
+//        }
+
 //        a.getListUsers();
-        a.getSum();
+       // a.getSum();
         tv1.setText(String.format("Tổng số tài khoản : "+ "Unknown"));
         }catch (Exception e){}
->>>>>>> master
         try{
             ListUserDataSource a = new ListUserDataSource();
             tv2.setText(String.format("Tổng số chuyến đi : " + a.getTripCount(user.getToken())));
