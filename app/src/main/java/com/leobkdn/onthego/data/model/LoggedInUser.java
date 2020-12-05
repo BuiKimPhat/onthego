@@ -31,6 +31,15 @@ public class LoggedInUser {
         this.address = address;
     }
 
+    public LoggedInUser() {
+        displayName = "An văn";
+        email = "Andeptrai89@gmail.com";
+        token = null;
+        isAdmin = true;
+        birthday = new Date();
+        address = "Bắc Ninh";
+    }
+
     @Nullable
     public Date getBirthday() {
         return birthday;
@@ -53,5 +62,29 @@ public class LoggedInUser {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

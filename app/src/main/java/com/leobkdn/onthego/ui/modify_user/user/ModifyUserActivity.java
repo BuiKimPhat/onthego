@@ -1,7 +1,10 @@
 package com.leobkdn.onthego.ui.modify_user.user;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,12 +23,15 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.ListUserDataSource;
+import com.leobkdn.onthego.data.LoginDataSource;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -50,16 +56,35 @@ public class ModifyUserActivity extends AppCompatActivity {
     private Button changePwdButton;
     private ProgressBar progressBar;
     private int Position = 0;
-    private LoggedInUser ex;
+    //private LoggedInUser ex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        if (android.os.Build.VERSION.SDK_INT > 9) {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
+//        //install http cache
+//        try {
+//            File httpCacheDir = new File(getCacheDir(), "http");
+//            long httpCacheSize = 1024 * 1024; // 1 MiB
+//            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+//        } catch (IOException e) {
+//            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
+//        }
+
         user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
-        Position = restorePrefsInt("Positon");
-        setContentView(R.layout.activity_modify_user);
+        Intent intent = getIntent();
+        Position = intent.getIntExtra("Position",1);
+        Log.i("Possiton :"," "+Position);
+        setContentView(R.layout.activity_modify_userprofile);
         ListUserDataSource us = new ListUserDataSource();
+        LoggedInUser ex ;
         ex = us.getInfoUser(Position,user.getToken());
+
+
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -83,12 +108,12 @@ public class ModifyUserActivity extends AppCompatActivity {
 
         // fill user info into UI
         nameView.setText(ex.getDisplayName());
-        nameEdit.setText(ex.getDisplayName());
-        emailView.setText(ex.getEmail());
+       nameEdit.setText(ex.getDisplayName());
+       emailView.setText(ex.getEmail());
         emailEdit.setText(ex.getEmail());
-        birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
+      birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
         birthdayEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
-        addressView.setText(ex.getAddress());
+      addressView.setText(ex.getAddress());
         addressSpinner.setSelection(addressSpinnerAdapter.getPosition(ex.getAddress()));
 
         // edit, done buttons
@@ -225,6 +250,6 @@ public class ModifyUserActivity extends AppCompatActivity {
     }
     private int restorePrefsInt(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
-        return prefs.getInt(key, 0);
+        return prefs.getInt(key, 1);
     }
 }

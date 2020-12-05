@@ -164,14 +164,13 @@ public class ListUserDataSource extends ServerData {
 
     //lấy thông tin user
     public LoggedInUser getInfoUser(int id,String token1) {
-        LoggedInUser newUser=null;
+        LoggedInUser newUser = new LoggedInUser();
         try {
-            URL url = new URL(server + "user/getUserInfor/"+id);
+            URL url = new URL(server + "/user/getUserInfor/"+id);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer "+token1);
-            connection.setDoOutput(true);
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -183,30 +182,34 @@ public class ListUserDataSource extends ServerData {
                 while (jsonReader.hasNext()) {
                     jsonReader.beginObject();
                     while (jsonReader.hasNext()){
+                        Log.i(TAG, "getInfoUser: request success");
                     if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
                         name = jsonReader.nextString();
+                        newUser.setDisplayName(name);
                     } else jsonReader.skipValue();
                     if (jsonReader.nextName().equals("email") && jsonReader.peek() != JsonToken.NULL) {
                         email = jsonReader.nextString();
+                        newUser.setEmail(email);
                     } else jsonReader.skipValue();
                     if (jsonReader.nextName().equals("isAdmin") && jsonReader.peek() != JsonToken.NULL) {
                         isAdmin = jsonReader.nextBoolean();
+                        newUser.setAdmin(isAdmin);
                     } else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("birthday") && jsonReader.peek() != JsonToken.NULL)
+                    if (jsonReader.nextName().equals("birthday") && jsonReader.peek() != JsonToken.NULL){
                         birthday = new SimpleDateFormat("yyyy-MM-dd").parse(jsonReader.nextString());
+                        newUser.setBirthday(birthday);}
                     else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
+                    if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL){
                         address = jsonReader.nextString();
+                        newUser.setAddress(address);}
                     else jsonReader.skipValue();
                     if (jsonReader.nextName().equals("token") && jsonReader.peek() != JsonToken.NULL)
                         token = jsonReader.nextString();
                     else jsonReader.skipValue();
                     }
-                    jsonReader.endObject();
                 }
-                jsonReader.endArray();
-                newUser = new LoggedInUser(name, email, token, isAdmin, birthday, address); // LOGIN SUCCESS
-                return newUser;
+                LoggedInUser newUser1 = new LoggedInUser(name, email, token, isAdmin, birthday, address); // LOGIN SUCCESS
+                return newUser1;
             } else {
                 InputStream responseBody = connection.getErrorStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
@@ -225,7 +228,7 @@ public class ListUserDataSource extends ServerData {
         } catch (Exception e) {
             Log.i(TAG, "getInfoUser: "+e);
         }
-        return new LoggedInUser("1","1","err",false,null,"err");
+        return newUser;
     }
 
     public boolean deleteUser(int id, String token) {

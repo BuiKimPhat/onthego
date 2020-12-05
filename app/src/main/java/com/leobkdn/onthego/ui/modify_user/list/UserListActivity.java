@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.ListUserDataSource;
 import com.leobkdn.onthego.data.LoginDataSource;
@@ -21,6 +22,7 @@ import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
+import com.leobkdn.onthego.ui.modify_user.user.AddUserActivity;
 import com.leobkdn.onthego.ui.modify_user.user.ModifyUserActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 
@@ -37,23 +39,24 @@ public class UserListActivity extends AppCompatActivity {
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
     private int Position =0;
+    private FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_user);
         //fix exception
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+//        if (android.os.Build.VERSION.SDK_INT > 9) {
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//        }
         //install http cache
-        try {
-            File httpCacheDir = new File(getCacheDir(), "http");
-            long httpCacheSize = 1024 * 1024; // 1 MiB
-            HttpResponseCache.install(httpCacheDir, httpCacheSize);
-        } catch (IOException e) {
-            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
-        }
+//        try {
+//            File httpCacheDir = new File(getCacheDir(), "http");
+//            long httpCacheSize = 1024 * 1024; // 1 MiB
+//            HttpResponseCache.install(httpCacheDir, httpCacheSize);
+//        } catch (IOException e) {
+//            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
+//        }
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
@@ -68,6 +71,7 @@ public class UserListActivity extends AppCompatActivity {
         }
         // Ném thông tin vào list view
         listView = findViewById(R.id.user_list_view);
+        fab = findViewById(R.id.addNewUserButton);
         User_adapter adapters= new User_adapter(Users,this);
         listView.setAdapter(adapters);
         // xử lí khi bấm vào 1 item
@@ -78,9 +82,17 @@ public class UserListActivity extends AppCompatActivity {
             int position, long id){
                 Position = position;
                 Position = Users.get(Position).getStt();
-//                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt(),user.getToken());
                 Intent intent= new Intent(UserListActivity.this , ModifyUserActivity.class);
-//                LoggedInUser ex = us.getInfoUser(Users.get(position).getStt());
+                intent.putExtra("Position",Position);
+                startActivity(intent);
+            }
+        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(UserListActivity.this,"add",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(UserListActivity.this, AddUserActivity.class);
                 startActivity(intent);
             }
         });

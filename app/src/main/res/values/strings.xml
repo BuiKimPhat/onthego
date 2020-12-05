@@ -41,6 +41,8 @@
     <string name="users">Người dùng</string>
     <string name="list_user">Danh sách người dùng</string>
     <string name="delete_user">Xóa người dùng</string>
+    <string name="add_user">Thêm người dùng mới</string>
+    <string name="add">Thêm</string>
 
     <string-array name="cities">
         <item>Địa chỉ</item>
