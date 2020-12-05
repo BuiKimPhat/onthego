@@ -3,15 +3,15 @@ package com.leobkdn.onthego.data.model;
 import androidx.annotation.Nullable;
 
 public class Destination {
-    private int id;
-    private String name;
-    private String address;
-    private String description;
-    private String category;
-    private float rating;
-    private int rateNum;
-    private float lat;
-    private float lon;
+    protected int id;
+    protected String name;
+    protected String address;
+    protected String description;
+    protected String category;
+    protected float rating;
+    protected int rateNum;
+    protected float lat;
+    protected float lon;
 
     public Destination(Destination x) {
         this.id = x.id;
@@ -29,7 +29,12 @@ public class Destination {
         this.id = id;
         this.name = name;
     }
-
+    public Destination(int id, String name, float lat, float lon) {
+        this.id = id;
+        this.name = name;
+        this.lat = lat;
+        this.lon = lon;
+    }
     public Destination(int id, String name, @Nullable String address, @Nullable String description, @Nullable String category, float rating, int rateNum, float lat, float lon) {
         this.id = id;
         this.name = name;

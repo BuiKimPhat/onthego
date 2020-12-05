@@ -14,6 +14,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.data.model.TripDestination;
+import com.leobkdn.onthego.data.model.Weather;
 
 import org.json.JSONException;
 
@@ -50,7 +51,6 @@ public class DestinationDataSource extends ServerData {
 //    private static final String dbPassword = "userpass";
 //    private static final String dbURI = "jdbc:jtds:sqlserver://" + hostName + ":" + port + ";instance=" + instance + ";user=" + dbUser + ";password=" + dbPassword + ";databasename=" + dbName;
     private String stringResult = "Error";
-    private int sum = 0; // lưu số điểm đến query đc
     private ArrayList<TripDestination> result = new ArrayList<TripDestination>();
     private ArrayList<Destination> result1 = new ArrayList<>();
 
@@ -87,22 +87,41 @@ public class DestinationDataSource extends ServerData {
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                result = new ArrayList<TripDestination>();
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
                 jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
-                    int id = -1;
-                    String name = null;
+                    int id = -1, rateNum = 0;
+                    String name = null, address = null, description = null;
+                    float lat = 0, lon = 0, rating = 0;
                     Timestamp startTime = null, finishTime = null;
                     jsonReader.beginObject();
                     while (jsonReader.hasNext()) {
                         if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
                             id = jsonReader.nextInt();
-                            sum++;
                         } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
                             name = jsonReader.nextString();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
+                            address = jsonReader.nextString();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL)
+                            description = jsonReader.nextString();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
+                            rating = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
+                            rateNum = jsonReader.nextInt();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL) {
+                            lat = (float) jsonReader.nextDouble();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL) {
+                            lon = (float) jsonReader.nextDouble();
                         } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("startTime") && jsonReader.peek() != JsonToken.NULL)
                             startTime = new Timestamp(new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'").parse(jsonReader.nextString()).getTime());
@@ -113,7 +132,7 @@ public class DestinationDataSource extends ServerData {
                     }
                     jsonReader.endObject();
                     if (id > 0 && name != null)
-                        result.add(new TripDestination(id, name, startTime, finishTime));
+                        result.add(new TripDestination(id, name, address, description, rating, rateNum, lat, lon, startTime, finishTime));
                 }
                 jsonReader.endArray();
                 connection.disconnect();
@@ -138,10 +157,7 @@ public class DestinationDataSource extends ServerData {
         return new Result.Success<>(result);
     }
 
-    //An
-    public int getSum() {
-        return sum;
-    }
+    // An use .size() instead
 
     public Result<ArrayList<Destination>> fetchDestinations(String token, @Nullable String category) {
         try {
@@ -224,7 +240,6 @@ public class DestinationDataSource extends ServerData {
                     jsonReader.endObject();
                     if (id > 0 && name != null)
                         result1.add(new Destination(id, name, address, description, category, rating, rateNum, lat, lon));
-                    //TODO: remake Class without inCost and avgCost
                 }
                 jsonReader.endArray();
                 connection.disconnect();
@@ -292,6 +307,54 @@ public class DestinationDataSource extends ServerData {
                 return new Result.Success<>(stringResult);
             } else {
 //                Log.w("httpRes","error");
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+    }
+    public Result<Weather> getCurrentWeather(String token, float lat, float lon){
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/destination/weather?lat="+lat+"&lon="+lon);
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("GET");
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                float temp = 0;
+                String description = null, icon = null;
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("temp") && jsonReader.peek() != JsonToken.NULL) {
+                        temp = (float) jsonReader.nextDouble();
+                    } else jsonReader.skipValue();
+                    if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL) {
+                        description = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                    if (jsonReader.nextName().equals("icon") && jsonReader.peek() != JsonToken.NULL) {
+                        icon = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(new Weather(temp, description, icon));
+            } else {
                 InputStream responseBody = connection.getErrorStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);

@@ -108,6 +108,8 @@
         <item>Yên Bái</item>
     </string-array>
     <string-array name="sortDestinations">
+        <item>Theo số người đánh giá: Cao -> thấp</item>
+        <item>Theo số người đánh giá: Thấp -> cao</item>
         <item>Theo đánh giá: Cao -> thấp</item>
         <item>Theo đánh giá: Thấp -> cao</item>
         <item>Theo tên: A -> Z</item>

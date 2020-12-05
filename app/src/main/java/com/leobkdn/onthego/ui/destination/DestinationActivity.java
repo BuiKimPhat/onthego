@@ -45,9 +45,10 @@ public class DestinationActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.id.home:{
                 finish();
                 break;
+            }
         }
         return true;
     }
@@ -71,6 +72,7 @@ public class DestinationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_destination);
 //        HttpResponseCache httpCache = HttpResponseCache.getInstalled();
 //        Log.w("HTTP cache", "cache hits: " + httpCache.getHitCount());
@@ -79,7 +81,9 @@ public class DestinationActivity extends AppCompatActivity {
         search = findViewById(R.id.destination_search);
         search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -88,8 +92,10 @@ public class DestinationActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 destinationList.setAdapter(new DestinationListAdapter(context, getIntent(), display));
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         sortList = findViewById(R.id.destination_sort);
@@ -132,6 +138,7 @@ public class DestinationActivity extends AppCompatActivity {
                 }
             }
         });
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -145,14 +152,50 @@ public class DestinationActivity extends AppCompatActivity {
         return prefs.getString(key, null);
     }
 
-//    private void hoan_vi(Destination a, Destination b) {
+    //    private void hoan_vi(Destination a, Destination b) {
 //        Destination temp = new Destination(a);
 //        a = b;
 //        b = temp;
 //    }
 //
     private void quickSortBy(ArrayList<Destination> source, int start, int end, String by) {
-        if (by.equals("Theo đánh giá: Thấp -> cao")) {
+        if (by.equals("Theo số người đánh giá: Cao -> thấp")) {
+            if (start < end) {
+                int i = start, j = end;
+                int chot = source.get((start + end) / 2).getRateNum(); // chon phan tu o giua lam chot
+                while (i < j) {
+                    while (source.get(i).getRateNum() > chot) i++;
+                    while (source.get(j).getRateNum() < chot) j--;
+                    if (i <= j) {
+                        Destination temp = new Destination(source.get(i));
+                        source.set(i, source.get(j));
+                        source.set(j, temp);
+                        i++;
+                        j--;
+                    }
+                }
+                quickSortBy(source, start, j, by);
+                quickSortBy(source, i, end, by);
+            }
+        } else if (by.equals("Theo số người đánh giá: Thấp -> cao")) {
+            if (start < end) {
+                int i = start, j = end;
+                int chot = source.get((start + end) / 2).getRateNum(); // chon phan tu o giua lam chot
+                while (i < j) {
+                    while (source.get(i).getRateNum() < chot) i++;
+                    while (source.get(j).getRateNum() > chot) j--;
+                    if (i <= j) {
+                        Destination temp = new Destination(source.get(i));
+                        source.set(i, source.get(j));
+                        source.set(j, temp);
+                        i++;
+                        j--;
+                    }
+                }
+                quickSortBy(source, start, j, by);
+                quickSortBy(source, i, end, by);
+            }
+        } else if (by.equals("Theo đánh giá: Thấp -> cao")) {
             if (start < end) {
                 int i = start, j = end;
                 float chot;
@@ -230,6 +273,7 @@ public class DestinationActivity extends AppCompatActivity {
             }
         }
     }
+
     private ArrayList<Destination> linearSearch(ArrayList<Destination> source, String str) {
         // TODO: include search city
         ArrayList<Destination> result = new ArrayList<>();
