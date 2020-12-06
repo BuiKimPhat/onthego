@@ -71,12 +71,13 @@ public class TripListAdapter extends BaseAdapter {
             }
             Intent reqIntent = ((Activity) context).getIntent();
             if (reqIntent.getStringExtra("mode") != null && reqIntent.getStringExtra("mode").equals("add")) {
+                int destinationID = reqIntent.getIntExtra("destinationID", -1);
                 tripText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent resIntent = new Intent();
                         resIntent.putExtra("tripID", trips.get(position).getId());
-                        resIntent.putExtra("destinationID", reqIntent.getIntExtra("destinationID", -1));
+                        resIntent.putExtra("destinationID", destinationID);
                         ((Activity) context).setResult(Activity.RESULT_OK, resIntent);
                         ((Activity) context).finish();
                     }
@@ -87,6 +88,7 @@ public class TripListAdapter extends BaseAdapter {
                     public void onClick(View v) {
                         savePrefsData("id", trips.get(position).getId());
                         savePrefsData("name", trips.get(position).getName());
+                        savePrefsData("owner", trips.get(position).getOwner());
                         if (oldActive != null) oldActive.setVisibility(View.GONE);
                         activeImg.setVisibility(View.VISIBLE);
                         oldActive = activeImg;
@@ -100,7 +102,8 @@ public class TripListAdapter extends BaseAdapter {
                     intent.putExtra("tripId", trips.get(position).getId());
                     intent.putExtra("tripName", trips.get(position).getName());
                     intent.putExtra("tripOwner", trips.get(position).getOwner());
-                    ((Activity) context).startActivityForResult(intent, 3);
+//                    ((Activity) context).startActivityForResult(intent, 3);
+                    context.startActivity(intent);
                 }
             });
         }

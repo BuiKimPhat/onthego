@@ -61,7 +61,8 @@
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.signup.SignUpActivity" />
         <activity android:name=".ui.login.LoginActivity" />
-        //An
+
+<!--        An-->
         <activity android:name=".ui.AdminHome.AdminHomeActivity"/>
         <activity
             android:name=".ui.modify_user.list.UserListActivity"

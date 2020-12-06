@@ -2,15 +2,25 @@ package com.leobkdn.onthego.ui.home;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +34,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.model.TripDestination;
+import com.leobkdn.onthego.data.model.Weather;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
 import com.leobkdn.onthego.ui.food.FoodActivity;
 import com.leobkdn.onthego.ui.go.GoActivity;
+import com.leobkdn.onthego.ui.go.info.TripDestinationResult;
+import com.leobkdn.onthego.ui.go.info.TripInfo;
+import com.leobkdn.onthego.ui.go.info.TripInfoAdapter;
+import com.leobkdn.onthego.ui.go.info.TripInfoDataPump;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
@@ -39,27 +56,56 @@ import com.leobkdn.onthego.ui.transport.TransportActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
     private LoggedInUserView user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
+    private ArrayList<TripDestination> destinations = new ArrayList<>();
+    private TripDestinationResult tripDestinationResult = new TripDestinationResult();
+    private WeatherResult weatherResult = new WeatherResult();
     private ImageButton destination;
     private ImageButton transport;
     private ImageButton stay;
     private ImageButton food;
     private ImageButton goButton;
     private ImageButton userAvatar;
+    private TextView username;
     private TextView currentTrip;
+    private LinearLayout currentTripInfo;
+    private TextView currentPos;
+    private TextView nextTime;
+    private Weather currentWeather;
+    private TextView weatherAdvise;
+    private ImageView weatherIcon;
+    private TextView weatherDescription;
+
     @Override
-    public void onRestart()
-    {
+    public void onRestart() {
         // back button pressed and return to this activity
         super.onRestart();
+        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        username.setText(user.getDisplayName());
         currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
-        // TODO: openweathermap api
+
+        if (restoreCurrentTripInt("id") != -1) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    tripDestinationResult.fetchTripDestination(restorePrefsData("token"), restoreCurrentTripInt("id"));
+                }
+            }).start();
+        }
     }
 
     // double-tap to exit activity
@@ -95,7 +141,7 @@ public class HomeActivity extends AppCompatActivity {
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),false,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
         goButton = findViewById(R.id.home_button_0);
         destination = findViewById(R.id.home_button_1);
@@ -108,11 +154,18 @@ public class HomeActivity extends AppCompatActivity {
         userAvatar = findViewById(R.id.userAvatar);
         LinearLayout profileSwitch = findViewById(R.id.linearLayout);
         //set avatar text
-        TextView username = findViewById(R.id.home_username);
+        username = findViewById(R.id.home_username);
         username.setText(user.getDisplayName());
         // current trip
         currentTrip = findViewById(R.id.home_currentTrip);
         currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
+
+        currentTripInfo = findViewById(R.id.home_currentTrip_info);
+        currentPos = findViewById(R.id.home_currentPosition);
+        nextTime = findViewById(R.id.home_nextStart);
+        weatherAdvise = findViewById(R.id.home_weather_advise);
+        weatherDescription = findViewById(R.id.home_weather_description);
+        weatherIcon = findViewById(R.id.home_weather_icon);
 
         // Log Out Result listener
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
@@ -138,7 +191,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: click to switch to trip info
         // profile switch listener
         profileSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +237,144 @@ public class HomeActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
+        currentTripInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (restoreCurrentTripInt("id") != -1) {
+                    Intent intent = new Intent(HomeActivity.this, TripInfo.class);
+                    intent.putExtra("tripId", restoreCurrentTripInt("id"));
+                    intent.putExtra("tripName", restoreCurrentTripData("name"));
+                    intent.putExtra("tripOwner", restoreCurrentTripData("owner"));
+                    startActivity(intent);
+                }
+            }
+        });
+
+        tripDestinationResult.getDestinationResult().observe(this, new Observer<Result>() {
+            @Override
+            public void onChanged(Result result) {
+                if (result instanceof Result.Success) {
+                    if (((Result.Success) result).checkTypeString()) {
+                        Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
+                    } else {
+                        destinations = ((Result.Success<ArrayList<TripDestination>>) result).getData();
+                        if (destinations != null) {
+                            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                            long min = 999999999; int minI = -1;
+                            for (int i=0;i<destinations.size();i++){
+                                Timestamp start = destinations.get(i).getStartTime();
+                                if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min){
+                                    min = currentTime.getTime() - start.getTime();
+                                    minI = i;
+                                }
+                            }
+                            if (minI >= 0) {
+                                currentPos.setText(destinations.get(minI).getName());
+                                int finalMinI = minI;
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        weatherResult.getCurrentWeather(restorePrefsData("token"), destinations.get(finalMinI).getLat(), destinations.get(finalMinI).getLon());
+                                    }
+                                }).start();
+                            } else currentPos.setText(user.getAddress());
+                            if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
+                                nextTime.setText(new SimpleDateFormat("HH:mm").format(destinations.get(minI).getFinishTime()));
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        weatherResult.getWeatherResult().observe(this, new Observer<Result>() {
+            @Override
+            public void onChanged(Result result) {
+                if (result instanceof Result.Success) {
+                    currentWeather = ((Result.Success<Weather>) result).getData();
+                    if (currentWeather != null) {
+                        String advise = "";
+                        if (currentWeather.getTemp() < 21) advise += "Ngoài trời lạnh lắm, nhớ mang áo lạnh nhé! ";
+                        weatherDescription.setText(currentWeather.getTemp()+"\u00B0C "+currentWeather.getDescription());
+                        switch (currentWeather.getIcon()){
+                            case "01d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d01));
+                                break;
+                            }
+                            case "01n":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.n01));
+                                break;
+                            }
+                            case "02d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d02));
+                                break;
+                            }
+                            case "02n":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.n02));
+                                break;
+                            }
+                            case "03n":
+                            case "03d": {
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d03));
+                                break;
+                            }
+                            case "04n":
+                            case "04d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d04));
+                                advise += "Ngoài trời có nhiều mây, có khả năng trời sẽ mưa đấy!";
+                                break;
+                            }
+                            case "09n":
+                            case "09d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d09));
+                                advise += "Ngoài trời đang mưa, nhớ mang theo áo mưa nhé!";
+                                break;
+                            }
+                            case "10d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d10));
+                                advise += "Ngoài trời đang mưa, nhớ mang theo áo mưa nhé!";
+                                break;
+                            }
+                            case "10n":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.n10));
+                                advise += "Ngoài trời đang mưa, nhớ mang theo áo mưa nhé!";
+                                break;
+                            }
+                            case "11n":
+                            case "11d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d11));
+                                advise += "Ngoài trời có sấm chớp, hãy cẩn thận khi ra đường!";
+                                break;
+                            }
+                            case "13n":
+                            case "13d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d13));
+                                advise += "Ngoài trời đang có tuyết, hãy đảm bảo bạn mặc đồ đủ ấm.";
+                                break;
+                            }
+                            case "50n":
+                            case "50d":{
+                                weatherIcon.setImageDrawable(getApplicationContext().getDrawable(R.drawable.d50));
+                                advise += "Ngoài trời đang có sương mù, hãy cẩn thận khi ra đường!";
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        if (restoreCurrentTripInt("id") != -1) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    tripDestinationResult.fetchTripDestination(restorePrefsData("token"), restoreCurrentTripInt("id"));
+                }
+            }).start();
+        }
     }
 
     @Override
@@ -196,7 +386,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void setupActivityButtons(ImageButton button, Intent intent){
+    private void setupActivityButtons(ImageButton button, Intent intent) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,23 +406,31 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    private void clearPrefs(String prefsName){
+    private void clearPrefs(String prefsName) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(prefsName, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.apply();
     }
+
     // get prefs from storage
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);
     }
+
     private long restorePrefsLong(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getLong(key, 0);
     }
+
     private String restoreCurrentTripData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("currentTrip", MODE_PRIVATE);
         return prefs.getString(key, null);
+    }
+
+    private int restoreCurrentTripInt(String key) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("currentTrip", MODE_PRIVATE);
+        return prefs.getInt(key, -1);
     }
 }

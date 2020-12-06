@@ -53,12 +53,13 @@ public class TripInfoAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildType(int groupPosition, int childPosition) {
         if (groupPosition == destinationList.keySet().size() - 1) return 0;
-        else return 1;
+        if (groupPosition == destinationList.keySet().size() - 2) return 2;
+        return 1;
     }
 
     @Override
     public int getChildTypeCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -234,6 +235,16 @@ public class TripInfoAdapter extends BaseExpandableListAdapter {
                     if (item.getFinishTime() != null) {
                         endTime.setText(new SimpleDateFormat("HH:mm").format(item.getFinishTime()));
                     }
+                    break;
+                }
+                case 2: {
+                    if (convertView == null) {
+                        convertView = layoutInflater.inflate(R.layout.trip_info_list_item, parent, false);
+                    }
+                    TextView destination = convertView.findViewById(R.id.destination_name);
+                    destination.setText((childPosition+1) + " : " + item.getName());
+                    LinearLayout time = convertView.findViewById(R.id.trip_destination_time);
+                    time.setVisibility(View.GONE);
                     break;
                 }
             }

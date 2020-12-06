@@ -32,10 +32,21 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:clickable="false"
-            android:text="Bùi Kim Phát"
-            android:textStyle="bold"
-            android:textSize="18sp" />
+            android:hint="@string/users"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/home_weather_advise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:ellipsize="end"
+        android:maxWidth="300dp"
+        android:maxLines="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <FrameLayout
         android:id="@+id/framePower"
@@ -87,6 +98,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/custom_home_button_1"
             tools:layout_editor_absoluteX="70dp" />
+
         <ImageView
             android:id="@+id/home_button_1_icon"
             android:layout_width="50dp"
@@ -95,6 +107,7 @@
             android:layout_marginTop="21dp"
             android:layout_marginEnd="39dp"
             app:srcCompat="@drawable/ic_baseline_place_24" />
+
         <TextView
             android:id="@+id/home_button_1_label"
             android:layout_width="match_parent"
@@ -121,6 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/custom_home_button_1" />
+
         <ImageView
             android:id="@+id/home_button_2_icon"
             android:layout_width="50dp"
@@ -129,6 +143,7 @@
             android:layout_marginTop="18dp"
             android:layout_marginEnd="40dp"
             app:srcCompat="@drawable/ic_baseline_flight_24" />
+
         <TextView
             android:id="@+id/home_button_2_label"
             android:layout_width="match_parent"
@@ -164,6 +179,7 @@
             android:layout_marginTop="23dp"
             android:layout_marginEnd="39dp"
             app:srcCompat="@drawable/ic_baseline_home_24" />
+
         <TextView
             android:id="@+id/home_button_3_label"
             android:layout_width="match_parent"
@@ -199,6 +215,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="39dp"
             app:srcCompat="@drawable/ic_baseline_fastfood_24" />
+
         <TextView
             android:id="@+id/home_button_4_label"
             android:layout_width="match_parent"
@@ -253,135 +270,162 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/frameLayout6"
+        android:id="@+id/home_currentTrip_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:clickable="true"
+        android:focusable="true"
         android:gravity="center|start"
         android:orientation="vertical"
-        android:clickable="true"
-        android:focusable="true">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <ImageView
-                android:layout_margin="8dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/onthego_logo"/>
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:clickable="false"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:padding="5sp"-->
-<!--                android:text="Chuyến đi hiện tại:"-->
-<!--                android:textColor="@color/colorTextSecondary"-->
-<!--                android:textSize="16sp" />-->
+                android:layout_margin="8dp"
+                android:background="@drawable/onthego_logo" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:clickable="false"-->
+            <!--                android:layout_marginTop="5dp"-->
+            <!--                android:padding="5sp"-->
+            <!--                android:text="Chuyến đi hiện tại:"-->
+            <!--                android:textColor="@color/colorTextSecondary"-->
+            <!--                android:textSize="16sp" />-->
 
             <TextView
                 android:id="@+id/home_currentTrip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false"
                 android:layout_margin="5dp"
-                android:padding="5sp"
-                android:text="Đi paylak ở VinhHaLongs asd asd asd asd asd asd asd "
-                android:textColor="@color/colorTextPrimary"
-                android:textSize="16sp"
+                android:clickable="false"
                 android:ellipsize="end"
+                android:maxWidth="230dp"
                 android:maxLines="1"
-                android:maxWidth="230dp"/>
+                android:padding="5sp"
+                android:hint="@string/destinations"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="16sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <ImageView
-                android:layout_margin="8dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/ic_baseline_place_24_black"/>
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:clickable="false"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:padding="5sp"-->
-<!--                android:text="Vị trí hiện tại:"-->
-<!--                android:textColor="@color/colorTextSecondary"-->
-<!--                android:textSize="16sp" />-->
+                android:layout_margin="8dp"
+                android:background="@drawable/ic_baseline_place_24_black" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:clickable="false"-->
+            <!--                android:layout_marginTop="5dp"-->
+            <!--                android:padding="5sp"-->
+            <!--                android:text="Vị trí hiện tại:"-->
+            <!--                android:textColor="@color/colorTextSecondary"-->
+            <!--                android:textSize="16sp" />-->
 
             <TextView
+                android:id="@+id/home_currentPosition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false"
                 android:layout_margin="5dp"
-                android:padding="5sp"
-                android:text="Đà Nẵng"
-                android:textColor="@color/colorTextPrimary"
-                android:textSize="16sp"
+                android:clickable="false"
                 android:ellipsize="end"
+                android:maxWidth="230dp"
                 android:maxLines="1"
-                android:maxWidth="230dp"/>
+                android:padding="5sp"
+                android:hint="@string/destinations"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="16sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+            <!--            <ImageView-->
+            <!--                android:layout_margin="8dp"-->
+            <!--                android:layout_width="25dp"-->
+            <!--                android:layout_height="25dp"-->
+            <!--                android:background="@drawable/ic_baseline_send_24"/>-->
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:clickable="false"-->
+            <!--                android:layout_margin="5dp"-->
+            <!--                android:padding="5sp"-->
+            <!--                android:text="Quảng Ninh"-->
+            <!--                android:textColor="@color/colorTextPrimary"-->
+            <!--                android:textSize="16sp"-->
+            <!--                android:ellipsize="end"-->
+            <!--                android:maxLines="1"-->
+            <!--                android:maxWidth="230dp"/>-->
             <ImageView
-                android:layout_margin="8dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/ic_baseline_send_24"/>
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:clickable="false"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:padding="5sp"-->
-<!--                android:text="Điểm đến tiếp theo:"-->
-<!--                android:textColor="@color/colorTextSecondary"-->
-<!--                android:textSize="16sp" />-->
+                android:layout_margin="8dp"
+                android:background="@drawable/ic_baseline_access_time_24" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:clickable="false"-->
+            <!--                android:layout_marginTop="5dp"-->
+            <!--                android:padding="5sp"-->
+            <!--                android:text="Điểm đến tiếp theo:"-->
+            <!--                android:textColor="@color/colorTextSecondary"-->
+            <!--                android:textSize="16sp" />-->
 
             <TextView
+                android:id="@+id/home_nextStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="false"
                 android:layout_margin="5dp"
-                android:padding="5sp"
-                android:text="Quảng Ninh"
-                android:textColor="@color/colorTextPrimary"
-                android:textSize="16sp"
+                android:clickable="false"
                 android:ellipsize="end"
+                android:maxWidth="230dp"
                 android:maxLines="1"
-                android:maxWidth="230dp"/>
+                android:padding="5sp"
+                android:hint="Xuất phát kế tiếp"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
+            android:id="@+id/home_weather_icon"
             android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:background="@drawable/cloudy_sun" />
+            android:layout_height="90dp"/>
 
         <TextView
+            android:id="@+id/home_weather_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="27\u00B0C Cloudy"
-            android:textSize="16sp" />
+            android:maxWidth="90dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <ProgressBar
@@ -389,9 +433,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:visibility="gone"
         android:background="@drawable/white_circle"
         android:padding="10dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

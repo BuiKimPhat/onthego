@@ -73,7 +73,6 @@ public class GoActivity extends AppCompatActivity {
 
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        // TODO: change to onRestart() to refresh data
 //        super.onActivityResult(requestCode, resultCode, data);
 //        if (requestCode == 3){
 //            if (resultCode == RESULT_OK){
@@ -188,7 +187,8 @@ public class GoActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(actCon, TripInfo.class);
                     intent.putExtra("isNew", true);
-                    startActivityForResult(intent, 3);
+//                    startActivityForResult(intent, 3);
+                    startActivity(intent);
                 }
             });
             existTripBtn.setOnClickListener(new View.OnClickListener() {

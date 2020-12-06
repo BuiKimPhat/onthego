@@ -76,6 +76,12 @@ public class DestinationListAdapter extends BaseAdapter {
                     Intent result = new Intent();
                     result.putExtra("destinationID", destinations.get(position).getId());
                     result.putExtra("destinationName", destinations.get(position).getName());
+                    result.putExtra("destinationLat", destinations.get(position).getLat());
+                    result.putExtra("destinationLon", destinations.get(position).getLon());
+                    result.putExtra("destinationAddress", destinations.get(position).getAddress());
+                    result.putExtra("destinationDescription", destinations.get(position).getDescription());
+                    result.putExtra("destinationRating", destinations.get(position).getRating());
+                    result.putExtra("destinationRateNum", destinations.get(position).getRateNum());
                     ((Activity) context).setResult(Activity.RESULT_OK, result);
                     ((Activity) context).finish();
                 }
@@ -100,7 +106,6 @@ public class DestinationListAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, GoActivity.class);
                     intent.putExtra("mode", "add");
                     intent.putExtra("destinationID", destinations.get(position).getId());
-//                    Log.w("destinationID", String.valueOf(destinations.get(position).getId()));
                     ((Activity) context).startActivityForResult(intent, 2);
                 }
             });

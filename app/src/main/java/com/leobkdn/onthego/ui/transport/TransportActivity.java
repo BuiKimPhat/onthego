@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -143,7 +144,43 @@ public class TransportActivity extends AppCompatActivity {
     }
 
     private void quickSortBy(ArrayList<Destination> source, int start, int end, String by) {
-        if (by.equals("Theo đánh giá: Thấp -> cao")) {
+        if (by.equals("Theo số người đánh giá: Cao -> thấp")) {
+            if (start < end) {
+                int i = start, j = end;
+                int chot = source.get((start + end) / 2).getRateNum(); // chon phan tu o giua lam chot
+                while (i < j) {
+                    while (source.get(i).getRateNum() > chot) i++;
+                    while (source.get(j).getRateNum() < chot) j--;
+                    if (i <= j) {
+                        Destination temp = new Destination(source.get(i));
+                        source.set(i, source.get(j));
+                        source.set(j, temp);
+                        i++;
+                        j--;
+                    }
+                }
+                quickSortBy(source, start, j, by);
+                quickSortBy(source, i, end, by);
+            }
+        } else if (by.equals("Theo số người đánh giá: Thấp -> cao")) {
+            if (start < end) {
+                int i = start, j = end;
+                int chot = source.get((start + end) / 2).getRateNum(); // chon phan tu o giua lam chot
+                while (i < j) {
+                    while (source.get(i).getRateNum() < chot) i++;
+                    while (source.get(j).getRateNum() > chot) j--;
+                    if (i <= j) {
+                        Destination temp = new Destination(source.get(i));
+                        source.set(i, source.get(j));
+                        source.set(j, temp);
+                        i++;
+                        j--;
+                    }
+                }
+                quickSortBy(source, start, j, by);
+                quickSortBy(source, i, end, by);
+            }
+        } else if (by.equals("Theo đánh giá: Thấp -> cao")) {
             if (start < end) {
                 int i = start, j = end;
                 float chot;
