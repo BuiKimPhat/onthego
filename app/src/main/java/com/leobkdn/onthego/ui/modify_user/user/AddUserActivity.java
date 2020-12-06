@@ -114,7 +114,7 @@ public class AddUserActivity extends AppCompatActivity  {
                 addButton.setEnabled(true);
                 if (loginResult.getError() != null) Toast.makeText(AddUserActivity.this,"ADD Failed",Toast.LENGTH_SHORT).show();
                 if (loginResult.getSuccess() != null) {
-                    Toast.makeText(AddUserActivity.this,"ADD Failed",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddUserActivity.this,"ADD Success",Toast.LENGTH_SHORT).show();
                     //Complete and destroy sign up activity once successful
                     finish();
                 }
