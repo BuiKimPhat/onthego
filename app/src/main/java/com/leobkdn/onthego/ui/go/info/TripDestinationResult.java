@@ -1,5 +1,7 @@
 package com.leobkdn.onthego.ui.go.info;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -17,7 +19,7 @@ public class TripDestinationResult {
         this.destinationDataSource = destinationDataSource;
     }
 
-    TripDestinationResult() {
+    public TripDestinationResult() {
     }
 
     public LiveData<Result> getDestinationResult() {

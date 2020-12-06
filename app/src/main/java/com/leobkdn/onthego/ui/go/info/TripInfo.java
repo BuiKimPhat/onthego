@@ -30,6 +30,7 @@ import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.model.TripDestination;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
+import com.leobkdn.onthego.ui.destination.info.DestinationInfo;
 import com.leobkdn.onthego.ui.go.TripResult;
 
 import java.sql.Time;
@@ -61,9 +62,10 @@ public class TripInfo extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.id.home: {
                 finish();
                 break;
+            }
         }
         return true;
     }
@@ -76,9 +78,16 @@ public class TripInfo extends AppCompatActivity {
                 confirmButton.setVisibility(View.VISIBLE);
                 int destinationID = data.getIntExtra("destinationID", -1);
                 String destinationName = data.getStringExtra("destinationName");
+                String destinationAddress = data.getStringExtra("destinationAddress");
+                String destinationDescription = data.getStringExtra("destinationDescription");
+                float destinationRating = data.getFloatExtra("destinationRating", 0);
+                int destinationRateNum = data.getIntExtra("destinationRateNum", 0);
+                float destinationLat = data.getFloatExtra("destinationLat", 0);
+                float destinationLon = data.getFloatExtra("destinationLon", 0);
+
                 for (int i = 0; i < destinations.size(); i++)
                     if (destinations.get(i).getId() == destinationID) return;
-                destinations.add(new TripDestination(destinationID, destinationName, null, null));
+                destinations.add(new TripDestination(destinationID, destinationName, destinationAddress, destinationDescription, destinationRating, destinationRateNum, destinationLat, destinationLon, null, null));
                 if (destinations != null) {
                     LinkedHashMap<String, ArrayList<TripDestination>> map = new TripInfoDataPump(destinations).getData();
                     adapter = new TripInfoAdapter(actCon, new ArrayList<String>(map.keySet()), map, destinations);
@@ -284,7 +293,6 @@ public class TripInfo extends AppCompatActivity {
                         tripResult.deleteTrip(restorePrefsData("token"), tripID);
                     }
                 });
-                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -449,7 +457,7 @@ public class TripInfo extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
-                // refresh elistview
+                // refresh listview
                 if (destinations != null) {
                     LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
                     adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
@@ -459,7 +467,20 @@ public class TripInfo extends AppCompatActivity {
                 }
             }
         });
-
+        listDestinations.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                TripDestination item = (TripDestination) adapter.getChild(groupPosition, childPosition);
+                Intent intent = new Intent(TripInfo.this, DestinationInfo.class);
+                intent.putExtra("name", item.getName());
+                intent.putExtra("address", item.getAddress());
+                intent.putExtra("rating", item.getRating());
+                intent.putExtra("description", item.getDescription());
+                startActivity(intent);
+                return false;
+            }
+        });
     }
 
 
