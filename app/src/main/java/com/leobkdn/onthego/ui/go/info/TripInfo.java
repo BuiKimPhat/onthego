@@ -5,12 +5,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,9 +34,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.Result;
 import com.leobkdn.onthego.data.model.TripDestination;
+import com.leobkdn.onthego.tools.Reminder;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
 import com.leobkdn.onthego.ui.destination.info.DestinationInfo;
 import com.leobkdn.onthego.ui.go.TripResult;
+import com.leobkdn.onthego.ui.home.HomeActivity;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -102,6 +109,7 @@ public class TripInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createNotificationChannel();
         setContentView(R.layout.activity_trip_info);
         tripID = getIntent().getIntExtra("tripId", -1);
         isNew = getIntent().getBooleanExtra("isNew", false);
@@ -377,6 +385,30 @@ public class TripInfo extends AppCompatActivity {
 //                                    listDestinations.removeViewAt(0);
 //                                }
 //                            });
+
+                            //set notification
+                            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                            long min = 999999999; int minI = -1;
+                            for (int i=0;i<destinations.size();i++){
+                                Timestamp start = destinations.get(i).getStartTime();
+                                if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min){
+                                    min = currentTime.getTime() - start.getTime();
+                                    minI = i;
+                                }
+                            }
+                            if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
+                                // notification
+                                Intent intent = new Intent(TripInfo.this, Reminder.class);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(TripInfo.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                                long currentTimeAfterFetch = System.currentTimeMillis();
+                                long fifteenMins = 15 * 60 * 1000;
+                                long endTime = destinations.get(minI).getFinishTime().getTime();
+//                                alarmManager.set(AlarmManager.RTC_WAKEUP, currentTimeAfterFetch + fifteenMins, pendingIntent);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
+                                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
+                            }
                         }
                     }
                 } else {
@@ -464,6 +496,30 @@ public class TripInfo extends AppCompatActivity {
                     listDestinations.setAdapter(adapter);
                     for (int i = 0; i < data.keySet().size() - 1; i++)
                         listDestinations.expandGroup(i);
+
+                    //set notification
+                    Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                    long min = 999999999; int minI = -1;
+                    for (int i=0;i<destinations.size();i++){
+                        Timestamp start = destinations.get(i).getStartTime();
+                        if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min){
+                            min = currentTime.getTime() - start.getTime();
+                            minI = i;
+                        }
+                    }
+                    if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
+                        // notification
+                        Intent intent = new Intent(TripInfo.this, Reminder.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(TripInfo.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                                long currentTimeAfterFetch = System.currentTimeMillis();
+                        long fifteenMins = 15 * 60 * 1000;
+                        long endTime = destinations.get(minI).getFinishTime().getTime();
+//                                alarmManager.set(AlarmManager.RTC_WAKEUP, currentTimeAfterFetch + fifteenMins, pendingIntent);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
+                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
+                    }
                 }
             }
         });
@@ -494,5 +550,17 @@ public class TripInfo extends AppCompatActivity {
         return !text.trim().isEmpty();
     }
 
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "OnTheGoChannel";
+            String description = "Channel for On The Go app";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("onTheGo", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
     //TODO: write functions for init UI and listeners
 }
