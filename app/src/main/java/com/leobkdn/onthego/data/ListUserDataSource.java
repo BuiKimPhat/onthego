@@ -235,8 +235,6 @@ public class ListUserDataSource extends ServerData {
         try {
             URL url = new URL(server + "/deleteUser/" + id);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("DELETE");
-            connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             if (connection.getResponseCode() == 200) {
@@ -257,40 +255,40 @@ public class ListUserDataSource extends ServerData {
     }
 
 
-//    public Result<String> editInfo(LoggedInUser user) {
-//        try {
-//            //Set connection
-//            Connection connection = DriverManager.getConnection(dbURI);
-//            if (connection != null) {
-//
-//                String sqlQuery = "update [User] set [name] = ?, email = ?, birthday = ?, [address] = ? where id in (select userId from [User_Token] where token = ?)";
-//                PreparedStatement statement = connection.prepareStatement(sqlQuery);
-////                int userId = Integer.parseInt(payload.getString("uid"));
-////                statement.setInt(1, userId);
-////                statement.setString(1, key);
-//                statement.setString(1, user.getDisplayName());
-//                statement.setString(2, user.getEmail());
-//                statement.setDate(3, new java.sql.Date(user.getBirthday().getTime()));
-//                statement.setString(4, user.getAddress());
-//                statement.setString(5, user.getToken());
-//                int recordUpdated = statement.executeUpdate();
-//                if (recordUpdated > 0) {
-//                    // if user updated
-//                    // return success
-//                    stringResult = "Cập nhật thành công!";
-//                } else {
-//                    stringResult = "Không tìm thấy người dùng!";
-//                }
-//                connection.close();
-//            } else throw new SQLException("Lỗi kết nối");
-//        } catch (JWTVerificationException e) {
-//            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
-//        } catch (Exception e) {
-//            return new Result.Error(e);
-//        }
-//        return new Result.Success<>(stringResult);
-//    }
-//}
+    public Result<String> editInfo(LoggedInUser user) {
+        try {
+            //Set connection
+            Connection connection = DriverManager.getConnection(server);
+            if (connection != null) {
+
+                String sqlQuery = "update [User] set [name] = ?, email = ?, birthday = ?, [address] = ? where id in (select userId from [User_Token] where token = ?)";
+                PreparedStatement statement = connection.prepareStatement(sqlQuery);
+//                int userId = Integer.parseInt(payload.getString("uid"));
+//                statement.setInt(1, userId);
+//                statement.setString(1, key);
+                statement.setString(1, user.getDisplayName());
+                statement.setString(2, user.getEmail());
+                statement.setDate(3, new java.sql.Date(user.getBirthday().getTime()));
+                statement.setString(4, user.getAddress());
+                statement.setString(5, user.getToken());
+                int recordUpdated = statement.executeUpdate();
+                if (recordUpdated > 0) {
+                    // if user updated
+                    // return success
+                    stringResult = "Cập nhật thành công!";
+                } else {
+                    stringResult = "Không tìm thấy người dùng!";
+                }
+                connection.close();
+            } else throw new SQLException("Lỗi kết nối");
+        } catch (JWTVerificationException e) {
+            return new Result.Error(new Exception("Token đã hết hạn, vui lòng đăng nhập lại!"));
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+        return new Result.Success<>(stringResult);
+    }
+
         //Set connection
 //            Connection connection = DriverManager.getConnection(dbURI);
 //            if (connection != null) {
@@ -327,67 +325,67 @@ public class ListUserDataSource extends ServerData {
 //                connection.close();
 //            } else throw new SQLException("Lỗi kết nối");
         // Create URL
-public Result<LoggedInUser> loginFake (String email,String id){
-        LoggedInUser newUser;
-        try{
-        URL endPoint = new URL(server + "/user/login_fake");
-        // Create connection
-        HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("User-Agent", "On The Go");
-        // Create the data
-        String postData = "{\"email\":\"" + email + "\",\"id\":\"" + id + "\"}";
-        // Enable writing
-        connection.setDoOutput(true);
-        // Write the data
-        connection.getOutputStream().write(postData.getBytes());
-        if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
-            InputStream responseBody = connection.getInputStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            String name = null, address = null, token = null;
-            boolean isAdmin = false;
-            Date birthday = null;
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
-                    name = jsonReader.nextString();
-                } else jsonReader.skipValue();
-                if (jsonReader.nextName().equals("isAdmin") && jsonReader.peek() != JsonToken.NULL) {
-                    isAdmin = jsonReader.nextBoolean();
-                } else jsonReader.skipValue();
-                if (jsonReader.nextName().equals("birthday") && jsonReader.peek() != JsonToken.NULL)
-                    birthday = new SimpleDateFormat("yyyy-MM-dd").parse(jsonReader.nextString());
-                else jsonReader.skipValue();
-                if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
-                    address = jsonReader.nextString();
-                else jsonReader.skipValue();
-                if (jsonReader.nextName().equals("token") && jsonReader.peek() != JsonToken.NULL)
-                    token = jsonReader.nextString();
-                else jsonReader.skipValue();
-            }
-            jsonReader.endObject();
-            newUser = new LoggedInUser(name, email, token, isAdmin, birthday, address); // LOGIN SUCCESS
-        } else {
-            InputStream responseBody = connection.getErrorStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            String error = "Lỗi không xác định";
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
-                    error = jsonReader.nextString();
-                } else jsonReader.skipValue();
-            }
-            jsonReader.endObject();
-            throw new Exception(error);
-        }
-        connection.disconnect();
-    } catch(Exception e){
-        return new Result.Error(e);
-    }
-        return new Result.Success<>(newUser);
-    }
+//public Result<LoggedInUser> loginFake (String email,String id){
+//        LoggedInUser newUser;
+//        try{
+//        URL endPoint = new URL(server + "/user/login_fake");
+//        // Create connection
+//        HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+//        connection.setRequestMethod("POST");
+//        connection.setRequestProperty("Accept", "application/json");
+//        connection.setRequestProperty("Content-Type", "application/json");
+//        connection.setRequestProperty("User-Agent", "On The Go");
+//        // Create the data
+//        String postData = "{\"email\":\"" + email + "\",\"id\":\"" + id + "\"}";
+//        // Enable writing
+//        connection.setDoOutput(true);
+//        // Write the data
+//        connection.getOutputStream().write(postData.getBytes());
+//        if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+//            InputStream responseBody = connection.getInputStream();
+//            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+//            JsonReader jsonReader = new JsonReader(responseBodyReader);
+//            String name = null, address = null, token = null;
+//            boolean isAdmin = false;
+//            Date birthday = null;
+//            jsonReader.beginObject();
+//            while (jsonReader.hasNext()) {
+//                if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
+//                    name = jsonReader.nextString();
+//                } else jsonReader.skipValue();
+//                if (jsonReader.nextName().equals("isAdmin") && jsonReader.peek() != JsonToken.NULL) {
+//                    isAdmin = jsonReader.nextBoolean();
+//                } else jsonReader.skipValue();
+//                if (jsonReader.nextName().equals("birthday") && jsonReader.peek() != JsonToken.NULL)
+//                    birthday = new SimpleDateFormat("yyyy-MM-dd").parse(jsonReader.nextString());
+//                else jsonReader.skipValue();
+//                if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
+//                    address = jsonReader.nextString();
+//                else jsonReader.skipValue();
+//                if (jsonReader.nextName().equals("token") && jsonReader.peek() != JsonToken.NULL)
+//                    token = jsonReader.nextString();
+//                else jsonReader.skipValue();
+//            }
+//            jsonReader.endObject();
+//            newUser = new LoggedInUser(name, email, token, isAdmin, birthday, address); // LOGIN SUCCESS
+//        } else {
+//            InputStream responseBody = connection.getErrorStream();
+//            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+//            JsonReader jsonReader = new JsonReader(responseBodyReader);
+//            String error = "Lỗi không xác định";
+//            jsonReader.beginObject();
+//            while (jsonReader.hasNext()) {
+//                if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+//                    error = jsonReader.nextString();
+//                } else jsonReader.skipValue();
+//            }
+//            jsonReader.endObject();
+//            throw new Exception(error);
+//        }
+//        connection.disconnect();
+//    } catch(Exception e){
+//        return new Result.Error(e);
+//    }
+//        return new Result.Success<>(newUser);
+//    }
 }

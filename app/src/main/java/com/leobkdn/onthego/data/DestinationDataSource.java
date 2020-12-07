@@ -1,6 +1,7 @@
 package com.leobkdn.onthego.data;
 
 import android.net.http.HttpResponseCache;
+import android.nfc.Tag;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.util.Log;
@@ -33,6 +34,8 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -261,6 +264,108 @@ public class DestinationDataSource extends ServerData {
             return new Result.Error(e);
         }
         return new Result.Success<>(result1);
+    }
+
+    public ArrayList<Destination> fetchDestinations2(String token) {
+        try {
+            //Set connection
+//            Connection connection = DriverManager.getConnection(dbURI);
+//            if (connection != null) {
+//                // verify token
+//            tokenVerifier(token);
+//                String sqlQuery;
+//                PreparedStatement statement;
+//                if (category == null) {
+//                    sqlQuery = "select id, [name], address, phone, description, city from Destination where category is null";
+//                    statement = connection.prepareStatement(sqlQuery);
+//                } else {
+//                    sqlQuery = "select id, [name], address, phone, description, city from Destination where category = ?";
+//                    statement = connection.prepareStatement(sqlQuery);
+//                    statement.setString(1, category);
+//                }
+//                ResultSet res = statement.executeQuery();
+//                if (!res.next()) throw new SQLException("Không tìm thấy điểm đến");
+//                else {
+//                    do {
+//                        result1.add(new Destination(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), category, res.getString(6), null));
+//                    } while (res.next());
+//                }
+//                connection.close();
+//            } else throw new SQLException("Lỗi kết nối");
+
+            // Create URL
+            URL endPoint = new URL(server + "/destination/list");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginArray();
+                while (jsonReader.hasNext()) {
+                    int id = -1, rateNum = 0;
+                    float rating = 0, lat = 0, lon = 0;
+                    String name = null, address = null, description = null;
+                    String category = null;
+                    jsonReader.beginObject();
+                    while (jsonReader.hasNext()) {
+                        if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
+                            id = jsonReader.nextInt();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
+                            name = jsonReader.nextString();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL)
+                            address = jsonReader.nextString();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL)
+                            description = jsonReader.nextString();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL)
+                            category = jsonReader.nextString();
+//                        else jsonReader.skipValue();
+//                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
+//                            avgCost = jsonReader.nextInt();
+//                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
+                            rating = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
+                            rateNum = jsonReader.nextInt();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL)
+                            lat = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL)
+                            lon = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                    }
+                    jsonReader.endObject();
+                    if (id > 0 && name != null)
+                        result1.add(new Destination(id, name, address, description, category, rating, rateNum, lat, lon));
+                }
+                jsonReader.endArray();
+                connection.disconnect();
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                throw new Exception(error);
+            }
+        } catch (Exception e) {
+            Log.i(TAG," Fetch destination err :"+e);
+        }
+        return result1;
     }
 
     public Result<String> addTripDestination(String token, int tripID, int destinationID) {

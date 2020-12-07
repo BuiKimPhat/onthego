@@ -122,8 +122,7 @@ public class ModifyUserActivity extends AppCompatActivity {
         birthdayEditButton = findViewById(R.id.profile_birthday_edit_button2);
         addressEditButton = findViewById(R.id.profile_address_edit_button2);
         editConfirm = findViewById(R.id.profile_edit_confirm2);
-        changePwdButton = findViewById(R.id.profile_delete2);
-        delete_user = findViewById(R.id.profile_delete);
+        delete_user = findViewById(R.id.profile_delete2);
 
         // button listeners
         setupEditButtons(nameEditButton, nameView, nameEdit);
@@ -179,6 +178,20 @@ public class ModifyUserActivity extends AppCompatActivity {
                         loginViewModel.editInfo(new LoggedInUserView(nameEdit.getText().toString(), emailEdit.getText().toString(), ex.getToken(), ex.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
                     } //not sure
                 }).start();
+            }
+        });
+        delete_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListUserDataSource a = new ListUserDataSource();
+                if(a.deleteUser(Position,user.getToken())){
+                    Toast.makeText(ModifyUserActivity.this,"delete success",Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                else {
+                    Toast.makeText(ModifyUserActivity.this,"delete failed",Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
     }
