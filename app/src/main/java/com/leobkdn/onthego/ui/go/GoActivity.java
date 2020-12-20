@@ -1,7 +1,6 @@
 package com.leobkdn.onthego.ui.go;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
@@ -26,14 +25,12 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.data.model.Destination;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.Trip;
+import com.leobkdn.onthego.data.result.TripResult;
 import com.leobkdn.onthego.tools.VNCharacterUtils;
-import com.leobkdn.onthego.ui.destination.DestinationListAdapter;
 import com.leobkdn.onthego.ui.go.info.TripInfo;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 
 public class GoActivity extends AppCompatActivity {
@@ -70,17 +67,6 @@ public class GoActivity extends AppCompatActivity {
         finish();
         startActivity(getIntent());
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 3){
-//            if (resultCode == RESULT_OK){
-//                finish();
-//                startActivity(getIntent());
-//            }
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +116,6 @@ public class GoActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
@@ -187,7 +172,6 @@ public class GoActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(actCon, TripInfo.class);
                     intent.putExtra("isNew", true);
-//                    startActivityForResult(intent, 3);
                     startActivity(intent);
                 }
             });
@@ -223,6 +207,7 @@ public class GoActivity extends AppCompatActivity {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         return prefs.getString(key, null);
     }
+
     private void quickSortBy(ArrayList<Trip> source, int start, int end, String by) {
         if (by.equals("Theo ngày thêm: Xa -> gần")) {
             if (start < end) {
@@ -304,7 +289,6 @@ public class GoActivity extends AppCompatActivity {
     }
 
     private ArrayList<Trip> linearSearch(ArrayList<Trip> source, String str){
-        // TODO: include search owner
         ArrayList<Trip> result = new ArrayList<>();
         for (int i=0;i<source.size();i++){
             if (VNCharacterUtils.removeAccent(source.get(i).getName().toLowerCase()).contains(VNCharacterUtils.removeAccent(str.toLowerCase())))

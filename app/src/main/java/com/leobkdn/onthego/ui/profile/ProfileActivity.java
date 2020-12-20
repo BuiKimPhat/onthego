@@ -1,15 +1,12 @@
 package com.leobkdn.onthego.ui.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.FormatException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,8 +15,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -27,21 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.LoginDataSource;
-import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
-import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private LoginViewModel loginViewModel;
     private TextView nameView;
     private EditText nameEdit;
@@ -63,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         setContentView(R.layout.activity_profile);
         
 
@@ -133,7 +124,6 @@ public class ProfileActivity extends AppCompatActivity {
         setupEditButtons(birthdayEditButton, birthdayView, birthdayEdit);
         setupEditButtons(addressEditButton, addressView, addressSpinnerWrapper);
 
-        //TODO: check email, birthday valid
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(LoginResult loginResult) {
@@ -182,7 +172,7 @@ public class ProfileActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.w("edit", e.getMessage());
                         }
-                        loginViewModel.editInfo(new LoggedInUserView(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
+                        loginViewModel.editInfo(new LoggedInUser(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
                     }
                 }).start();
             }

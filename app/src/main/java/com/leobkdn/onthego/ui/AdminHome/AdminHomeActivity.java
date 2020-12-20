@@ -20,26 +20,20 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.DestinationDataSource;
-import com.leobkdn.onthego.data.ListUserDataSource;
-import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.ui.home.HomeActivity;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.source.DestinationDataSource;
+import com.leobkdn.onthego.data.source.ListUserDataSource;
 import com.leobkdn.onthego.ui.login.LoginActivity;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
-import com.leobkdn.onthego.ui.modify_user.list.Users_class;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
-import com.leobkdn.onthego.ui.signup.SignUpActivity;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class AdminHomeActivity extends AppCompatActivity {
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
     private ImageButton destination;
@@ -70,7 +64,7 @@ public class AdminHomeActivity extends AppCompatActivity {
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
         destination = findViewById(R.id.destination_button);
         trip = findViewById(R.id.trip_button);

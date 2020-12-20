@@ -22,6 +22,7 @@ import com.leobkdn.onthego.ui.login.LoginActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+// Intro activity
 public class MainActivity extends AppCompatActivity {
     private IntroAdapter introAdapter;
     private LinearLayout introIndicators;
@@ -131,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
         );
         layoutParams.setMargins(8, 0, 8, 0);
 
-        //
         for (int i = 0; i < indicators.length; i++) {
             indicators[i] = new ImageView(getApplicationContext());
             indicators[i].setImageDrawable(ContextCompat.getDrawable(

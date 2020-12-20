@@ -76,7 +76,6 @@ public class TripInfoDataPump {
         // calling tsp backtracking function,  starting from 0 for easily manipulate with arrays
         initialize(dSize, X, BestWay, T, Free);
         attemp(distances, dSize, X, BestWay, T, Free,1);
-//        print(dSize, BestWay, distances);
 
         for (int i=0;i<dSize;i++){
             result.add(data.get(BestWay[i]));
@@ -118,22 +117,6 @@ public class TripInfoDataPump {
             }
         }
     }
-
-//    void print(int n, int[] BestWay, double[][] c) {
-//        String string = "";
-//        for (int i = 0; i < n; i ++) {
-//            for (int j = 0; j < n; j ++) {
-//                string += c[i][j] + "  ";
-//            }
-//            string += "\n";
-//        }
-//        for (int i = 0; i < n; i ++) {
-//            string += BestWay[i] + 1 + " -> ";
-//        }
-//        string += 1;
-//        string += "\nCost: " + BestConfig;
-//        Log.w("TSP", string);
-//    }
 
     private double distance(float lat1, float lat2, float lon1, float lon2) {
         if (lat1==lat2 && lon1==lon2) return 0;

@@ -14,18 +14,23 @@ public class LoginFormState {
     private Integer passwordError;
     @Nullable
     private Integer nameError;
+    @Nullable
+    private Integer confirmError;
     private boolean isDataValid;
 
-    LoginFormState(@Nullable Integer emailError, @Nullable Integer passwordError, @Nullable Integer nameError) {
+    LoginFormState(@Nullable Integer emailError, @Nullable Integer passwordError, @Nullable Integer nameError, @Nullable Integer confirmError) {
         this.emailError = emailError;
         this.passwordError = passwordError;
         this.nameError = nameError;
+        this.confirmError = confirmError;
         this.isDataValid = false;
     }
+
     LoginFormState(boolean isDataValid) {
         this.emailError = null;
         this.passwordError = null;
         this.nameError = null;
+        this.confirmError = null;
         this.isDataValid = isDataValid;
     }
 
@@ -40,7 +45,14 @@ public class LoginFormState {
     }
 
     @Nullable
-    public Integer getNameError(){ return nameError; }
+    public Integer getNameError() {
+        return nameError;
+    }
+
+    @Nullable
+    public Integer getConfirmError() {
+        return confirmError;
+    }
 
     public boolean isDataValid() {
         return isDataValid;

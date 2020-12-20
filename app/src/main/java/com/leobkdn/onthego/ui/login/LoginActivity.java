@@ -18,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.AdminHome.AdminHomeActivity;
 import com.leobkdn.onthego.ui.home.HomeActivity;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
@@ -26,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ProgressBar loadingProgressBar;
+    private EditText usernameEditText;
+    private EditText passwordEditText;
     private Button loginButton;
 
     @Override
@@ -43,8 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText usernameEditText = findViewById(R.id.username);
-        final EditText passwordEditText = findViewById(R.id.password);
+        usernameEditText = findViewById(R.id.username);
+        passwordEditText = findViewById(R.id.password);
         loginButton = findViewById(R.id.loginButton);
         loadingProgressBar = findViewById(R.id.loading);
         Button signUpButton = findViewById(R.id.signUpButton);
@@ -94,14 +98,10 @@ public class LoginActivity extends AppCompatActivity {
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
@@ -111,19 +111,10 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loadingProgressBar.setVisibility(View.VISIBLE);
-                    loginButton.setEnabled(false);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loginViewModel.login(usernameEditText.getText().toString(),
-                                    passwordEditText.getText().toString());
-                        }
-                    }).start();
+                    login();
                 }
                 return false;
             }
@@ -132,20 +123,24 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginButton.setEnabled(false);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loginViewModel.login(usernameEditText.getText().toString(),
-                                passwordEditText.getText().toString());
-                    }
-                }).start();
+                login();
             }
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
+    private void login(){
+        loadingProgressBar.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loginViewModel.login(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+            }
+        }).start();
+    }
+
+    private void updateUiWithUser(LoggedInUser model) {
         // initiate successful logged in experience
 
         savePrefsData("username",model.getDisplayName());

@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,12 +16,9 @@ import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.login.LoginFormState;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     private EditText oldPassword;
@@ -46,7 +42,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         changePwdButton = findViewById(R.id.changePwd_action_button);
         progressBar = findViewById(R.id.changePwd_loading);
 
-        // TODO: check valid password, confirm password
         changePwdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,14 +97,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 changePwdViewModel.pwdDataChanged(oldPassword.getText().toString(), newPassword.getText().toString(), confirmPassword.getText().toString());

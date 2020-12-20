@@ -5,15 +5,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Log;
 import android.util.Patterns;
 
 import com.leobkdn.onthego.data.LoginRepository;
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.result.LoginResult;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.R;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 // handle data on changed, call login, signup, logout method (from repository), input validators, store result of login/sign up
@@ -41,7 +40,7 @@ public class LoginViewModel extends ViewModel {
 
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
+            loginResult.postValue(new LoginResult(new LoggedInUser(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
         } else {
             loginResult.postValue(new LoginResult(result.toString()));
         }
@@ -51,7 +50,7 @@ public class LoginViewModel extends ViewModel {
         Result<LoggedInUser> result = loginRepository.signUp(email, password, name, birthday, address);
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.postValue(new LoginResult(new LoggedInUserView(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
+            loginResult.postValue(new LoginResult(new LoggedInUser(data.getDisplayName(), data.getEmail(), data.getToken(), data.getIsAdmin(), data.getBirthday(), data.getAddress())));
         } else {
             loginResult.postValue(new LoginResult(result.toString()));
         }
@@ -66,7 +65,7 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    public void editInfo(LoggedInUserView user){
+    public void editInfo(LoggedInUser user){
         Result<String> result = loginRepository.editInfo(user);
         if (result instanceof Result.Success) {
             loginResult.postValue(new LoginResult((Result.Success<String>) result));
@@ -86,31 +85,33 @@ public class LoginViewModel extends ViewModel {
 
     public void loginDataChanged(String email, String password) {
         if (!isUserNameValid(email)) {
-            loginFormState.setValue(new LoginFormState(R.string.invalid_email, null, null));
+            loginFormState.setValue(new LoginFormState(R.string.invalid_email, null, null, null));
         } else if (!isPasswordValid(password)) {
-            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null));
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null, null));
         } else {
             loginFormState.setValue(new LoginFormState(true));
         }
     }
-    public void signUpDataChanged(String email, String password, String name) {
+    public void signUpDataChanged(String email, String password, String confirm, String name) {
         if (!isUserNameValid(email)) {
-            loginFormState.setValue(new LoginFormState(R.string.invalid_email, null, null));
+            loginFormState.setValue(new LoginFormState(R.string.invalid_email, null, null, null));
         } else if (!isPasswordValid(password)) {
-            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null));
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null, null));
+        } else if (!isConfirmValid(password, confirm)) {
+            loginFormState.setValue(new LoginFormState(null, null, null, R.string.password_confirm_invalid));
         } else if (!isTextValid(name)){
-            loginFormState.setValue(new LoginFormState(null, null, R.string.no_empty));
+            loginFormState.setValue(new LoginFormState(null, null, R.string.no_empty, null));
         } else {
             loginFormState.setValue(new LoginFormState(true));
         }
     }
     public void pwdDataChanged(String oldPwd, String newPwd, String confirmPwd){
         if (!isPasswordValid(oldPwd)){
-            loginFormState.setValue(new LoginFormState(R.string.invalid_password, null, null));
+            loginFormState.setValue(new LoginFormState(R.string.invalid_password, null, null, null));
         } else if (!isPasswordValid(newPwd)){
-            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null));
+            loginFormState.setValue(new LoginFormState(null, R.string.invalid_password, null, null));
         } else if (!isConfirmValid(newPwd, confirmPwd)) {
-            loginFormState.setValue(new LoginFormState(null, null, R.string.password_confirm_invalid));
+            loginFormState.setValue(new LoginFormState(null, null, R.string.password_confirm_invalid, null));
         } else {
             loginFormState.setValue(new LoginFormState(true));
         }
@@ -124,7 +125,6 @@ public class LoginViewModel extends ViewModel {
         if (username.contains("@")) {
             return Patterns.EMAIL_ADDRESS.matcher(username).matches();
         } else {
-//            return !username.trim().isEmpty();
             return false;
         }
     }

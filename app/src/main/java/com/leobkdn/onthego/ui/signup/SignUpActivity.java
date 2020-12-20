@@ -1,17 +1,14 @@
 package com.leobkdn.onthego.ui.signup;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,11 +20,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.ui.home.HomeActivity;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginFormState;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 
@@ -39,26 +37,32 @@ public class SignUpActivity extends AppCompatActivity {
 
     private LoginViewModel signUpViewModel;
     private Date birthday;
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private EditText confirmPwdEditText;
+    private EditText nameEditText;
+    private EditText birthdayEditText;
+    private ProgressBar loadingProgressBar;
+    private Button signUpButton;
+    private Button loginSwitchButton;
+    private Spinner addressSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        //test insert db
-//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
         signUpViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText emailEditText = findViewById(R.id.email);
-        final EditText passwordEditText = findViewById(R.id.password);
-        final EditText nameEditText = findViewById(R.id.userFullName);
-        EditText birthdayEditText = findViewById(R.id.userDOB);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-        final Button signUpButton = findViewById(R.id.signUpButtonAction);
-        Button loginSwitchButton = findViewById(R.id.loginButtonSwitch);
-        Spinner addressSpinner = findViewById(R.id.userAddress);
+        emailEditText = findViewById(R.id.email);
+        passwordEditText = findViewById(R.id.password);
+        confirmPwdEditText = findViewById(R.id.confirm_password);
+        nameEditText = findViewById(R.id.userFullName);
+        birthdayEditText = findViewById(R.id.userDOB);
+        loadingProgressBar = findViewById(R.id.loading);
+        signUpButton = findViewById(R.id.signUpButtonAction);
+        loginSwitchButton = findViewById(R.id.loginButtonSwitch);
+        addressSpinner = findViewById(R.id.userAddress);
         // Create an ArrayAdapter using the cities string array and a default spinner layout
         ArrayAdapter<CharSequence> addressSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -107,11 +111,13 @@ public class SignUpActivity extends AppCompatActivity {
                 if (signUpFormState.getPasswordError() != null) {
                     passwordEditText.setError(getString(signUpFormState.getPasswordError()));
                 }
+                if (signUpFormState.getConfirmError() != null){
+                    confirmPwdEditText.setError(getString(signUpFormState.getConfirmError()));
+                }
                 if (signUpFormState.getNameError() != null) {
                     nameEditText.setError(getString(signUpFormState.getNameError()));
                 }
             }
-            // TODO: check name validation
         });
         // Observe Signup form state on submitted, update UI if success, show error if error
         signUpViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
@@ -134,38 +140,25 @@ public class SignUpActivity extends AppCompatActivity {
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 signUpViewModel.signUpDataChanged(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString(),
+                        passwordEditText.getText().toString(), confirmPwdEditText.getText().toString(),
                         nameEditText.getText().toString());
             }
         };
         //append listener to editText
         emailEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
+        confirmPwdEditText.addTextChangedListener(afterTextChangedListener);
         nameEditText.addTextChangedListener(afterTextChangedListener);
-        //if press Enter (last field, after input form), sign up with the email, password, name
-//        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    signUpViewModel.signUp(emailEditText.getText().toString(),
-//                            passwordEditText.getText().toString(),
-//                            nameEditText.getText().toString());
-//                }
-//                return false;
-//            }
-//        });
+
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,11 +166,11 @@ public class SignUpActivity extends AppCompatActivity {
                 signUpButton.setEnabled(false);
 
                 // parse edittext string to date
-                if (birthdayEditText.getText() != null){
+                if (birthdayEditText.getText() != null) {
                     try {
                         String birthdayString = birthdayEditText.getText().toString();
                         birthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayString);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.getStackTrace();
                         Log.w("convertDateError", e.toString());
                     }
@@ -197,13 +190,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // on success
-    private void updateUiWithUser(LoggedInUserView model) {
+    private void updateUiWithUser(LoggedInUser model) {
         // initiate successful signed in experience
 
         //save user info to storage
-        savePrefsData("username",model.getDisplayName());
+        savePrefsData("username", model.getDisplayName());
         savePrefsData("email", model.getEmail());
-        savePrefsData("token",model.getToken());
+        savePrefsData("token", model.getToken());
         savePrefsData("isAdmin", model.getIsAdmin());
         if (model.getBirthday() != null) savePrefsData("birthday", model.getBirthday().getTime());
         if (model.getAddress() != null) savePrefsData("address", model.getAddress());
@@ -211,11 +204,12 @@ public class SignUpActivity extends AppCompatActivity {
         // show quick noti toast on sign up success
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-        if (!model.getIsAdmin()) startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        if (!model.getIsAdmin())
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
     }
 
     //show quick noti toast on sign up failure
-    private void showLoginFailed(String errorString){
+    private void showLoginFailed(String errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
     }
 
@@ -226,12 +220,14 @@ public class SignUpActivity extends AppCompatActivity {
         editor.putString(key, value);
         editor.apply();
     }
+
     private void savePrefsData(String key, boolean value) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
         editor.apply();
     }
+
     private void savePrefsData(String key, long value) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

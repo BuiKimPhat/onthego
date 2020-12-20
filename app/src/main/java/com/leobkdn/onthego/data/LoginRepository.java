@@ -1,13 +1,11 @@
 package com.leobkdn.onthego.data;
 
-import android.content.SharedPreferences;
-
 import androidx.annotation.Nullable;
 
 import com.leobkdn.onthego.data.model.LoggedInUser;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
+import com.leobkdn.onthego.data.result.Result;
+import com.leobkdn.onthego.data.source.LoginDataSource;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -70,7 +68,7 @@ public class LoginRepository {
         return result;
     }
 
-    public Result<String> editInfo(LoggedInUserView user) {
+    public Result<String> editInfo(LoggedInUser user) {
         if (user == null) return new Result.Error(new Exception("Dữ liệu người dùng lỗi! Vui lòng đăng nhập lại!"));
         Result<String> result = dataSource.editInfo(new LoggedInUser(user.getDisplayName(), user.getEmail(), user.getToken(), user.getIsAdmin(), user.getBirthday(), user.getAddress()));
         return result;

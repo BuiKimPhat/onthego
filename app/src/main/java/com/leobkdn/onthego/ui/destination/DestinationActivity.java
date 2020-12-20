@@ -8,12 +8,10 @@ import androidx.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.http.HttpResponseCache;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,9 +23,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.result.DestinationResult;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.data.model.Trip;
 import com.leobkdn.onthego.tools.VNCharacterUtils;
 
 import java.util.ArrayList;
@@ -74,8 +72,6 @@ public class DestinationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_destination);
-//        HttpResponseCache httpCache = HttpResponseCache.getInstalled();
-//        Log.w("HTTP cache", "cache hits: " + httpCache.getHitCount());
         progressBar = findViewById(R.id.destinationsLoading);
         destinationList = findViewById(R.id.destinations_listView);
         search = findViewById(R.id.destination_search);
@@ -152,12 +148,6 @@ public class DestinationActivity extends AppCompatActivity {
         return prefs.getString(key, null);
     }
 
-    //    private void hoan_vi(Destination a, Destination b) {
-//        Destination temp = new Destination(a);
-//        a = b;
-//        b = temp;
-//    }
-//
     private void quickSortBy(ArrayList<Destination> source, int start, int end, String by) {
         if (by.equals("Theo số người đánh giá: Cao -> thấp")) {
             if (start < end) {
@@ -275,7 +265,6 @@ public class DestinationActivity extends AppCompatActivity {
     }
 
     private ArrayList<Destination> linearSearch(ArrayList<Destination> source, String str) {
-        // TODO: include search city
         ArrayList<Destination> result = new ArrayList<>();
         for (int i = 0; i < source.size(); i++) {
             if (VNCharacterUtils.removeAccent(source.get(i).getName().toLowerCase()).contains(VNCharacterUtils.removeAccent(str.toLowerCase())))

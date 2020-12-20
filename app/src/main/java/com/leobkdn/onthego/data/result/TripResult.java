@@ -1,10 +1,9 @@
-package com.leobkdn.onthego.ui.go;
+package com.leobkdn.onthego.data.result;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.leobkdn.onthego.data.Result;
-import com.leobkdn.onthego.data.TripDataSource;
+import com.leobkdn.onthego.data.source.TripDataSource;
 import com.leobkdn.onthego.data.model.Trip;
 import com.leobkdn.onthego.data.model.TripDestination;
 

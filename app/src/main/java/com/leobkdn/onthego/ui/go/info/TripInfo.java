@@ -19,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -32,19 +31,17 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.TripDestination;
+import com.leobkdn.onthego.data.result.TripDestinationResult;
 import com.leobkdn.onthego.tools.Reminder;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
 import com.leobkdn.onthego.ui.destination.info.DestinationInfo;
-import com.leobkdn.onthego.ui.go.TripResult;
-import com.leobkdn.onthego.ui.home.HomeActivity;
+import com.leobkdn.onthego.data.result.TripResult;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class TripInfo extends AppCompatActivity {
@@ -96,11 +93,7 @@ public class TripInfo extends AppCompatActivity {
                     if (destinations.get(i).getId() == destinationID) return;
                 destinations.add(new TripDestination(destinationID, destinationName, destinationAddress, destinationDescription, destinationRating, destinationRateNum, destinationLat, destinationLon, null, null));
                 if (destinations != null) {
-                    LinkedHashMap<String, ArrayList<TripDestination>> map = new TripInfoDataPump(destinations).getData();
-                    adapter = new TripInfoAdapter(actCon, new ArrayList<String>(map.keySet()), map, destinations);
-                    listDestinations.setAdapter(adapter);
-                    for (int i = 0; i < map.keySet().size() - 1; i++)
-                        listDestinations.expandGroup(i);
+                    refreshList();
                 }
             }
         }
@@ -159,50 +152,8 @@ public class TripInfo extends AppCompatActivity {
                         return;
                     }
                     //reinit UI
-                    tripNameBtn.setVisibility(View.VISIBLE);
-                    confirmButton.setVisibility(View.GONE);
-                    tripNameEdit.setVisibility(View.GONE);
-                    tripName.setText(tripNameEdit.getText());
-                    tripName.setVisibility(View.VISIBLE);
-                    if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
-                        for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
-                            View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
-                            EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
-                            TextView date = child.findViewById(R.id.trip_destination_date);
-                            TextView startTime = child.findViewById(R.id.trip_destination_startTime);
-                            EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
-                            TextView endTime = child.findViewById(R.id.trip_destination_endTime);
-                            EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                            ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
-                            timeEdit.setVisibility(View.VISIBLE);
+                    initUI();
 
-                            date.setText(dateEdit.getText());
-                            date.setVisibility(View.VISIBLE);
-                            dateEdit.setVisibility(View.GONE);
-
-                            startTime.setText(startTimeEdit.getText());
-                            startTime.setVisibility(View.VISIBLE);
-                            startTimeEdit.setVisibility(View.GONE);
-
-                            endTime.setText(endTimeEdit.getText());
-                            endTime.setVisibility(View.VISIBLE);
-                            endTimeEdit.setVisibility(View.GONE);
-                            // set edited time
-                            if (dateEdit.getText().toString().equals("")) {
-                                destinations.get(i).setStartTime(null);
-                                destinations.get(i).setFinishTime(null);
-                            } else {
-                                try {
-                                    String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
-                                    String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
-                                    destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
-                                    destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -221,59 +172,14 @@ public class TripInfo extends AppCompatActivity {
                         return;
                     }
                     //Reinit UI
-                    tripNameBtn.setVisibility(View.VISIBLE);
-                    confirmButton.setVisibility(View.GONE);
-                    tripNameEdit.setVisibility(View.GONE);
-                    tripName.setText(tripNameEdit.getText());
-                    tripName.setVisibility(View.VISIBLE);
-                    if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
-                        for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
-                            View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
-                            EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
-                            TextView date = child.findViewById(R.id.trip_destination_date);
-                            TextView startTime = child.findViewById(R.id.trip_destination_startTime);
-                            EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
-                            TextView endTime = child.findViewById(R.id.trip_destination_endTime);
-                            EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                            ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
-                            timeEdit.setVisibility(View.VISIBLE);
+                    initUI();
 
-                            date.setText(dateEdit.getText());
-                            date.setVisibility(View.VISIBLE);
-                            dateEdit.setVisibility(View.GONE);
-
-                            startTime.setText(startTimeEdit.getText());
-                            startTime.setVisibility(View.VISIBLE);
-                            startTimeEdit.setVisibility(View.GONE);
-
-                            endTime.setText(endTimeEdit.getText());
-                            endTime.setVisibility(View.VISIBLE);
-                            endTimeEdit.setVisibility(View.GONE);
-
-                            //set edited time
-                            if (dateEdit.getText().toString().equals("")) {
-                                destinations.get(i).setStartTime(null);
-                                destinations.get(i).setFinishTime(null);
-                            } else {
-                                try {
-                                    String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
-                                    String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
-                                    destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
-                                    destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations);
                         }
                     }).start();
-//                    for (int i=0;i<destinations.size();i++)
-//                        Log.w("confirm", destinations.get(i).getStartTime() != null ? destinations.get(i).getStartTime().toString() : "null");
                 }
             });
             new Thread(new Runnable() {
@@ -295,6 +201,7 @@ public class TripInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
+                clearPrefs("currentTrip");
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -308,34 +215,8 @@ public class TripInfo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //update edit date/time
-                if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
-                    for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
-                        View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
-                        EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
-                        TextView date = child.findViewById(R.id.trip_destination_date);
-                        TextView startTime = child.findViewById(R.id.trip_destination_startTime);
-                        EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
-                        TextView endTime = child.findViewById(R.id.trip_destination_endTime);
-                        EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                        date.setText(dateEdit.getText());
-                        startTime.setText(startTimeEdit.getText());
-                        endTime.setText(endTimeEdit.getText());
-                        if (dateEdit.getText().toString().equals("")) {
-                            destinations.get(i).setStartTime(null);
-                            destinations.get(i).setFinishTime(null);
-                        } else {
-                            try {
-                                String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
-                                String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
-                                destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
-                                destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
+                //reinit UI
+                initUI();
 
                 Intent intent = new Intent(actCon, DestinationActivity.class);
                 intent.putExtra("mode", "add");
@@ -373,42 +254,11 @@ public class TripInfo extends AppCompatActivity {
                     } else {
                         destinations = ((Result.Success<ArrayList<TripDestination>>) result).getData();
                         if (destinations != null) {
-                            LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
-                            adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
-                            listDestinations.setAdapter(adapter);
-                            for (int i = 0; i < data.keySet().size() - 1; i++)
-                                listDestinations.expandGroup(i);
-//                            View child = listDestinations.getChildAt(0);
-//                            child.findViewById(R.id.trip_destination_delete).setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    listDestinations.removeViewAt(0);
-//                                }
-//                            });
+                            // refresh ListView
+                            refreshList();
 
-                            //set notification
-                            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-                            long min = 999999999; int minI = -1;
-                            for (int i=0;i<destinations.size();i++){
-                                Timestamp start = destinations.get(i).getStartTime();
-                                if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min){
-                                    min = currentTime.getTime() - start.getTime();
-                                    minI = i;
-                                }
-                            }
-                            if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
-                                // notification
-                                Intent intent = new Intent(TripInfo.this, Reminder.class);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(TripInfo.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//                                long currentTimeAfterFetch = System.currentTimeMillis();
-                                long fifteenMins = 15 * 60 * 1000;
-                                long endTime = destinations.get(minI).getFinishTime().getTime();
-//                                alarmManager.set(AlarmManager.RTC_WAKEUP, currentTimeAfterFetch + fifteenMins, pendingIntent);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
-                                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
-                            }
+                            // setup notification
+                            setupNotification();
                         }
                     }
                 } else {
@@ -434,50 +284,9 @@ public class TripInfo extends AppCompatActivity {
                                     tripNameEdit.setError("Không được bỏ trống");
                                     return;
                                 }
-                                tripNameBtn.setVisibility(View.VISIBLE);
-                                confirmButton.setVisibility(View.GONE);
-                                tripNameEdit.setVisibility(View.GONE);
-                                tripName.setText(tripNameEdit.getText());
-                                tripName.setVisibility(View.VISIBLE);
-                                if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
-                                    for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
-                                        View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
-                                        EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
-                                        TextView date = child.findViewById(R.id.trip_destination_date);
-                                        TextView startTime = child.findViewById(R.id.trip_destination_startTime);
-                                        EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
-                                        TextView endTime = child.findViewById(R.id.trip_destination_endTime);
-                                        EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
-                                        ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
-                                        timeEdit.setVisibility(View.VISIBLE);
+                                // reinit ui
+                                initUI();
 
-                                        date.setText(dateEdit.getText());
-                                        date.setVisibility(View.VISIBLE);
-                                        dateEdit.setVisibility(View.GONE);
-
-                                        startTime.setText(startTimeEdit.getText());
-                                        startTime.setVisibility(View.VISIBLE);
-                                        startTimeEdit.setVisibility(View.GONE);
-
-                                        endTime.setText(endTimeEdit.getText());
-                                        endTime.setVisibility(View.VISIBLE);
-                                        endTimeEdit.setVisibility(View.GONE);
-
-                                        if (dateEdit.getText().toString().equals("")) {
-                                            destinations.get(i).setStartTime(null);
-                                            destinations.get(i).setFinishTime(null);
-                                        } else {
-                                            try {
-                                                String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
-                                                String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
-                                                destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
-                                                destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-                                }
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -489,37 +298,12 @@ public class TripInfo extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
-                // refresh listview
                 if (destinations != null) {
-                    LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
-                    adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
-                    listDestinations.setAdapter(adapter);
-                    for (int i = 0; i < data.keySet().size() - 1; i++)
-                        listDestinations.expandGroup(i);
+                    // refresh listView
+                    refreshList();
 
                     //set notification
-                    Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-                    long min = 999999999; int minI = -1;
-                    for (int i=0;i<destinations.size();i++){
-                        Timestamp start = destinations.get(i).getStartTime();
-                        if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min){
-                            min = currentTime.getTime() - start.getTime();
-                            minI = i;
-                        }
-                    }
-                    if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
-                        // notification
-                        Intent intent = new Intent(TripInfo.this, Reminder.class);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(TripInfo.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//                                long currentTimeAfterFetch = System.currentTimeMillis();
-                        long fifteenMins = 15 * 60 * 1000;
-                        long endTime = destinations.get(minI).getFinishTime().getTime();
-//                                alarmManager.set(AlarmManager.RTC_WAKEUP, currentTimeAfterFetch + fifteenMins, pendingIntent);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
-                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
-                    }
+                    setupNotification();
                 }
             }
         });
@@ -539,6 +323,81 @@ public class TripInfo extends AppCompatActivity {
         });
     }
 
+    private void initUI() {
+        tripNameBtn.setVisibility(View.VISIBLE);
+        confirmButton.setVisibility(View.GONE);
+        tripNameEdit.setVisibility(View.GONE);
+        tripName.setText(tripNameEdit.getText());
+        tripName.setVisibility(View.VISIBLE);
+        if (adapter != null && (adapter.getGroupCount() > 0 ? adapter.isChildViewsExist(adapter.getGroupCount() - 1) : false)) {
+            for (int i = 0; i < adapter.getChildrenCount(adapter.getGroupCount() - 1); i++) {
+                View child = adapter.getChildView(adapter.getGroupCount() - 1, i);
+                EditText dateEdit = child.findViewById(R.id.trip_destination_date_edit);
+                TextView date = child.findViewById(R.id.trip_destination_date);
+                TextView startTime = child.findViewById(R.id.trip_destination_startTime);
+                EditText startTimeEdit = child.findViewById(R.id.trip_destination_startTime_edit);
+                TextView endTime = child.findViewById(R.id.trip_destination_endTime);
+                EditText endTimeEdit = child.findViewById(R.id.trip_destination_endTime_edit);
+                ImageButton timeEdit = child.findViewById(R.id.trip_time_edit_button);
+                timeEdit.setVisibility(View.VISIBLE);
+
+                date.setText(dateEdit.getText());
+                date.setVisibility(View.VISIBLE);
+                dateEdit.setVisibility(View.GONE);
+
+                startTime.setText(startTimeEdit.getText());
+                startTime.setVisibility(View.VISIBLE);
+                startTimeEdit.setVisibility(View.GONE);
+
+                endTime.setText(endTimeEdit.getText());
+                endTime.setVisibility(View.VISIBLE);
+                endTimeEdit.setVisibility(View.GONE);
+                // set edited time
+                if (dateEdit.getText().toString().equals("")) {
+                    destinations.get(i).setStartTime(null);
+                    destinations.get(i).setFinishTime(null);
+                } else {
+                    try {
+                        String startString = dateEdit.getText().toString() + " " + (startTimeEdit.getText().toString().equals("") ? "00:00" : startTimeEdit.getText().toString());
+                        String endString = dateEdit.getText().toString() + " " + (endTimeEdit.getText().toString().equals("") ? "00:00" : endTimeEdit.getText().toString());
+                        destinations.get(i).setStartTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(startString).getTime()));
+                        destinations.get(i).setFinishTime(new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(endString).getTime()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+    private void refreshList(){
+        LinkedHashMap<String, ArrayList<TripDestination>> data = new TripInfoDataPump(destinations).getData();
+        adapter = new TripInfoAdapter(actCon, new ArrayList<String>(data.keySet()), data, destinations);
+        listDestinations.setAdapter(adapter);
+        for (int i = 0; i < data.keySet().size() - 1; i++)
+            listDestinations.expandGroup(i);
+    }
+    private void setupNotification(){
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        long min = 999999999;
+        int minI = -1;
+        for (int i = 0; i < destinations.size(); i++) {
+            Timestamp start = destinations.get(i).getStartTime();
+            if (start != null && currentTime.getTime() - start.getTime() > 0 && currentTime.getTime() - start.getTime() < min) {
+                min = currentTime.getTime() - start.getTime();
+                minI = i;
+            }
+        }
+        if (minI >= 0 && destinations.get(minI).getFinishTime() != null) {
+            Intent intent = new Intent(TripInfo.this, Reminder.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(TripInfo.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            long fifteenMins = 15 * 60 * 1000;
+            long endTime = destinations.get(minI).getFinishTime().getTime();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
+        }
+    }
 
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
@@ -550,8 +409,8 @@ public class TripInfo extends AppCompatActivity {
         return !text.trim().isEmpty();
     }
 
-    private void createNotificationChannel(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "OnTheGoChannel";
             String description = "Channel for On The Go app";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -562,5 +421,10 @@ public class TripInfo extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-    //TODO: write functions for init UI and listeners
+    private void clearPrefs(String prefsName) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(prefsName, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
+    }
 }

@@ -1,11 +1,10 @@
-package com.leobkdn.onthego.ui.destination;
+package com.leobkdn.onthego.data.result;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.leobkdn.onthego.data.DestinationDataSource;
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.source.DestinationDataSource;
 import com.leobkdn.onthego.data.model.Destination;
 
 import java.util.ArrayList;

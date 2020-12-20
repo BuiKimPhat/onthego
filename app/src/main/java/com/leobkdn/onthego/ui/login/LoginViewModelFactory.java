@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import com.leobkdn.onthego.data.LoginDataSource;
+import com.leobkdn.onthego.data.source.LoginDataSource;
 import com.leobkdn.onthego.data.LoginRepository;
 
 /**

@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.leobkdn.onthego.R;
+import com.leobkdn.onthego.data.result.TripResult;
 
 public class ExistTripAddDialog extends DialogFragment {
     private String token;
