@@ -18,6 +18,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Class that handles trip CRUD.
  * (Server class)
@@ -136,10 +138,92 @@ public class TripDataSource extends ServerData {
         }
     }
     // An
-    public int getSum() {
-        return sum;
+    public ArrayList<Trip> getListTrip(String token) {
+        ArrayList<Trip> trips = new ArrayList<Trip>();
+        try{
+        URL endPoint = new URL(server + "/trip/getListTrip");
+        // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginArray();
+            while (jsonReader.hasNext()) {
+                int id = -1;
+                String name = "an", owner = "an";
+                String ownerName = "an";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
+                        id = jsonReader.nextInt();
+                    } else jsonReader.skipValue();
+                    if (jsonReader.nextName().equals("ownerId") && jsonReader.peek() != JsonToken.NULL) {
+                        owner = ""+jsonReader.nextInt();
+                    } else jsonReader.skipValue();
+                    if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL){
+                        name = jsonReader.nextString();
+                    }
+                    else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                trips.add(new Trip(id, name, owner));
+            }
+            jsonReader.endArray();
+            return trips;
+        } else {
+//                Log.w("httpRes","error");
+            InputStream responseBody = connection.getErrorStream();
+            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+            JsonReader jsonReader = new JsonReader(responseBodyReader);
+            String error = "Lỗi không xác định";
+            jsonReader.beginObject();
+            while (jsonReader.hasNext()) {
+                if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                    error = jsonReader.nextString();
+                } else jsonReader.skipValue();
+            }
+            jsonReader.endObject();
+            throw new Exception(error);
+        }
+    } catch (Exception e) {
+            Log.i(TAG, " Get trip err :" + e);
+            trips.add(new Trip(0,"Faild","Faild"));
+            return trips;
+        }
     }
-
+    public int getTripCout(String token){
+        int num =-1;
+        try{
+            URL endPoint = new URL(server + "/trip/getListTrip");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginArray();
+                while (jsonReader.hasNext()) {
+                    jsonReader.beginObject();
+                    while (jsonReader.hasNext()) {
+                        if (jsonReader.nextName().equals("numOfTrips") && jsonReader.peek() != JsonToken.NULL) {
+                            num = jsonReader.nextInt();
+                        } else jsonReader.skipValue();
+                    }
+                    jsonReader.endObject();
+                    return num;
+                }
+            }
+        }catch (Exception err){
+            Log.i(TAG, " Get trip count err :" + err);
+            return sum;
+        }
+        return -1;
+}
     public Result<String> addTrip(String token, int tripId) {
         try {
             //Set connection

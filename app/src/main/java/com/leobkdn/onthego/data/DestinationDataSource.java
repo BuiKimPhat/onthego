@@ -500,7 +500,7 @@ public class DestinationDataSource extends ServerData {
 
     public boolean addDes(String token,Destination destination){
         try{
-            URL endPoint = new URL(server + "/destination/edit");
+            URL endPoint = new URL(server + "/destination/add");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestMethod("POST");
@@ -510,7 +510,7 @@ public class DestinationDataSource extends ServerData {
             String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
                     + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
                     + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") +"\",\"latitude\":\"" + destination.getLat()
-                    + "\",\"longitude\":\"" + destination.getLon() + "\",\"id\":\"" + destination.getId() +"}";
+                    + "\",\"longitude\":\"" + destination.getLon()+"}";
             connection.setDoOutput(true);
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {

@@ -90,6 +90,11 @@
             android:theme="@style/withActionBar"
             android:label="Thêm điểm đến"
             />
+        <activity android:name=".ui.listTrip.list.listTrip"
+            android:label="Danh sách chuyến đi"
+            android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
+            android:theme="@style/withActionBar"
+            />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

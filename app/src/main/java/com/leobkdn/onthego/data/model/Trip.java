@@ -26,6 +26,12 @@ public class Trip {
         this.createdAt = createdAt;
     }
 
+    public Trip(int id, String name, String owner) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+    }
+
     public Trip(int id, String name, String owner, Date createdAt, ArrayList<TripDestination> destinations) {
         this.id = id;
         this.name = name;
@@ -53,6 +59,7 @@ public class Trip {
     public Date getCreatedAt() {
         return createdAt;
     }
+
 
     public int tripCost(){
         return 0;

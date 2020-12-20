@@ -32,7 +32,7 @@ import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.ui.listDestination.List.destinationActivity;
-
+import com.leobkdn.onthego.ui.listTrip.list.listTrip;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -98,6 +98,7 @@ public class  AdminHomeActivity extends AppCompatActivity {
         //setButton
         setupActivityButtons(persons,new Intent(AdminHomeActivity.this, UserListActivity.class));
         setupActivityButtons(destination,new Intent(AdminHomeActivity.this, destinationActivity.class));
+        setupActivityButtons(trip,new Intent(AdminHomeActivity.this, listTrip.class));
 //        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
 //        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
 //        persons.setOnClickListener(new View.OnClickListener() {

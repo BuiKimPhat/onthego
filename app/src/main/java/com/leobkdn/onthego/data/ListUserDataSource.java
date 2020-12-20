@@ -152,7 +152,7 @@ public class ListUserDataSource extends ServerData {
                 while (jsonReader.hasNext()) {
                     jsonReader.beginObject();
                     while (jsonReader.hasNext())
-                    if (jsonReader.nextName().equals("numOfTrip") && jsonReader.peek() != JsonToken.NULL)
+                    if (jsonReader.nextName().equals("numOfTrips") && jsonReader.peek() != JsonToken.NULL)
                         tripCount = jsonReader.nextInt();
                 }
             }
