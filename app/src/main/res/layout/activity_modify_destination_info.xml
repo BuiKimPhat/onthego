@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/space_8"
+        android:padding="1dp"
+        android:text="Tên :"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+    <EditText
+        android:id="@+id/ed_ten"
+        android:layout_width="380dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/space_8"
+        app:layout_constraintLeft_toRightOf="@id/name"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <TextView
+        android:id="@+id/cat1"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="13dp"
+        android:padding="1dp"
+        android:text="Loại điểm đến :"
+        app:layout_constraintTop_toBottomOf="@id/ed_ten"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+    <Button
+        android:id="@+id/noi_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Nơi ở"
+        android:background="@color/darkSky"
+        app:layout_constraintTop_toBottomOf="@id/ed_ten"
+        app:layout_constraintLeft_toRightOf="@id/cat1"
+        />
+
+    <Button
+        android:id="@+id/an_uong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Ăn Uống"
+        app:layout_constraintLeft_toRightOf="@id/noi_o"
+        app:layout_constraintTop_toBottomOf="@id/ed_ten" />
+
+    <Button
+        android:id="@+id/di_chuyen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="Di Chuyển"
+        app:layout_constraintTop_toBottomOf="@id/ed_ten"
+        app:layout_constraintLeft_toRightOf="@id/an_uong"/>
+    <TextView
+        android:id="@+id/dia_chi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Địa Chỉ : "
+        app:layout_constraintTop_toBottomOf="@id/cat1"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+    <EditText
+        android:id="@+id/ed_dia_chi"
+        android:layout_width="360dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="@dimen/space_8"
+        app:layout_constraintLeft_toRightOf="@id/dia_chi"
+        app:layout_constraintTop_toBottomOf="@id/an_uong"
+        />
+    <TextView
+        android:id="@+id/mo_ta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:text="Mô tả : "
+        app:layout_constraintTop_toBottomOf="@id/ed_dia_chi"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+    <EditText
+        android:id="@+id/ed_mo_ta"
+        android:layout_width="360dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/space_8"
+        app:layout_constraintLeft_toRightOf="@id/mo_ta"
+        app:layout_constraintTop_toBottomOf="@id/ed_dia_chi"
+        />
+    <TextView
+        android:id="@+id/rating"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        app:layout_constraintTop_toBottomOf="@+id/ed_mo_ta"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+    <TextView
+        android:id="@+id/rating_num"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        app:layout_constraintTop_toBottomOf="@+id/ed_mo_ta"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+    <TextView
+        android:id="@+id/kinh_do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:text="Kinh độ :"
+        app:layout_constraintTop_toBottomOf="@+id/rating"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+    <EditText
+        android:id="@+id/ed_kinh_do"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/space_8"
+        app:layout_constraintLeft_toRightOf="@id/kinh_do"
+        app:layout_constraintTop_toBottomOf="@id/rating"
+        />
+    <TextView
+        android:id="@+id/vi_do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:layout_marginLeft="55dp"
+        android:text="Vĩ độ :"
+        app:layout_constraintLeft_toRightOf="@+id/ed_kinh_do"
+        app:layout_constraintTop_toBottomOf="@+id/rating_num"
+        />
+    <EditText
+        android:id="@+id/ed_vi_do"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginLeft="@dimen/space_8"
+        app:layout_constraintLeft_toRightOf="@id/vi_do"
+        app:layout_constraintTop_toBottomOf="@id/rating_num"
+        />
+    <Button
+        android:id="@+id/confirm_button1"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Xác nhận thay đổi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:text="Xóa điểm đến"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

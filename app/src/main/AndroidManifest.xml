@@ -73,9 +73,23 @@
             android:parentActivityName=".ui.modify_user.list.UserListActivity"
             android:theme="@style/withActionBar"/>
         <activity android:name=".ui.modify_user.user.AddUserActivity"
+            android:label="Thêm người dùng"
             android:parentActivityName=".ui.modify_user.list.UserListActivity"
             android:theme="@style/withActionBar"/>
-
+        <activity android:name=".ui.listDestination.List.destinationActivity"
+            android:label="Danh sach điểm đến"
+            android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity android:name=".ui.listDestination.modify.modifyDetinatiobInfoActivity"
+            android:parentActivityName=".ui.listDestination.List.destinationActivity"
+            android:theme="@style/withActionBar"
+            android:label="Chỉnh sửa thông tin điểm đén"
+            />
+        <activity android:name=".ui.listDestination.modify.addDestinationActivity"
+            android:parentActivityName=".ui.listDestination.List.destinationActivity"
+            android:theme="@style/withActionBar"
+            android:label="Thêm điểm đến"
+            />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

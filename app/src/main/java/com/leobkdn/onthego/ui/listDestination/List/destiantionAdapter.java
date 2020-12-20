@@ -1,4 +1,4 @@
-package com.leobkdn.onthego.ui.listDestination;
+package com.leobkdn.onthego.ui.listDestination.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -46,11 +46,17 @@ public class destiantionAdapter extends BaseAdapter {
             view = View.inflate(parent.getContext(), R.layout.destination_info_list_item,null);
         } else view = convertView;
         //bind date
-        Destination user = (Destination) getItem(position);
-        ((TextView) view.findViewById(R.id.tv_id)).setText(String.format(" %d ", user.getId()));
-        ((TextView) view.findViewById(R.id.tv_name2)).setText(String.format("Tên : %s", user.getName()));
-        ((TextView) view.findViewById(R.id.tv_address)).setText(String.format("Địa chỉ: %s", user.getAddress()));
-        ((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("%s", user.getCategory()));
+        Destination dess = (Destination) getItem(position);
+        ((TextView) view.findViewById(R.id.tv_id)).setText(String.format(" %d ", dess.getId()));
+        ((TextView) view.findViewById(R.id.tv_name2)).setText(String.format("Tên : %s", dess.getName()));
+        ((TextView) view.findViewById(R.id.tv_address)).setText(String.format("Địa chỉ: %s", dess.getAddress()));
+        if( dess.getCategory()==null) ((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("Chưa rõ!"));
+        else{
+            if(dess.getCategory().equals("food")) ((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("Quán \n ăn"));
+            if(dess.getCategory().equals("stay")) ((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("Nơi \n ở"));
+            if(dess.getCategory().equals("transport")) ((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("Di \nchuyển"));
+            //((TextView) view.findViewById(R.id.tv_cat)).setText(String.format("%s",dess.getCategory()));
+        }
         return view;
     }
 }

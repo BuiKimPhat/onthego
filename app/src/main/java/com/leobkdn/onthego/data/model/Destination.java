@@ -47,6 +47,42 @@ public class Destination {
         this.lon = lon;
     }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public void setLon(float lon) {
+        this.lon = lon;
+    }
+
+    public void setRateNum(int rateNum) {
+        this.rateNum = rateNum;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
     public int getId() {
         return id;
     }

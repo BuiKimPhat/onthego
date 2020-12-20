@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/tv_id"
-        android:layout_width="wrap_content"
+        android:layout_width="25dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,41 +17,47 @@
 
     <TextView
         android:id="@+id/tv_name2"
-        android:layout_width="wrap_content"
+        android:layout_width="285dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_16"
+        android:paddingRight="10dp"
         android:textSize="@dimen/medium_text"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_id"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/tv_cat"
-        />
+        app:layout_constraintTop_toBottomOf="parent" />
+<!--        app:layout_constraintLeft_toRightOf="@id/tv_id"-->
+
 
     <TextView
         android:id="@+id/tv_address"
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_16"
         android:layout_marginTop="4dp"
+        android:paddingRight="10dp"
         android:textSize="@dimen/inter_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/tv_id"
         app:layout_constraintTop_toBottomOf="@+id/tv_name2"
-        app:layout_constraintRight_toLeftOf="@id/tv_cat"
         />
     <TextView
         android:id="@+id/tv_cat"
-        android:layout_width="wrap_content"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_16"
+        android:layout_marginLeft="@dimen/space_8"
         android:textSize="@dimen/medium_text"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tv_name2"
         app:layout_constraintBottom_toBottomOf="@id/tv_address"
+        app:layout_constraintLeft_toRightOf="@id/tv_address"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

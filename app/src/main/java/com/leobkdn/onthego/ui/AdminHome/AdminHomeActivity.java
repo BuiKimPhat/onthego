@@ -23,7 +23,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.DestinationDataSource;
 import com.leobkdn.onthego.data.ListUserDataSource;
 import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
@@ -32,6 +31,7 @@ import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
+import com.leobkdn.onthego.ui.listDestination.List.destinationActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +97,7 @@ public class  AdminHomeActivity extends AppCompatActivity {
 
         //setButton
         setupActivityButtons(persons,new Intent(AdminHomeActivity.this, UserListActivity.class));
+        setupActivityButtons(destination,new Intent(AdminHomeActivity.this, destinationActivity.class));
 //        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
 //        setupActivityButtons(persons,new Intent(getApplicationContext(),UserListActivity.class));
 //        persons.setOnClickListener(new View.OnClickListener() {
