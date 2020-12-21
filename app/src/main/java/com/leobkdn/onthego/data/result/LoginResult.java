@@ -1,15 +1,16 @@
-package com.leobkdn.onthego.ui.login;
+package com.leobkdn.onthego.data.result;
 
 import androidx.annotation.Nullable;
 
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.model.LoggedInUser;
 
 /**
  * Authentication result : success (user details) or error message.
  */
+
 public class LoginResult {
     @Nullable
-    private LoggedInUserView success;
+    private LoggedInUser success;
     @Nullable
     private String error;
     @Nullable
@@ -19,7 +20,7 @@ public class LoginResult {
         this.error = error;
     }
 
-    public LoginResult(@Nullable LoggedInUserView success) {
+    public LoginResult(@Nullable LoggedInUser success) {
         this.success = success;
     }
 
@@ -28,7 +29,7 @@ public class LoginResult {
     }
 
     @Nullable
-    public LoggedInUserView getSuccess() {
+    public LoggedInUser getSuccess() {
         return success;
     }
 

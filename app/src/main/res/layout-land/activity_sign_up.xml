@@ -42,6 +42,16 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:selectAllOnFocus="true" />
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/confirm_password"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="@string/confirm_new_password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:selectAllOnFocus="true" />
+
     </LinearLayout>
 
     <LinearLayout

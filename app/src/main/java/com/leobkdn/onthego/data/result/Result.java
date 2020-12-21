@@ -1,4 +1,4 @@
-package com.leobkdn.onthego.data;
+package com.leobkdn.onthego.data.result;
 
 /**
  * A generic class that holds a result success w/ data or an error exception.
@@ -17,7 +17,6 @@ public class Result<T> {
             Result.Error error = (Result.Error) this;
             if (error.getErrMessage() != null)  return error.getErrMessage();
             return error.getError().toString();
-//            return "Lỗi: [" + error.getError().toString() + "]";
         }
         return "";
     }
@@ -28,11 +27,9 @@ public class Result<T> {
         public Success(T data) {
             this.data = data;
         }
-
         public T getData() {
             return this.data;
         }
-
         public boolean checkTypeString(){
             if (data instanceof String) return true;
             return false;
@@ -46,7 +43,6 @@ public class Result<T> {
         public Error(Exception error) {
             this.error = error;
         }
-
         public Exception getError() {
             return this.error;
         }

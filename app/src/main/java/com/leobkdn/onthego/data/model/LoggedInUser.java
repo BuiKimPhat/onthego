@@ -17,11 +17,6 @@ public class LoggedInUser {
     private Date birthday;
     private String address;
 
-    public LoggedInUser(String displayName, String token) {
-        this.displayName = displayName;
-        this.token = token;
-    }
-
     public LoggedInUser(String displayName, String email, String token, boolean isAdmin, @Nullable Date birthday, @Nullable String address) {
         this.displayName = displayName;
         this.email = email;

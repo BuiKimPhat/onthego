@@ -9,9 +9,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.ListUserDataSource;
-import com.leobkdn.onthego.data.LoginDataSource;
-import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.source.ListUserDataSource;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 
 import java.util.ArrayList;

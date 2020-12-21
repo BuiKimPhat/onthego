@@ -22,6 +22,7 @@ import com.leobkdn.onthego.ui.login.LoginActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+// Intro activity
 public class MainActivity extends AppCompatActivity {
     private IntroAdapter introAdapter;
     private LinearLayout introIndicators;
@@ -90,28 +91,34 @@ public class MainActivity extends AppCompatActivity {
 
         IntroItem itemIntroduction = new IntroItem();
         itemIntroduction.setTitle("Chào mừng đến với On The Go");
-        itemIntroduction.setDescription("Ứng dụng gợi ý dành cho những người thích đi du lịch");
+        itemIntroduction.setDescription("Ứng dụng dành cho những người thích đi du lịch");
         itemIntroduction.setImage(R.drawable.onthego_logo);
 
         IntroItem itemDestination = new IntroItem();
-        itemDestination.setTitle("Gợi ý điểm đến, lập lộ trình");
-        itemDestination.setDescription("Không cần phải băn khoăn nên đi đâu, tự động gợi ý chuyến đi tốt nhất");
+        itemDestination.setTitle("Tìm kiếm điểm đến du lịch");
+        itemDestination.setDescription("Tìm, lọc và sắp xếp các điểm đến");
         itemDestination.setImage(R.drawable.destinations);
 
         IntroItem itemFlight = new IntroItem();
-        itemFlight.setTitle("Tự động tìm chuyến bay phù hợp");
-        itemFlight.setDescription("Giúp bạn chọn những chuyến bay tốt nhất");
-        itemFlight.setImage(R.drawable.flight);
+        itemFlight.setTitle("Tạo 1 tour du lịch của riêng bạn");
+        itemFlight.setDescription("Tự tạo 1 tour du lịch có điểm đến, thời gian rõ ràng và chia sẻ với người khác");
+        itemFlight.setImage(R.drawable.travel_planning);
 
         IntroItem itemMoney = new IntroItem();
-        itemMoney.setTitle("Chi tiêu hợp lí");
-        itemMoney.setDescription("Tự lập lộ trình, hoạt động du lịch theo số tiền mà bạn có");
-        itemMoney.setImage(R.drawable.money);
+        itemMoney.setTitle("Gọi ý lộ trình ngắn nhất");
+        itemMoney.setDescription("Sử dụng giải thuật quay lui, tìm thứ tự điểm đến thích hợp cho tổng lộ trình ngắn nhất");
+        itemMoney.setImage(R.drawable.roundtrip);
+
+        IntroItem itemNoti = new IntroItem();
+        itemNoti.setTitle("Thông báo khi hết giờ");
+        itemNoti.setDescription("Gửi thông báo đến điện thoại của bạn khi gần hết thời gian dành cho điểm đến");
+        itemNoti.setImage(R.drawable.notification);
 
         introItemList.add(itemIntroduction);
         introItemList.add(itemDestination);
         introItemList.add(itemFlight);
         introItemList.add(itemMoney);
+        introItemList.add(itemNoti);
 
         introAdapter = new IntroAdapter(introItemList);
     }
@@ -125,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
         );
         layoutParams.setMargins(8, 0, 8, 0);
 
-        //
         for (int i = 0; i < indicators.length; i++) {
             indicators[i] = new ImageView(getApplicationContext());
             indicators[i].setImageDrawable(ContextCompat.getDrawable(

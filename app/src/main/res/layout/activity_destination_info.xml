@@ -28,7 +28,7 @@
             app:layout_constraintTop_toBottomOf="@id/destination_info_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:hint="Địa chỉ điểm đến"
+            android:hint="Địa chỉ: Không rõ"
             android:padding="5dp"
             android:textSize="16sp" />
         <TextView
@@ -38,18 +38,38 @@
             app:layout_constraintTop_toBottomOf="@id/destination_info_address"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:hint="Số điện thoại điểm đến"
+            android:hint="Đánh giá: Không có"
+            android:padding="5dp"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/destination_info_rateNum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/destination_info_phone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:hint="Số người đánh giá: 0"
+            android:padding="5dp"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/destination_info_coordinate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/destination_info_rateNum"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:hint="Tọa độ: Không rõ"
             android:padding="5dp"
             android:textSize="16sp" />
         <TextView
             android:id="@+id/destination_info_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/destination_info_phone"
+            app:layout_constraintTop_toBottomOf="@id/destination_info_coordinate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp"
-            android:hint="Mô tả điểm đến"
+            android:hint="Chưa có mô tả về điểm đến"
             android:padding="5dp"
             android:textSize="16sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>

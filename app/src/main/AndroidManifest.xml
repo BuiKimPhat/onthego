@@ -69,6 +69,8 @@
             android:label="@string/list_user"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar"/>
+
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,6 +78,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".tools.Reminder" />
     </application>
 
 </manifest>

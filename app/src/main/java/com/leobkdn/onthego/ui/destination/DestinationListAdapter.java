@@ -3,7 +3,6 @@ package com.leobkdn.onthego.ui.destination;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +66,9 @@ public class DestinationListAdapter extends BaseAdapter {
                     intent.putExtra("address", destinations.get(position).getAddress());
                     intent.putExtra("rating", destinations.get(position).getRating());
                     intent.putExtra("description", destinations.get(position).getDescription());
+                    intent.putExtra("rateNum", destinations.get(position).getRateNum());
+                    intent.putExtra("lat", destinations.get(position).getLat());
+                    intent.putExtra("lon", destinations.get(position).getLon());
                     context.startActivity(intent);
                 }
             });
@@ -95,6 +97,9 @@ public class DestinationListAdapter extends BaseAdapter {
                     intent.putExtra("address", destinations.get(position).getAddress());
                     intent.putExtra("rating", destinations.get(position).getRating());
                     intent.putExtra("description", destinations.get(position).getDescription());
+                    intent.putExtra("rateNum", destinations.get(position).getRateNum());
+                    intent.putExtra("lat", destinations.get(position).getLat());
+                    intent.putExtra("lon", destinations.get(position).getLon());
                     context.startActivity(intent);
                 }
             });

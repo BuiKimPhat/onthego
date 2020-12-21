@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,11 +23,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.tools.VNCharacterUtils;
 import com.leobkdn.onthego.ui.destination.DestinationListAdapter;
-import com.leobkdn.onthego.ui.destination.DestinationResult;
+import com.leobkdn.onthego.data.result.DestinationResult;
 
 import java.util.ArrayList;
 

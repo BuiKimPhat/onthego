@@ -19,8 +19,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 
@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ModifyUserActivity extends AppCompatActivity {
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private LoginViewModel loginViewModel;
     private TextView nameView;
     private EditText nameEdit;
@@ -51,7 +51,7 @@ public class ModifyUserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         setContentView(R.layout.activity_profile);
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
@@ -144,7 +144,7 @@ public class ModifyUserActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.w("edit", e.getMessage());
                         }
-                        loginViewModel.editInfo(new LoggedInUserView(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
+                        loginViewModel.editInfo(new LoggedInUser(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
                     }
                 }).start();
             }

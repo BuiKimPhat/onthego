@@ -2,30 +2,23 @@ package com.leobkdn.onthego.ui.home;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.http.HttpResponseCache;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,21 +27,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.leobkdn.onthego.data.Result;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.result.Result;
 import com.leobkdn.onthego.data.model.TripDestination;
 import com.leobkdn.onthego.data.model.Weather;
+import com.leobkdn.onthego.data.result.WeatherResult;
+import com.leobkdn.onthego.tools.Reminder;
 import com.leobkdn.onthego.ui.destination.DestinationActivity;
 import com.leobkdn.onthego.ui.food.FoodActivity;
 import com.leobkdn.onthego.ui.go.GoActivity;
-import com.leobkdn.onthego.ui.go.info.TripDestinationResult;
+import com.leobkdn.onthego.data.result.TripDestinationResult;
 import com.leobkdn.onthego.ui.go.info.TripInfo;
-import com.leobkdn.onthego.ui.go.info.TripInfoAdapter;
-import com.leobkdn.onthego.ui.go.info.TripInfoDataPump;
 import com.leobkdn.onthego.ui.profile.ProfileActivity;
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginActivity;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.stay.StayActivity;
@@ -59,16 +52,11 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private LoginViewModel loginViewModel;
     private boolean pressedOnce = false;
     private ArrayList<TripDestination> destinations = new ArrayList<>();
@@ -94,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onRestart() {
         // back button pressed and return to this activity
         super.onRestart();
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         username.setText(user.getDisplayName());
         currentTrip.setText(restoreCurrentTripData("name") != null ? restoreCurrentTripData("name") : "Chưa chọn chuyến đi");
 
@@ -130,6 +118,9 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        // notification channel
+        createNotificationChannel();
+
         // install http cache
         try {
             File httpCacheDir = new File(getCacheDir(), "http");
@@ -141,7 +132,7 @@ public class HomeActivity extends AppCompatActivity {
 
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
-        user = new LoggedInUserView(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
 
         goButton = findViewById(R.id.home_button_0);
         destination = findViewById(R.id.home_button_1);
@@ -259,6 +250,7 @@ public class HomeActivity extends AppCompatActivity {
                     } else {
                         destinations = ((Result.Success<ArrayList<TripDestination>>) result).getData();
                         if (destinations != null) {
+                            //set current trip info text
                             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
                             long min = 999999999; int minI = -1;
                             for (int i=0;i<destinations.size();i++){
@@ -278,8 +270,19 @@ public class HomeActivity extends AppCompatActivity {
                                     }
                                 }).start();
                             } else currentPos.setText(user.getAddress());
+
                             if (minI >=0 && destinations.get(minI).getFinishTime() != null) {
                                 nextTime.setText(new SimpleDateFormat("HH:mm").format(destinations.get(minI).getFinishTime()));
+
+                                // notification
+                                Intent intent = new Intent(HomeActivity.this, Reminder.class);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(HomeActivity.this, 69, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                                long fifteenMins = 15 * 60 * 1000;
+                                long endTime = destinations.get(minI).getFinishTime().getTime();
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && currentTime.getTime() <= endTime - fifteenMins)
+                                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endTime - fifteenMins, pendingIntent);
                             }
                         }
                     }
@@ -360,6 +363,7 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             }
                         }
+                        weatherAdvise.setText(advise);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
@@ -432,5 +436,18 @@ public class HomeActivity extends AppCompatActivity {
     private int restoreCurrentTripInt(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("currentTrip", MODE_PRIVATE);
         return prefs.getInt(key, -1);
+    }
+
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "OnTheGoChannel";
+            String description = "Channel for On The Go app";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("onTheGo", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
