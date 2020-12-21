@@ -58,12 +58,12 @@ public class TripInfoDataPump {
 //        Kĩ thuật nhánh cận dựa trên phương pháp quay lui
         ArrayList<TripDestination> result = new ArrayList<>();
         int dSize = source.size();
-        double distances[][] = new double[dSize][dSize];
+        double distances[][] = new double[dSize][dSize]; // Ma Trận Trọng số G=(U,V)
         for (int i = 0; i < dSize; i++) {
             float startLat = source.get(i).getLat(), startLon = source.get(i).getLon();
             for (int j = i; j < dSize; j++) {
                 float endLat = source.get(j).getLat(), endLon = source.get(j).getLon();
-                distances[i][j] = distance(startLat, endLat, startLon, endLon);
+                distances[i][j] = distance(startLat, endLat, startLon, endLon); // Khoảng cách từ điểm i đến điểm j
                 if (i!=j) distances[j][i] = distances[i][j];
             }
         }
@@ -96,21 +96,23 @@ public class TripInfoDataPump {
     }
 
     void attemp(double[][] C, int n, int[] X, int[] BestWay, double[] T, boolean[] Free, int i) {
-        for (int j = 1; j < n; j ++) {
-            if (Free[j]) {
-                X[i] = j;
-                T[i] = T[i - 1] + C[X[i - 1]][j];
-                if (T[i] < BestConfig) {
-                    if (i < n - 1) {
-                        Free[j] = false;
+        for (int j = 1; j < n; j ++) { //Tạo vòng for
+            if (Free[j]) { // Kiểm tra điểm j đã đi qua hay chưa ( True nếu chưa từng đi qua, False nếu đã đi qua ) , nếu chưa:
+                X[i] = j; // Gán điểm j vào mảng x tại vị trí thứ i.
+                T[i] = T[i - 1] + C[X[i - 1]][j]; // Tính khoảng cách từ điểm 0 đến i bằng cách lấy khoảng cách từ điểm phía trước (i-1)
+                                                  //cộng với khoảng cách từ điểm trước (x[i-1]) đến điểm (j)
+                if (T[i] < BestConfig) { //Kiểm tra còn hi vọng với cấu hình này hay không ( Kĩ thuật nhánh cận )
+                    if (i < n - 1) { // Nếu cấu hình hiện tại chưa phải là cấu hình cuối
+                        Free[j] = false; // set điểm j là đã đi qua
                         attemp(C, n, X, BestWay, T, Free, i + 1);
-                        Free[j] = true;
-                    } else {
-                        if (T[i] + C[X[i]][0] < BestConfig) {
-                            for (int k = 0; k < n; k ++) {
+                        Free[j] = true; // set điểm j là chưa đi qua
+                    } else { // nếu cấu hình là cấu hình cuối
+                        if (T[i] + C[X[i]][0] < BestConfig) { // Nếu tổng quảng đường từ điểm đầu đến điểm cuối
+                                                              // và từ điểm cuối di chuyển đến điểm đầu nhỏ hơn khoảng cách của cấu hình trước đó
+                            for (int k = 0; k < n; k ++) { // Chúng ta gán quảng đường mới nhất cho BestWay
                                 BestWay[k] = X[k];
                             }
-                            BestConfig = T[i] + C[X[i]][0];
+                            BestConfig = T[i] + C[X[i]][0]; // Thay đổi khoảng cách ngắn nhất
                         }
                     }
                 }

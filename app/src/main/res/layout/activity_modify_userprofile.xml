@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="20dp">
         <ImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/profile_image2"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_margin="50dp"
@@ -24,7 +24,7 @@
             app:srcCompat="@drawable/ic_baseline_person_24" />
 
         <TextView
-            android:id="@+id/profile_name"
+            android:id="@+id/profile_name2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -36,10 +36,10 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_image2" />
 
         <EditText
-            android:id="@+id/profile_name_edit"
+            android:id="@+id/profile_name_edit2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -52,21 +52,21 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_image2" />
 
         <ImageButton
-            android:id="@+id/profile_name_edit_button"
+            android:id="@+id/profile_name_edit_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:background="@drawable/avatar_circle"
             android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/profile_name"
+            app:layout_constraintTop_toTopOf="@+id/profile_name2"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         <LinearLayout
-            android:id="@+id/profile_linear_email"
+            android:id="@+id/profile_linear_email2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
@@ -74,17 +74,17 @@
             android:orientation="vertical"
             android:padding="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_image">
+            app:layout_constraintTop_toBottomOf="@id/profile_image2">
 
             <TextView
-                android:id="@+id/profile_label_email"
+                android:id="@+id/profile_label_email2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="Email" />
 
             <TextView
-                android:id="@+id/profile_email"
+                android:id="@+id/profile_email2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -96,7 +96,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/profile_email_edit"
+                android:id="@+id/profile_email_edit2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -111,36 +111,36 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/profile_email_edit_button"
+            android:id="@+id/profile_email_edit_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/avatar_circle"
             android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="@id/profile_linear_email"
-            app:layout_constraintTop_toTopOf="@+id/profile_linear_email"
+            app:layout_constraintEnd_toEndOf="@id/profile_linear_email2"
+            app:layout_constraintTop_toTopOf="@+id/profile_linear_email2"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         <LinearLayout
-            android:id="@+id/profile_linear_birthday"
+            android:id="@+id/profile_linear_birthday2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_background"
             android:orientation="vertical"
             android:padding="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_linear_email">
+            app:layout_constraintTop_toBottomOf="@id/profile_linear_email2">
 
             <TextView
-                android:id="@+id/profile_label_birthday"
+                android:id="@+id/profile_label_birthday2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="Ngày sinh" />
 
             <TextView
-                android:id="@+id/profile_birthday"
+                android:id="@+id/profile_birthday2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -152,7 +152,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/profile_birthday_edit"
+                android:id="@+id/profile_birthday_edit2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -167,36 +167,36 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/profile_birthday_edit_button"
+            android:id="@+id/profile_birthday_edit_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/avatar_circle"
             android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="@id/profile_linear_birthday"
-            app:layout_constraintTop_toTopOf="@+id/profile_linear_birthday"
+            app:layout_constraintEnd_toEndOf="@id/profile_linear_birthday2"
+            app:layout_constraintTop_toTopOf="@+id/profile_linear_birthday2"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         <LinearLayout
-            android:id="@+id/profile_linear_address"
+            android:id="@+id/profile_linear_address2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_background"
             android:orientation="vertical"
             android:padding="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_linear_birthday">
+            app:layout_constraintTop_toBottomOf="@id/profile_linear_birthday2">
 
             <TextView
-                android:id="@+id/profile_label_address"
+                android:id="@+id/profile_label_address2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="Địa chỉ" />
 
             <TextView
-                android:id="@+id/profile_address"
+                android:id="@+id/profile_address2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -207,7 +207,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
             <RelativeLayout
-                android:id="@+id/addressSpinnerWrapper"
+                android:id="@+id/addressSpinnerWrapper2"
                 android:visibility="gone"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
@@ -216,7 +216,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="10dp"
-                app:layout_constraintBottom_toTopOf="@+id/signUpButtonAction"
+                app:layout_constraintBottom_toTopOf="@+id/signUpButtonAction2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.218"
                 app:layout_constraintStart_toStartOf="parent"
@@ -224,7 +224,7 @@
                 app:layout_constraintVertical_bias="0.021">
 
                 <Spinner
-                    android:id="@+id/profile_address_edit"
+                    android:id="@+id/profile_address_edit2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -245,19 +245,19 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/profile_address_edit_button"
+            android:id="@+id/profile_address_edit_button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/avatar_circle"
             android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="@id/profile_linear_address"
-            app:layout_constraintTop_toTopOf="@+id/profile_linear_address"
+            app:layout_constraintEnd_toEndOf="@id/profile_linear_address2"
+            app:layout_constraintTop_toTopOf="@+id/profile_linear_address2"
             app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         <Button
-            android:id="@+id/profile_edit_confirm"
+            android:id="@+id/profile_edit_confirm2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Xác nhận thay đổi"
@@ -265,17 +265,17 @@
             android:backgroundTint="@color/success_material_button"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_linear_address"/>
+            app:layout_constraintTop_toBottomOf="@id/profile_linear_address2"/>
         <Button
-            android:id="@+id/profile_delete"
+            android:id="@+id/profile_delete2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Xóa người dùng"
+            android:text="@string/delete_user"
             android:layout_margin="15dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_edit_confirm"/>
+            app:layout_constraintTop_toBottomOf="@id/profile_edit_confirm2"/>
         <ProgressBar
-            android:id="@+id/profile_loading"
+            android:id="@+id/profile_loading2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"

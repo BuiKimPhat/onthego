@@ -61,7 +61,6 @@
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.signup.SignUpActivity" />
         <activity android:name=".ui.login.LoginActivity" />
-
 <!--        An-->
         <activity android:name=".ui.AdminHome.AdminHomeActivity"/>
         <activity
@@ -69,8 +68,33 @@
             android:label="@string/list_user"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar"/>
-
-
+        <activity android:name=".ui.modify_user.user.ModifyUserActivity"
+            android:label="Chỉnh sửa thông tin người dùng"
+            android:parentActivityName=".ui.modify_user.list.UserListActivity"
+            android:theme="@style/withActionBar"/>
+        <activity android:name=".ui.modify_user.user.AddUserActivity"
+            android:label="Thêm người dùng"
+            android:parentActivityName=".ui.modify_user.list.UserListActivity"
+            android:theme="@style/withActionBar"/>
+        <activity android:name=".ui.listDestination.List.destinationActivity"
+            android:label="Danh sach điểm đến"
+            android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
+            android:theme="@style/withActionBar" />
+        <activity android:name=".ui.listDestination.modify.modifyDetinatiobInfoActivity"
+            android:parentActivityName=".ui.listDestination.List.destinationActivity"
+            android:theme="@style/withActionBar"
+            android:label="Chỉnh sửa thông tin điểm đén"
+            />
+        <activity android:name=".ui.listDestination.modify.addDestinationActivity"
+            android:parentActivityName=".ui.listDestination.List.destinationActivity"
+            android:theme="@style/withActionBar"
+            android:label="Thêm điểm đến"
+            />
+        <activity android:name=".ui.listTrip.list.listTrip"
+            android:label="Danh sách chuyến đi"
+            android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
+            android:theme="@style/withActionBar"
+            />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
