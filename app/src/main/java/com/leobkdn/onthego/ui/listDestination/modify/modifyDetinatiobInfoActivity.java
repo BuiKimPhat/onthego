@@ -17,10 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.DestinationDataSource;
+
 import com.leobkdn.onthego.data.model.Destination;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.source.DestinationDataSource;
 import com.leobkdn.onthego.ui.listDestination.List.destinationActivity;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
+
 
 import java.util.Date;
 
@@ -39,7 +41,7 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
     private Button bt3;
     private Button confirm;
     private Button delete;
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private Destination destination;
     private int positon;
     private String cat;
@@ -49,7 +51,7 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_modify_destination_info);
         DestinationDataSource a = new DestinationDataSource();
 
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         Intent intent = getIntent();
         positon = intent.getIntExtra("Position",1);
         try{

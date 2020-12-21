@@ -15,9 +15,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.DestinationDataSource;
 import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.source.DestinationDataSource;
 
 import java.util.Date;
 
@@ -35,7 +35,7 @@ public class addDestinationActivity extends AppCompatActivity {
     private Button bt2;
     private Button bt3;
     private Button confirm;
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private Destination destination;
     private String cat;
     @Override
@@ -44,7 +44,7 @@ public class addDestinationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_destination);
         DestinationDataSource a = new DestinationDataSource();
 
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         Intent intent = getIntent();
 
         //setView

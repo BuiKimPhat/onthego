@@ -40,11 +40,27 @@
         android:inputType="textPassword"
         android:maxLines="1"
         android:selectAllOnFocus="true"
-        app:layout_constraintBottom_toTopOf="@+id/userFullName2"
+        app:layout_constraintBottom_toTopOf="@+id/confirm_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email2" />
+    <EditText
+        android:id="@+id/confirm_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="24dp"
+        android:hint="@string/prompt_password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        app:layout_constraintBottom_toTopOf="@+id/userFullName2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password2" />
 
     <EditText
         android:id="@+id/userFullName2"
@@ -61,7 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password2" />
+        app:layout_constraintTop_toBottomOf="@+id/confirm_password" />
 
     <EditText
         android:id="@+id/userDOB2"

@@ -26,9 +26,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.ui.home.HomeActivity;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.login.LoginFormState;
-import com.leobkdn.onthego.ui.login.LoginResult;
+import com.leobkdn.onthego.data.result.LoginResult;
 import com.leobkdn.onthego.ui.login.LoginViewModel;
 import com.leobkdn.onthego.ui.login.LoginViewModelFactory;
 import com.leobkdn.onthego.ui.signup.SignUpActivity;
@@ -39,6 +38,7 @@ import java.text.SimpleDateFormat;
 public class AddUserActivity extends AppCompatActivity  {
     private LoginViewModel signUpViewModel;
     private Date birthday;
+    private EditText confirmPass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +57,7 @@ public class AddUserActivity extends AppCompatActivity  {
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         final Button addButton = findViewById(R.id.addButtonAction);
         Spinner addressSpinner = findViewById(R.id.userAddress2);
+        confirmPass = findViewById(R.id.confirm_password);
         // Create an ArrayAdapter using the cities string array and a default spinner layout
         ArrayAdapter<CharSequence> addressSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -102,6 +103,9 @@ public class AddUserActivity extends AppCompatActivity  {
                 if (signUpFormState.getNameError() != null) {
                     nameEditText.setError(getString(signUpFormState.getNameError()));
                 }
+                if (signUpFormState.getConfirmError() != null) {
+                    confirmPass.setError(getString(signUpFormState.getConfirmError()));
+                }
             }
             // TODO: check name validation
         });
@@ -136,7 +140,7 @@ public class AddUserActivity extends AppCompatActivity  {
             @Override
             public void afterTextChanged(Editable s) {
                 signUpViewModel.signUpDataChanged(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString(),
+                        passwordEditText.getText().toString(), confirmPass.getText().toString(),
                         nameEditText.getText().toString());
             }
         };
@@ -144,6 +148,7 @@ public class AddUserActivity extends AppCompatActivity  {
         emailEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         nameEditText.addTextChangedListener(afterTextChangedListener);
+        confirmPass.addTextChangedListener(afterTextChangedListener);
         //if press Enter (last field, after input form), sign up with the email, password, name
 //        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //

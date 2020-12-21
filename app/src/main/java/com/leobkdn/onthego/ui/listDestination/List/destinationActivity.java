@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.DestinationDataSource;
+import com.leobkdn.onthego.data.model.LoggedInUser;
+import com.leobkdn.onthego.data.source.DestinationDataSource;
 import com.leobkdn.onthego.data.model.Destination;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
 import com.leobkdn.onthego.ui.modify_user.list.UserListActivity;
 import com.leobkdn.onthego.ui.listDestination.modify.modifyDetinatiobInfoActivity;
 import com.leobkdn.onthego.ui.modify_user.user.ModifyUserActivity;
@@ -26,7 +26,7 @@ import java.util.Date;
 public class destinationActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayList<Destination> des;
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private int Position =0;
     private FloatingActionButton fab;
     @Override
@@ -35,7 +35,7 @@ public class destinationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_destination);
         DestinationDataSource a = new DestinationDataSource();
 
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         //des = new Result<ArrayList<Destination>()>;
         try{
             des = a.fetchDestinations2(user.getToken());

@@ -9,10 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.leobkdn.onthego.R;
-import com.leobkdn.onthego.data.TripDataSource;
+
+import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.data.model.Trip;
+import com.leobkdn.onthego.data.source.TripDataSource;
 import com.leobkdn.onthego.ui.listDestination.List.destiantionAdapter;
-import com.leobkdn.onthego.ui.login.LoggedInUserView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.Date;
 public class listTrip  extends AppCompatActivity {
     private ListView listView;
     private ArrayList<Trip> trips;
-    private LoggedInUserView user;
+    private LoggedInUser user;
     private int Position =0;
     private FloatingActionButton fab;
     @Override
@@ -29,7 +30,7 @@ public class listTrip  extends AppCompatActivity {
         setContentView(R.layout.activity_list_trip);
         TripDataSource a = new TripDataSource();
 
-        user = new LoggedInUserView(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
+        user = new LoggedInUser(restorePrefsData("username"),restorePrefsData("email"),restorePrefsData("token"),true,new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         //des = new Result<ArrayList<Destination>()>;
         try{
             trips = a.getListTrip(user.getToken());
