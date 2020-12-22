@@ -12,7 +12,7 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:hint="@string/destinations"
-        android:maxWidth="250dp"
+        android:maxWidth="220dp"
         android:maxLines="2"
         android:padding="5dp"
         android:textSize="16sp" />
