@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('F:\\School\\Projects\\Programming\\OnTheGo_Release\\onthego.jks')
+            storePassword 'Phat2782001'
+            keyAlias 'key0'
+            keyPassword 'Phat2782001'
+        }
+    }
     compileSdkVersion 29
 
     compileOptions {
@@ -18,6 +26,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        signingConfig signingConfigs.release
     }
 
     buildTypes {

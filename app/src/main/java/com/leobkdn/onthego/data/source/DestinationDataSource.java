@@ -30,6 +30,7 @@ public class DestinationDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 ArrayList<TripDestination> result = new ArrayList();
                 InputStream responseBody = connection.getInputStream();
@@ -98,6 +99,7 @@ public class DestinationDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 ArrayList<Destination> result = new ArrayList<>();
                 InputStream responseBody = connection.getInputStream();
@@ -182,6 +184,7 @@ public class DestinationDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
@@ -202,11 +205,11 @@ public class DestinationDataSource extends ServerData {
                         } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL) {
                             address = jsonReader.nextString();
-                        }else jsonReader.skipValue();
+                        } else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL) {
                             description = jsonReader.nextString();
-                        }else jsonReader.skipValue();
-                        if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL){
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL) {
                             category = jsonReader.nextString();
                         } else jsonReader.skipValue();
 //                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
@@ -251,134 +254,136 @@ public class DestinationDataSource extends ServerData {
         return result1;
     }
 
-    public Destination getDestination(String token,int DesID){
-        Destination result = new Destination(1,"Dut");
-        try{
-        URL endPoint = new URL(server + "/destination/getDes/"+DesID);
-        // Create connection
-        HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
-        connection.setRequestProperty("User-Agent", "On The Go");
-        connection.addRequestProperty("Authorization", "Bearer " + token);
-        if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
-            InputStream responseBody = connection.getInputStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            jsonReader.beginArray();
-            while (jsonReader.hasNext()) {
-                int id = -1, rateNum = 0;
-                float rating = 0, lat = 0, lon = 0;
-                String name = null, address = null, description = null;
-                String category = null;
-                jsonReader.beginObject();
+    public Destination getDestination(String token, int DesID) {
+        Destination result = new Destination(1, "Dut");
+        try {
+            URL endPoint = new URL(server + "/destination/getDes/" + DesID);
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
-                    if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
-                        id = jsonReader.nextInt();
-                    } else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
-                        name = jsonReader.nextString();
-                    } else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL) {
-                        address = jsonReader.nextString();
-                    }else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL) {
-                        description = jsonReader.nextString();
-                    }else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL){
-                        category = jsonReader.nextString();
-                    } else jsonReader.skipValue();
+                    int id = -1, rateNum = 0;
+                    float rating = 0, lat = 0, lon = 0;
+                    String name = null, address = null, description = null;
+                    String category = null;
+                    jsonReader.beginObject();
+                    while (jsonReader.hasNext()) {
+                        if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
+                            id = jsonReader.nextInt();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL) {
+                            name = jsonReader.nextString();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("address") && jsonReader.peek() != JsonToken.NULL) {
+                            address = jsonReader.nextString();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("description") && jsonReader.peek() != JsonToken.NULL) {
+                            description = jsonReader.nextString();
+                        } else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL) {
+                            category = jsonReader.nextString();
+                        } else jsonReader.skipValue();
 //                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
 //                            avgCost = jsonReader.nextInt();
 //                        else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
-                        rating = (float) jsonReader.nextDouble();
-                    else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
-                        rateNum = jsonReader.nextInt();
-                    else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL)
-                        lat = (float) jsonReader.nextDouble();
-                    else jsonReader.skipValue();
-                    if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL)
-                        lon = (float) jsonReader.nextDouble();
-                    else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
+                            rating = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
+                            rateNum = jsonReader.nextInt();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL)
+                            lat = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                        if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL)
+                            lon = (float) jsonReader.nextDouble();
+                        else jsonReader.skipValue();
+                    }
+                    jsonReader.endObject();
+                    if (id > 0 && name != null)
+                        result = new Destination(id, name, address, description, category, rating, rateNum, lat, lon);
+                }
+                jsonReader.endArray();
+                connection.disconnect();
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
                 }
                 jsonReader.endObject();
-                if (id > 0 && name != null)
-                    result = new Destination(id, name, address, description, category, rating, rateNum, lat, lon);
+                throw new Exception(error);
             }
-            jsonReader.endArray();
-            connection.disconnect();
-        } else {
-            InputStream responseBody = connection.getErrorStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            String error = "Lỗi không xác định";
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
-                    error = jsonReader.nextString();
-                } else jsonReader.skipValue();
-            }
-            jsonReader.endObject();
-            throw new Exception(error);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
         return result;
     }
 
-    public boolean editInfo(String token,Destination destination){
-        try{
-        URL endPoint = new URL(server + "/destination/edit");
-        // Create connection
-        HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("User-Agent", "On The Go");
-        connection.addRequestProperty("Authorization", "Bearer " + token);
-        connection.setRequestProperty("Content-Type", "application/json");
-        String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
-                + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
-                + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") +"\",\"latitude\":\"" + destination.getLat()
-                + "\",\"longitude\":\"" + destination.getLon() + "\",\"id\":\"" + destination.getId() +"}";
-        connection.setDoOutput(true);
-        connection.getOutputStream().write(postData.getBytes());
-        if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
-            InputStream responseBody = connection.getInputStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            jsonReader.beginObject();
-            String stringResult;
-            while (jsonReader.hasNext()) {
-                if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
-                    stringResult = jsonReader.nextString();
-                } else jsonReader.skipValue();
+    public boolean editInfo(String token, Destination destination) {
+        try {
+            URL endPoint = new URL(server + "/destination/edit");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
+                    + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
+                    + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") + "\",\"latitude\":\"" + destination.getLat()
+                    + "\",\"longitude\":\"" + destination.getLon() + "\",\"id\":\"" + destination.getId() + "}";
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                String stringResult;
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                return true;
+            } else {
+                InputStream responseBody = connection.getErrorStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                String error = "Lỗi không xác định";
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
+                        error = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                throw new Exception(error);
             }
-            jsonReader.endObject();
-            return true;
-        } else {
-            InputStream responseBody = connection.getErrorStream();
-            InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
-            JsonReader jsonReader = new JsonReader(responseBodyReader);
-            String error = "Lỗi không xác định";
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                if (jsonReader.nextName().equals("error") && jsonReader.peek() != JsonToken.NULL) {
-                    error = jsonReader.nextString();
-                } else jsonReader.skipValue();
-            }
-            jsonReader.endObject();
-            connection.disconnect();
-            throw new Exception(error);
-        }
-    } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-    }
+        }
         return false;
     }
 
-    public boolean addDes(String token,Destination destination){
-        try{
+    public boolean addDes(String token, Destination destination) {
+        try {
             URL endPoint = new URL(server + "/destination/add");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
@@ -386,10 +391,11 @@ public class DestinationDataSource extends ServerData {
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
                     + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
-                    + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") +"\",\"latitude\":\"" + destination.getLat()
-                    + "\",\"longitude\":\"" + destination.getLon()+"}";
+                    + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") + "\",\"latitude\":\"" + destination.getLat()
+                    + "\",\"longitude\":\"" + destination.getLon() + "}";
             connection.setDoOutput(true);
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
@@ -436,6 +442,7 @@ public class DestinationDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"tripId\":" + tripID + ", \"destinationId\":" + destinationID + "}";
             connection.getOutputStream().write(postData.getBytes());
@@ -467,6 +474,7 @@ public class DestinationDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             connection.setRequestMethod("GET");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();

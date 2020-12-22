@@ -27,6 +27,7 @@ public class TripDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 ArrayList<Trip> result = new ArrayList<>();
                 InputStream responseBody = connection.getInputStream();
@@ -73,6 +74,7 @@ public class TripDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
@@ -101,7 +103,6 @@ public class TripDataSource extends ServerData {
             jsonReader.endArray();
             return trips;
         } else {
-//                Log.w("httpRes","error");
             InputStream responseBody = connection.getErrorStream();
             InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
             JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -129,6 +130,7 @@ public class TripDataSource extends ServerData {
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 InputStream responseBody = connection.getInputStream();
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
@@ -161,6 +163,7 @@ public class TripDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"tripId\":" + tripId + "}";
             connection.getOutputStream().write(postData.getBytes());
@@ -194,6 +197,7 @@ public class TripDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"name\":\"" + newTripName + "\"}";
             if (!destinations.isEmpty()) {
@@ -244,6 +248,7 @@ public class TripDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"id\":" + tripId + ",\"name\":\"" + newTripName + "\"}";
             if (!destinations.isEmpty()) {
@@ -294,6 +299,7 @@ public class TripDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"tripId\":" + tripId + "}";
             connection.getOutputStream().write(postData.getBytes());

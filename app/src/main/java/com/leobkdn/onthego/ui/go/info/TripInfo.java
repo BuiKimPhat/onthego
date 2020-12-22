@@ -317,6 +317,9 @@ public class TripInfo extends AppCompatActivity {
                 intent.putExtra("address", item.getAddress());
                 intent.putExtra("rating", item.getRating());
                 intent.putExtra("description", item.getDescription());
+                intent.putExtra("rateNum", item.getRateNum());
+                intent.putExtra("lat", item.getLat());
+                intent.putExtra("lon", item.getLon());
                 startActivity(intent);
                 return false;
             }
