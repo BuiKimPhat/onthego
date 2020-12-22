@@ -153,31 +153,6 @@ public class DestinationDataSource extends ServerData {
     public ArrayList<Destination> fetchDestinations2(String token) {
         ArrayList<Destination> result1 = new ArrayList<>();
         try {
-            //Set connection
-//            Connection connection = DriverManager.getConnection(dbURI);
-//            if (connection != null) {
-//                // verify token
-//            tokenVerifier(token);
-//                String sqlQuery;
-//                PreparedStatement statement;
-//                if (category == null) {
-//                    sqlQuery = "select id, [name], address, phone, description, city from Destination where category is null";
-//                    statement = connection.prepareStatement(sqlQuery);
-//                } else {
-//                    sqlQuery = "select id, [name], address, phone, description, city from Destination where category = ?";
-//                    statement = connection.prepareStatement(sqlQuery);
-//                    statement.setString(1, category);
-//                }
-//                ResultSet res = statement.executeQuery();
-//                if (!res.next()) throw new SQLException("Không tìm thấy điểm đến");
-//                else {
-//                    do {
-//                        result1.add(new Destination(res.getInt(1), res.getString(2), res.getString(3), res.getString(4), res.getString(5), category, res.getString(6), null));
-//                    } while (res.next());
-//                }
-//                connection.close();
-//            } else throw new SQLException("Lỗi kết nối");
-
             // Create URL
             URL endPoint = new URL(server + "/destination/list");
             // Create connection
@@ -212,21 +187,12 @@ public class DestinationDataSource extends ServerData {
                         if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL) {
                             category = jsonReader.nextString();
                         } else jsonReader.skipValue();
-//                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
-//                            avgCost = jsonReader.nextInt();
-//                        else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
                             rating = (float) jsonReader.nextDouble();
                         else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("rateNum") && jsonReader.peek() != JsonToken.NULL)
                             rateNum = jsonReader.nextInt();
                         else jsonReader.skipValue();
-//                        if (jsonReader.nextName().equals("latitude") && jsonReader.peek() != JsonToken.NULL)
-//                            lat = (float) jsonReader.nextDouble();
-//                        else jsonReader.skipValue();
-//                        if (jsonReader.nextName().equals("longitude") && jsonReader.peek() != JsonToken.NULL)
-//                            lon = (float) jsonReader.nextDouble();
-//                        else jsonReader.skipValue();
                     }
                     jsonReader.endObject();
                     if (id > 0 && name != null)
@@ -290,9 +256,6 @@ public class DestinationDataSource extends ServerData {
                         if (jsonReader.nextName().equals("category") && jsonReader.peek() != JsonToken.NULL) {
                             category = jsonReader.nextString();
                         } else jsonReader.skipValue();
-//                        if (jsonReader.nextName().equals("avgCost") && jsonReader.peek() != JsonToken.NULL)
-//                            avgCost = jsonReader.nextInt();
-//                        else jsonReader.skipValue();
                         if (jsonReader.nextName().equals("rating") && jsonReader.peek() != JsonToken.NULL)
                             rating = (float) jsonReader.nextDouble();
                         else jsonReader.skipValue();

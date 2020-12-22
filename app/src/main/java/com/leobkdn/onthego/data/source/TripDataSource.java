@@ -65,6 +65,7 @@ public class TripDataSource extends ServerData {
             return new Result.Error(e);
         }
     }
+
     // An
     public ArrayList<Trip> getListTrip(String token) {
         ArrayList<Trip> trips = new ArrayList<Trip>();
