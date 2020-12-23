@@ -6,9 +6,6 @@ import com.leobkdn.onthego.ui.modify_user.list.Users_class;
 
 import android.util.JsonReader;
 import android.util.JsonToken;
-import android.util.Log;
-
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

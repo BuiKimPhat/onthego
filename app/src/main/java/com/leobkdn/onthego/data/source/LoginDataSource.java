@@ -116,6 +116,7 @@ public class LoginDataSource extends ServerData {
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
+            connection.setRequestProperty("Accept", "application/json");
             connection.addRequestProperty("Authorization", "Bearer " + token);
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 String stringResult = "Done";
@@ -146,6 +147,7 @@ public class LoginDataSource extends ServerData {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + user.getToken());
+            connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
             String postData = "{\"email\":\"" + user.getEmail() + "\",\"name\":\""
                     + user.getDisplayName() + "\",\"birthday\":" + (user.getBirthday() != null ? user.getBirthday().getTime() : "null") + ",\"address\":"
@@ -181,6 +183,7 @@ public class LoginDataSource extends ServerData {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json");
             String postData = "{\"oldPwd\":\"" + oldPassword + "\",\"newPwd\":\"" + newPassword + "\"}";
             connection.setDoOutput(true);
