@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,15 +39,14 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
     private EditText viDo;
     private TextView rating;
     private TextView ratingNum;
-    private Button bt1;
-    private Button bt2;
-    private Button bt3;
+    private Spinner opt;
     private Button confirm;
     private Button delete;
     private LoggedInUser user;
     private Destination destination;
     private int positon;
     private String cat;
+    private boolean turn = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +70,9 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
         viDo = findViewById(R.id.ed_vi_do);
         rating = findViewById(R.id.rating);
         ratingNum = findViewById(R.id.rating_num);
-        bt2 = findViewById(R.id.noi_o);
-        bt1 = findViewById(R.id.an_uong);
-        bt3 = findViewById(R.id.di_chuyen);
         delete = findViewById(R.id.delete_button);
         confirm = findViewById(R.id.confirm_button1);
+        opt = findViewById(R.id.destination_opt);
 
         //setInfo
         name.setText(destination.getName());
@@ -83,40 +83,31 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
         rating.setText(String.format("Đánh giá điểm đến : %s",destination.getRating()));
         ratingNum.setText(String.format("Số người đánh gía : %s",destination.getRateNum()));
         cat = destination.getCategory();
-        if(cat!=null){
-             if(cat.equals("food")) bt1.setBackgroundColor(0xFFCC99);
-             if(cat.equals("stay")) bt2.setBackgroundColor(0xFFCC99);
-             if(cat.equals("transport")) bt3.setBackgroundColor(0xFFCC99);
-        }else Toast.makeText(this,"Loại điểm dến chưa xác định",Toast.LENGTH_SHORT).show();
 
-        //set OnClickListener
-        bt1.setOnClickListener(new View.OnClickListener() {
+        ArrayAdapter<CharSequence> optAdapter = ArrayAdapter.createFromResource(this, R.array.spi_des, android.R.layout.simple_spinner_item);
+        optAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        opt.setAdapter(optAdapter);
+        opt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0xFFCC99);
-                bt2.setBackgroundColor(0x000000);
-                bt3.setBackgroundColor(0x000000);
-                cat = "food";
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(turn){
+                if(cat==null){
+                }else if(cat.equals("food")) opt.setSelection(2);
+                else if(cat.equals("stay")) opt.setSelection(1);
+                else opt.setSelection(3);
+                turn=false;
+                }else {
+                    cat=opt.getSelectedItem().toString();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0x000000);
-                bt2.setBackgroundColor(0xFFCC99);
-                bt3.setBackgroundColor(0x000000);
-                cat = "stay";
-            }
-        });
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0x000000);
-                bt2.setBackgroundColor(0x000000);
-                bt3.setBackgroundColor(0xFFCC99);
-                cat = "transport";
-            }
-        });
+
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

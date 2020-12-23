@@ -67,6 +67,7 @@
             android:name=".ui.modify_user.list.UserListActivity"
             android:label="@string/list_user"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/withActionBar"/>
         <activity android:name=".ui.modify_user.user.ModifyUserActivity"
             android:label="Chỉnh sửa thông tin người dùng"
@@ -78,6 +79,7 @@
             android:theme="@style/withActionBar"/>
         <activity android:name=".ui.listDestination.List.destinationActivity"
             android:label="Danh sach điểm đến"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar" />
         <activity android:name=".ui.listDestination.modify.modifyDetinatiobInfoActivity"
@@ -92,6 +94,7 @@
             />
         <activity android:name=".ui.listTrip.list.listTrip"
             android:label="Danh sách chuyến đi"
+            android:windowSoftInputMode="stateHidden"
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar"
             />

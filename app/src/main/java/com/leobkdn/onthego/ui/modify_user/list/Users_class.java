@@ -9,7 +9,11 @@ public class Users_class {
         this.email=email;
         this.stt=stt;
     }
-
+    public Users_class(Users_class a){
+        this.name= a.name;
+        this.email=a.email;
+        this.stt=a.stt;
+    }
     public String getName() {
         return name;
     }

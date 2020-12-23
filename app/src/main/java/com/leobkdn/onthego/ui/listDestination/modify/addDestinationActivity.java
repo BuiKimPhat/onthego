@@ -7,8 +7,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +21,8 @@ import com.leobkdn.onthego.R;
 import com.leobkdn.onthego.data.model.Destination;
 import com.leobkdn.onthego.data.model.LoggedInUser;
 import com.leobkdn.onthego.data.source.DestinationDataSource;
+import com.leobkdn.onthego.ui.listDestination.List.destiantionAdapter;
+import com.leobkdn.onthego.ui.listDestination.List.destinationActivity;
 
 import java.util.Date;
 
@@ -31,9 +36,7 @@ public class addDestinationActivity extends AppCompatActivity {
     private EditText viDo;
     private EditText rating;
     private EditText ratingNum;
-    private Button bt1;
-    private Button bt2;
-    private Button bt3;
+    private Spinner opt;
     private Button confirm;
     private LoggedInUser user;
     private Destination destination;
@@ -55,10 +58,8 @@ public class addDestinationActivity extends AppCompatActivity {
         viDo = findViewById(R.id.ed_vi_do);
         rating = findViewById(R.id.ed_rating);
         ratingNum = findViewById(R.id.ed_rating_num);
-        bt2 = findViewById(R.id.noi_o);
-        bt1 = findViewById(R.id.an_uong);
-        bt3 = findViewById(R.id.di_chuyen);
         confirm = findViewById(R.id.add_button1);
+        opt = findViewById(R.id.destination_opt);
 
         //setInfo
         name.setText("Tên");
@@ -70,34 +71,21 @@ public class addDestinationActivity extends AppCompatActivity {
         rating.setText("Số người đánh giá");
         cat = "food";
 
-        //set OnClickListener
-        bt1.setOnClickListener(new View.OnClickListener() {
+        ArrayAdapter<CharSequence> optAdapter = ArrayAdapter.createFromResource(this, R.array.spi_des, android.R.layout.simple_spinner_item);
+        optAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        opt.setAdapter(optAdapter);
+        opt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0xFFCC99);
-                bt2.setBackgroundColor(0x000000);
-                bt3.setBackgroundColor(0x000000);
-                cat = "food";
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0x000000);
-                bt2.setBackgroundColor(0xFFCC99);
-                bt3.setBackgroundColor(0x000000);
-                cat = "stay";
-            }
-        });
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bt1.setBackgroundColor(0x000000);
-                bt2.setBackgroundColor(0x000000);
-                bt3.setBackgroundColor(0xFFCC99);
-                cat = "transport";
-            }
-        });
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -124,4 +124,16 @@
         <item>Theo tên: A -> Z</item>
         <item>Theo tên: Z -> A</item>
     </string-array>
+    <string-array name="sortUser">
+        <item>Theo ID: Cao -> thấp</item>
+        <item>Theo ID: Thấp -> cao</item>
+        <item>Theo tên: A -> Z</item>
+        <item>Theo tên: Z -> A</item>
+    </string-array>
+    <string-array name="spi_des">
+        <item> Chưa rõ</item>
+        <item> Nơi ở</item>
+        <item> Quán ăn</item>
+        <item> Di chuyển</item>
+    </string-array>
 </resources>
