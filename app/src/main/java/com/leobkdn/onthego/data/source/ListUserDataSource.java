@@ -65,6 +65,43 @@ public class ListUserDataSource extends ServerData {
         return Users;
     }
 
+    public String editInfo2(LoggedInUser user,int position) {
+        String result="Failed";
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/user/edit2");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + user.getToken());
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json");
+            String postData = "{"+"\"id\":\"" + position+ "\","  +"\"email\":\"" + user.getEmail() + "\",\"name\":\""
+                    + user.getDisplayName() + "\",\"birthday\":" + (user.getBirthday() != null ? user.getBirthday().getTime() : "null") + ",\"address\":"
+                    + (user.getAddress() != null ? "\"" + user.getAddress() + "\"" : "null") + "}";
+            connection.setDoOutput(true);
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        result = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return result;
+            } else throw errorReader(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public String getSum(String token) {
         try {
             URL endPoint = new URL(server + "/user/getUserCount");
@@ -213,7 +250,7 @@ public class ListUserDataSource extends ServerData {
 
     public boolean deleteUser(int id, String token) {
         try {
-            URL url = new URL(server + "/deleteUser/" + id);
+            URL url = new URL(server + "/user/deleteUser/" + id);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "On The Go");
             connection.addRequestProperty("Authorization", "Bearer " + token);
@@ -223,10 +260,9 @@ public class ListUserDataSource extends ServerData {
                 InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                 JsonReader jsonReader = new JsonReader(responseBodyReader);
                 if (jsonReader.hasNext())
-                    if (jsonReader.nextName().equals("Delete") && jsonReader.peek() != JsonToken.NULL) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
                         result = jsonReader.nextString();
-                        if (result.equals("success")) return true;
-                        else return false;
+                        if (!result.equals("Xóa người dùng không thành công")) return true;
                     }
             }
         } catch (Exception e) {

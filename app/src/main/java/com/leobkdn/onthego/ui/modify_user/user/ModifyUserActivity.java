@@ -43,6 +43,7 @@ import java.util.Date;
 public class ModifyUserActivity extends AppCompatActivity {
     private LoggedInUser user;
     private LoginViewModel loginViewModel;
+    ListUserDataSource us;
     private TextView nameView;
     private EditText nameEdit;
     private TextView emailView;
@@ -58,7 +59,6 @@ public class ModifyUserActivity extends AppCompatActivity {
     private ImageButton birthdayEditButton;
     private ImageButton addressEditButton;
     private Button editConfirm;
-    private Button changePwdButton;
     private ProgressBar progressBar;
     private int Position = 0;
     //private LoggedInUser ex;
@@ -66,23 +66,12 @@ public class ModifyUserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (android.os.Build.VERSION.SDK_INT > 9) {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//            StrictMode.setThreadPolicy(policy);
-//        }
-//        //install http cache
-//        try {
-//            File httpCacheDir = new File(getCacheDir(), "http");
-//            long httpCacheSize = 1024 * 1024; // 1 MiB
-//            HttpResponseCache.install(httpCacheDir, httpCacheSize);
-//        } catch (IOException e) {
-//            Log.i("HTTP cache", "HTTP response cache installation failed:" + e);
-//        }
+
         user = new LoggedInUser(restorePrefsData("username"), restorePrefsData("email"), restorePrefsData("token"), false, new Date(restorePrefsLong("birthday")), restorePrefsData("address"));
         Intent intent = getIntent();
         Position = intent.getIntExtra("Position",1);
         setContentView(R.layout.activity_modify_userprofile);
-        ListUserDataSource us = new ListUserDataSource();
+        us = new ListUserDataSource();
         LoggedInUser ex ;
         ex = us.getInfoUser(Position,user.getToken());
 
@@ -110,11 +99,11 @@ public class ModifyUserActivity extends AppCompatActivity {
         nameView.setText(ex.getDisplayName());
        nameEdit.setText(ex.getDisplayName());
        emailView.setText(ex.getEmail());
-        emailEdit.setText(ex.getEmail());
-      birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
-        birthdayEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
-      addressView.setText(ex.getAddress());
-        addressSpinner.setSelection(addressSpinnerAdapter.getPosition(ex.getAddress()));
+       emailEdit.setText(ex.getEmail());
+       birthdayView.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
+       birthdayEdit.setText(new SimpleDateFormat("dd/MM/yyyy").format(ex.getBirthday()));
+       addressView.setText(ex.getAddress());
+       addressSpinner.setSelection(addressSpinnerAdapter.getPosition(ex.getAddress()));
 
         // edit, done buttons
         nameEditButton = findViewById(R.id.profile_name_edit_button2);
@@ -130,7 +119,6 @@ public class ModifyUserActivity extends AppCompatActivity {
         setupEditButtons(birthdayEditButton, birthdayView, birthdayEdit);
         setupEditButtons(addressEditButton, addressView, addressSpinnerWrapper);
 
-        //TODO: check email, birthday valid
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(LoginResult loginResult) {
@@ -166,32 +154,26 @@ public class ModifyUserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
                 editConfirm.setEnabled(false);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Date newBirthday = ex.getBirthday();
-                        try {
-                            newBirthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayEdit.getText().toString());
-                        } catch (Exception e) {
-                            Log.w("edit", e.getMessage());
-                        }
-                        loginViewModel.editInfo(new LoggedInUser(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()));
-                    }
-                }).start();
+                Date newBirthday = ex.getBirthday();
+                try {
+                    newBirthday = new SimpleDateFormat("dd/MM/yyyy").parse(birthdayEdit.getText().toString());
+                } catch (Exception e) {
+                    Log.w("edit", e.getMessage());
+                }
+                Toast.makeText(ModifyUserActivity.this,us.editInfo2(new LoggedInUser(nameEdit.getText().toString(), emailEdit.getText().toString(), user.getToken(), user.getIsAdmin(), newBirthday, addressSpinner.getSelectedItem().toString()),Position),Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
         delete_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListUserDataSource a = new ListUserDataSource();
-                if(a.deleteUser(Position,user.getToken())){
-                    Toast.makeText(ModifyUserActivity.this,"delete success",Toast.LENGTH_SHORT).show();
-                    finish();
+                if(us.deleteUser(Position,user.getToken())){
+                    Toast.makeText(ModifyUserActivity.this,"Xóa người dùng thành công ",Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(ModifyUserActivity.this,"delete failed",Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(ModifyUserActivity.this,"Xóa người dùng thất bại ",Toast.LENGTH_SHORT).show();
                 }
+                finish();
             }
         });
     }

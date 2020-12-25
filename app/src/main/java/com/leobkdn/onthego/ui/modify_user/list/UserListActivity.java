@@ -102,6 +102,7 @@ public class UserListActivity extends AppCompatActivity {
         try {
         ListUserDataSource a = new ListUserDataSource();
         Users = a.getListUsers(user.getToken());
+        quickSortBy(Users,0,Users.size()-1," ");
         display = Users;
         }catch (Exception e){
             Toast.makeText(UserListActivity.this," "+e,Toast.LENGTH_LONG).show();
@@ -115,7 +116,7 @@ public class UserListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView < ? > parent, View view,
             int position, long id){
                 Position = position;
-                Position = Users.get(Position).getStt();
+                Position = display.get(Position).getStt();
                 Intent intent= new Intent(UserListActivity.this , ModifyUserActivity.class);
                 intent.putExtra("Position",Position);
                 startActivity(intent);

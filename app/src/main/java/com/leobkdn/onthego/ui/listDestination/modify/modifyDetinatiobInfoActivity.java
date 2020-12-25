@@ -91,10 +91,11 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(turn){
-                if(cat==null){
+                if(cat==null){ turn = false;
                 }else if(cat.equals("food")) opt.setSelection(2);
                 else if(cat.equals("stay")) opt.setSelection(1);
                 else opt.setSelection(3);
+                cat=opt.getSelectedItem().toString();
                 turn=false;
                 }else {
                     cat=opt.getSelectedItem().toString();
@@ -115,22 +116,24 @@ public class modifyDetinatiobInfoActivity extends AppCompatActivity {
                 destination.setAddress(address.getText().toString());
                 destination.setName(name.getText().toString());
                 destination.setDescription(descrip.getText().toString());
-                destination.setRateNum(Integer.valueOf(ratingNum.getText().toString()));
-                destination.setRating(Float.valueOf(rating.getText().toString()));
                 destination.setLat(Float.valueOf(viDo.getText().toString()));
                 destination.setLon(Float.valueOf(kinhDo.getText().toString()));
-                destination.setCategory(cat);
+                if(cat==null) destination.setCategory(cat);
+                else if(cat.equals("Chưa rõ")) destination.setCategory(null);
+                else if(cat.equals("Nơi ở")) destination.setCategory("stay");
+                else if (cat.equals("Quán ăn")) destination.setCategory("food");
+                else if(cat.equals("Di chuyển")) destination.setCategory("transport");
                 a.editInfo(user.getToken(),destination);
-                restartActivity(modifyDetinatiobInfoActivity.this);
+                Toast.makeText(modifyDetinatiobInfoActivity.this, "Thay đổi thành công!", Toast.LENGTH_SHORT).show();
+                confirm.setEnabled(true);
             }
         });
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                a.delete(positon);
-//                finish();
-                Toast.makeText(modifyDetinatiobInfoActivity.this,"Không thể xóa vì ảnh hưởng đến trải nghiệm người dùng",Toast.LENGTH_SHORT).show();
+                Toast.makeText(modifyDetinatiobInfoActivity.this,a.deleteDes(user.getToken(),positon),Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
     }

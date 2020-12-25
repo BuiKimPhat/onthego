@@ -98,6 +98,10 @@
             android:parentActivityName=".ui.AdminHome.AdminHomeActivity"
             android:theme="@style/withActionBar"
             />
+        <activity android:name=".ui.listTrip.modify.modifyTrip"
+            android:label="CHuyến đi"
+            android:parentActivityName=".ui.listTrip.list.listTrip"
+            android:theme="@style/withActionBar"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

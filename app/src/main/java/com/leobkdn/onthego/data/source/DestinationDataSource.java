@@ -2,6 +2,7 @@ package com.leobkdn.onthego.data.source;
 
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -14,6 +15,7 @@ import com.leobkdn.onthego.data.result.Result;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -295,6 +297,35 @@ public class DestinationDataSource extends ServerData {
         return result;
     }
 
+    public String deleteDes(String token,int id){
+        String result="Success";
+        try{
+            URL endPoint = new URL(server + "/destination/deleteDes/" + id);
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Accept", "application/json");
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        result = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                    jsonReader.endObject();
+                    return result;
+                }
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public boolean editInfo(String token, Destination destination) {
         try {
             URL endPoint = new URL(server + "/destination/edit");
@@ -305,10 +336,10 @@ public class DestinationDataSource extends ServerData {
             connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
-            String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
-                    + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
-                    + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") + "\",\"latitude\":\"" + destination.getLat()
-                    + "\",\"longitude\":\"" + destination.getLon() + "\",\"id\":\"" + destination.getId() + "}";
+            String postData = "{ \"name\":\"" + destination.getName() + "\",\"cat\":\""
+                    + destination.getCategory() + "\",\"description\":\"" + (destination.getDescription() != null ? destination.getDescription() : "null") + "\",\"address\":\""
+                    + (destination.getAddress() != null ? destination.getAddress() : "null") + "\",\"latitude\":\"" + destination.getLat()
+                    + "\",\"longitude\":\"" + (double)destination.getLon() + "\",\"id\":\"" +destination.getId() + "\"}";
             connection.setDoOutput(true);
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
@@ -342,23 +373,24 @@ public class DestinationDataSource extends ServerData {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
-    public boolean addDes(String token, Destination destination) {
+    public boolean addDes(String token,Destination destination) {
         try {
             URL endPoint = new URL(server + "/destination/add");
             // Create connection
             HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("User-Agent", "On The Go");
-            connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
             connection.setRequestProperty("Accept", "application/json");
-            String postData = "{  \"name\":\"" + destination.getName() + "\",\"cat\":\""
-                    + destination.getCategory() + "\",\"description\":" + (destination.getDescription() != null ? destination.getDescription() : "null") + ",\"address\":"
-                    + (destination.getAddress() != null ? "\"" + destination.getAddress() + "\"" : "null") + "\",\"latitude\":\"" + destination.getLat()
-                    + "\",\"longitude\":\"" + destination.getLon() + "}";
+            connection.setRequestProperty("User-Agent", "On The Go");
+            String postData = "{\"name\":\"" + destination.getName() + "\",\"address\":\""
+                    + destination.getAddress() + "\",\"cat\":\"" + destination.getCategory() + "\",\"description\":\""
+                    + (destination.getDescription() != null ? destination.getDescription() : "null") + "\",\"latitude\":\"" +destination.getLat()
+                    + "\",\"longitude\":\"" +destination.getLon()+"\""+"}";
             connection.setDoOutput(true);
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
@@ -373,6 +405,7 @@ public class DestinationDataSource extends ServerData {
                     } else jsonReader.skipValue();
                 }
                 jsonReader.endObject();
+                connection.disconnect();
                 return true;
             } else {
                 InputStream responseBody = connection.getErrorStream();

@@ -40,6 +40,7 @@ public class addDestinationActivity extends AppCompatActivity {
     private Button confirm;
     private LoggedInUser user;
     private Destination destination;
+    private boolean turn=true;
     private String cat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,8 @@ public class addDestinationActivity extends AppCompatActivity {
         descrip.setText("Mô tả");
         kinhDo.setText("0");
         viDo.setText("0");
-        rating.setText("Điểm đánh giá");
-        rating.setText("Số người đánh giá");
+        rating.setText("0");
+        ratingNum.setText("1");
         cat = "food";
 
         ArrayAdapter<CharSequence> optAdapter = ArrayAdapter.createFromResource(this, R.array.spi_des, android.R.layout.simple_spinner_item);
@@ -77,7 +78,13 @@ public class addDestinationActivity extends AppCompatActivity {
         opt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                if(turn){
+                    opt.setSelection(0);
+                    cat=opt.getSelectedItem().toString();
+                    turn=false;
+                }else {
+                    cat=opt.getSelectedItem().toString();
+                }
             }
 
             @Override
@@ -90,25 +97,27 @@ public class addDestinationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 confirm.setEnabled(false);
-                destination.setAddress(address.getText().toString());
-                destination.setName(name.getText().toString());
-                destination.setDescription(descrip.getText().toString());
-                destination.setLat(Float.valueOf(viDo.getText().toString()));
-                destination.setLon(Float.valueOf(kinhDo.getText().toString()));
-                destination.setCategory(cat);
-                a.addDes(user.getToken(),destination);
-                restartActivity(addDestinationActivity.this);
+                if(address.getText().toString()==null || name.getText().toString() == null ) {
+                    Toast.makeText(addDestinationActivity.this,"Tên và địa chỉ không được để trốmg",Toast.LENGTH_SHORT).show();
+                    confirm.setEnabled(true);
+                }else {
+                    destination = new Destination();
+                    destination.setAddress(address.getText().toString());
+                    destination.setName(name.getText().toString());
+                    destination.setDescription(descrip.getText().toString());
+                    destination.setLat(Float.valueOf(viDo.getText().toString()));
+                    destination.setLon(Float.valueOf(kinhDo.getText().toString()));
+                    if(cat==null) destination.setCategory(cat);
+                    else if(cat.equals("Chưa rõ")) destination.setCategory(null);
+                    else if(cat.equals("Nơi ở")) destination.setCategory("stay");
+                    else if (cat.equals("Quán ăn")) destination.setCategory("food");
+                    else if(cat.equals("Di chuyển")) destination.setCategory("transport");
+                    a.addDes(user.getToken(), destination);
+                    Toast.makeText(addDestinationActivity.this, "Thêm thành công!", Toast.LENGTH_SHORT).show();
+                    confirm.setEnabled(true);
+                }
             }
         });
-    }
-
-    public static void restartActivity(Activity activity) {
-        if (Build.VERSION.SDK_INT >= 11) {
-            activity.recreate();
-        } else {
-            activity.finish();
-            activity.startActivity(activity.getIntent());
-        }
     }
     private String restorePrefsData(String key) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("userPrefs", MODE_PRIVATE);

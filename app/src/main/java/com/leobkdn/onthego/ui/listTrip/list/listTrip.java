@@ -1,5 +1,6 @@
 package com.leobkdn.onthego.ui.listTrip.list;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,6 +24,8 @@ import com.leobkdn.onthego.data.source.TripDataSource;
 import com.leobkdn.onthego.tools.VNCharacterUtils;
 import com.leobkdn.onthego.ui.destination.DestinationListAdapter;
 import com.leobkdn.onthego.ui.listDestination.List.destiantionAdapter;
+import com.leobkdn.onthego.ui.listTrip.modify.modifyTrip;
+import com.leobkdn.onthego.ui.listTrip.modify.addTrip;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,25 +95,33 @@ public class listTrip  extends AppCompatActivity {
         }
         listView = findViewById(R.id.trip_list_view);
         fab = findViewById(R.id.addNewTripButton);
-        listTripAdapter adapter = new listTripAdapter(trips,this);
+        listTripAdapter adapter = new listTripAdapter(display,this);
         listView.setAdapter(adapter);
 
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Position = trips.get(position).getId();
-//                Intent intent= new Intent(listTrip.this , modifyTripInfoActivity.class);
-//                intent.putExtra("Position",Position);
-//                startActivity(intent);
-//            }
-//        });
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent= new Intent(listTrip.this , addTripActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Position = display.get(position).getId();
+                Intent intent= new Intent(listTrip.this , modifyTrip.class);
+                intent.putExtra("Position",Position);
+                intent.putExtra("tripName", display.get(position).getName());
+                intent.putExtra("tripId", display.get(position).getId());
+                intent.putExtra("isNew", false);
+                intent.putExtra("tripOwner", display.get(position).getOwner());
+                startActivity(intent);
+            }
+        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(listTrip.this , modifyTrip.class);
+                intent.putExtra("tripName", "an");
+                intent.putExtra("tripId", 0);
+                intent.putExtra("isNew", true);
+                intent.putExtra("tripOwner", "admin");
+                startActivity(intent);
+            }
+        });
 
     }
 

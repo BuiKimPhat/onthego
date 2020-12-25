@@ -101,7 +101,7 @@ public class destinationActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Position = des.get(position).getId();
+                Position = display.get(position).getId();
                 Intent intent= new Intent(destinationActivity.this , modifyDetinatiobInfoActivity.class);
                 intent.putExtra("Position",Position);
                 startActivity(intent);

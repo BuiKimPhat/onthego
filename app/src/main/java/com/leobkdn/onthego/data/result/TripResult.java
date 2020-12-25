@@ -39,8 +39,16 @@ public class TripResult {
         Result<String> result = tripDataSource.editTrip(token, tripId, newTripName, destinations);
         tripResult.postValue(result);
     }
+    public void editTrip(String token, int tripId, String newTripName, ArrayList<TripDestination> destinations,int uid){
+        Result<String> result = tripDataSource.editTrip(token, tripId, newTripName, destinations,uid);
+        tripResult.postValue(result);
+    }
     public void deleteTrip(String token, int tripId){
         Result<String> result = tripDataSource.deleteTrip(token, tripId);
+        tripResult.postValue(result);
+    }
+    public void deleteTrip(String token, int tripId,int uid){
+        Result<String> result = tripDataSource.deleteTrip(token, tripId,uid);
         tripResult.postValue(result);
     }
 }

@@ -43,28 +43,23 @@ public class AddUserActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_user);
-        //test insert db
-//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, PackageManager.PERMISSION_GRANTED);
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
+
         signUpViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText emailEditText = findViewById(R.id.email2);
-        final EditText passwordEditText = findViewById(R.id.password2);
-        final EditText nameEditText = findViewById(R.id.userFullName2);
+        EditText emailEditText = findViewById(R.id.email2);
+        EditText passwordEditText = findViewById(R.id.password2);
+        EditText nameEditText = findViewById(R.id.userFullName2);
         EditText birthdayEditText = findViewById(R.id.userDOB2);
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
-        final Button addButton = findViewById(R.id.addButtonAction);
+        ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        Button addButton = findViewById(R.id.addButtonAction);
         Spinner addressSpinner = findViewById(R.id.userAddress2);
         confirmPass = findViewById(R.id.confirm_password);
-        // Create an ArrayAdapter using the cities string array and a default spinner layout
+
         ArrayAdapter<CharSequence> addressSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.cities, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
         addressSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
         addressSpinner.setAdapter(addressSpinnerAdapter);
-        // switch to login page
+
         birthdayEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +102,6 @@ public class AddUserActivity extends AppCompatActivity  {
                     confirmPass.setError(getString(signUpFormState.getConfirmError()));
                 }
             }
-            // TODO: check name validation
         });
         // Observe Signup form state on submitted, update UI if success, show error if error
         signUpViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
@@ -149,19 +143,7 @@ public class AddUserActivity extends AppCompatActivity  {
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         nameEditText.addTextChangedListener(afterTextChangedListener);
         confirmPass.addTextChangedListener(afterTextChangedListener);
-        //if press Enter (last field, after input form), sign up with the email, password, name
-//        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    signUpViewModel.signUp(emailEditText.getText().toString(),
-//                            passwordEditText.getText().toString(),
-//                            nameEditText.getText().toString());
-//                }
-//                return false;
-//            }
-//        });
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -290,6 +290,57 @@ public class TripDataSource extends ServerData {
         }
     }
 
+    public Result<String> editTrip(String token, int tripId, String newTripName, ArrayList<TripDestination> destinations,int uid) {
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/trip/edit2");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"id\":" + tripId + ",\"name\":\"" + newTripName + "\",\"uid\":" + uid + "}";
+            if (!destinations.isEmpty()) {
+                postData = "{\"id\":" + tripId + ",\"name\":\"" + newTripName + "\",\"uid\":" + uid + ",\"destinations\": [";
+                for (int i = 0; i < destinations.size() - 1; i++) {
+                    postData += "{\"id\":" + destinations.get(i).getId()
+                            + ",\"startTime\":"
+                            + (destinations.get(i).getStartTime() != null ? destinations.get(i).getStartTime().getTime() : "null")
+                            + ",\"finishTime\":"
+                            + (destinations.get(i).getFinishTime() != null ? destinations.get(i).getFinishTime().getTime() : "null")
+                            + "},";
+                }
+                postData += "{\"id\":" + destinations.get(destinations.size() - 1).getId()
+                        + ",\"startTime\":"
+                        + (destinations.get(destinations.size() - 1).getStartTime() != null ? destinations.get(destinations.size() - 1).getStartTime().getTime() : "null")
+                        + ",\"finishTime\":"
+                        + (destinations.get(destinations.size() - 1).getFinishTime() != null ? destinations.get(destinations.size() - 1).getFinishTime().getTime() : "null")
+                        + "}]}";
+            }
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                String stringResult = "Error";
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success<>(stringResult);
+            } else throw errorReader(connection);
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+    }
+
     public Result<String> deleteTrip(String token, int tripId) {
         try {
             // Create URL
@@ -303,6 +354,40 @@ public class TripDataSource extends ServerData {
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
             String postData = "{\"tripId\":" + tripId + "}";
+            connection.getOutputStream().write(postData.getBytes());
+            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
+                String stringResult = "Error";
+                InputStream responseBody = connection.getInputStream();
+                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    if (jsonReader.nextName().equals("message") && jsonReader.peek() != JsonToken.NULL) {
+                        stringResult = jsonReader.nextString();
+                    } else jsonReader.skipValue();
+                }
+                jsonReader.endObject();
+                connection.disconnect();
+                return new Result.Success(stringResult);
+            } else throw errorReader(connection);
+        } catch (Exception e) {
+            return new Result.Error(e);
+        }
+    }
+
+    public Result<String> deleteTrip(String token, int tripId,int uid) {
+        try {
+            // Create URL
+            URL endPoint = new URL(server + "/trip/delete2");
+            // Create connection
+            HttpURLConnection connection = (HttpURLConnection) endPoint.openConnection();
+            connection.setRequestProperty("User-Agent", "On The Go");
+            connection.addRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+            String postData = "{\"tripId:" + tripId + ",\"uid\":" + uid + "}";
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 String stringResult = "Error";

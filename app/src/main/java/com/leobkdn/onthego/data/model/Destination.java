@@ -13,6 +13,8 @@ public class Destination {
     protected float lat;
     protected float lon;
 
+    public Destination(){
+    }
     public Destination(Destination x) {
         this.id = x.id;
         this.name = x.name;
