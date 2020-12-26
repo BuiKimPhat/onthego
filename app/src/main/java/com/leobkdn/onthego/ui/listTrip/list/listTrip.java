@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +27,7 @@ import com.leobkdn.onthego.ui.destination.DestinationListAdapter;
 import com.leobkdn.onthego.ui.listDestination.List.destiantionAdapter;
 import com.leobkdn.onthego.ui.listTrip.modify.modifyTrip;
 import com.leobkdn.onthego.ui.listTrip.modify.addTrip;
+import com.leobkdn.onthego.ui.modify_user.list.Users_class;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +79,8 @@ public class listTrip  extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
-                quickSortBy(display, 0, display.size() - 1, selectedItem);
+                for(int i=0;i<display.size();i++)
+                quickSortBy(display, 0, display.size()-1, selectedItem);
                 listView.setAdapter(new listTripAdapter(display,listTrip.this));
             }
 
@@ -89,7 +92,7 @@ public class listTrip  extends AppCompatActivity {
 
         try{
             trips = a.getListTrip(user.getToken());
-            display=trips;
+            display = trips;
         }catch (Exception err){
             Toast.makeText(listTrip.this," "+err,Toast.LENGTH_SHORT).show();
         }
@@ -107,7 +110,7 @@ public class listTrip  extends AppCompatActivity {
                 intent.putExtra("tripName", display.get(position).getName());
                 intent.putExtra("tripId", display.get(position).getId());
                 intent.putExtra("isNew", false);
-                intent.putExtra("tripOwner", display.get(position).getOwner());
+                intent.putExtra("tripOwnerId", display.get(position).getOwnerId());
                 startActivity(intent);
             }
         });
@@ -116,13 +119,12 @@ public class listTrip  extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent= new Intent(listTrip.this , modifyTrip.class);
                 intent.putExtra("tripName", "an");
-                intent.putExtra("tripId", 0);
+                intent.putExtra("tripId", 1);
                 intent.putExtra("isNew", true);
-                intent.putExtra("tripOwner", "admin");
+                intent.putExtra("tripOwnerId", 1);
                 startActivity(intent);
             }
         });
-
     }
 
     // get prefs from storage
@@ -143,10 +145,10 @@ public class listTrip  extends AppCompatActivity {
             if (start < end) {
                 int i = start, j = end;
                 long chot;
-                chot = source.get((start + end) / 2).getCreatedAt() != null ? source.get((start + end) / 2).getCreatedAt().getTime() : -1; // chon phan tu o giua lam chot
+                chot = source.get((start + end) / 2).getOwnerId(); // chon phan tu o giua lam chot
                 while (i < j) {
-                    while ((source.get(i).getCreatedAt() != null ? source.get(i).getCreatedAt().getTime() : -1) < chot) i++;
-                    while ((source.get(j).getCreatedAt() != null ? source.get(j).getCreatedAt().getTime() : -1) > chot) j--;
+                    while ((source.get(i).getOwnerId()) < chot) i++;
+                    while ((source.get(j).getOwnerId()) > chot) j--;
                     if (i <= j) {
                         Trip temp = new Trip(source.get(i));
                         source.set(i, source.get(j));
@@ -199,11 +201,11 @@ public class listTrip  extends AppCompatActivity {
         } else {
             if (start < end) {
                 int i = start, j = end;
-                long chot;
-                chot = source.get((start + end) / 2).getCreatedAt() != null ? source.get((start + end) / 2).getCreatedAt().getTime() : -1; // chon phan tu o giua lam chot
+                float chot;
+                chot = source.get((start + end) / 2).getOwnerId(); // chon phan tu o giua lam chot
                 while (i < j) {
-                    while ((source.get(i).getCreatedAt() != null ? source.get(i).getCreatedAt().getTime() : -1) > chot) i++;
-                    while ((source.get(j).getCreatedAt() != null ? source.get(j).getCreatedAt().getTime() : -1) < chot) j--;
+                    while (source.get(i).getOwnerId() > chot) i++;
+                    while (source.get(j).getOwnerId() < chot) j--;
                     if (i <= j) {
                         Trip temp = new Trip(source.get(i));
                         source.set(i, source.get(j));

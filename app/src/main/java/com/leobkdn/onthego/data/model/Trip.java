@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Trip {
     private int id;
+    private int ownerId;
     private String name;
     private String owner;
     private Date createdAt;
@@ -16,6 +17,7 @@ public class Trip {
         this.id = x.id;
         this.name = x.name;
         this.owner = x.owner;
+        this.ownerId=x.ownerId;
         this.createdAt = x.createdAt;
     }
 
@@ -26,10 +28,16 @@ public class Trip {
         this.createdAt = createdAt;
     }
 
-    public Trip(int id, String name, String owner) {
+    public Trip(int id, String name,int owner, Date createdAt) {
         this.id = id;
         this.name = name;
-        this.owner = owner;
+        this.ownerId = owner;
+        this.createdAt = createdAt;
+    }
+    public Trip(int id, String name,int owner) {
+        this.id = id;
+        this.name = name;
+        this.ownerId = owner;
     }
 
     public Trip(int id, String name, String owner, Date createdAt, ArrayList<TripDestination> destinations) {
@@ -60,6 +68,9 @@ public class Trip {
         return createdAt;
     }
 
+    public int getOwnerId() {
+        return ownerId;
+    }
 
     public int tripCost(){
         return 0;

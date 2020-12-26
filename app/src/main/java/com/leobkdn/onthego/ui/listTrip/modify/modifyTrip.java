@@ -117,7 +117,7 @@ public class modifyTrip extends AppCompatActivity {
         tripNameEdit.setText(getIntent().getStringExtra("tripName"));
         tripNameBtn = findViewById(R.id.trip_name_edit_button);
         tripOwner = findViewById(R.id.trip_owner_name);
-        tripOwner.setText(getIntent().getStringExtra("tripOwner"));
+        tripOwner.setText(" "+getIntent().getIntExtra("tripOwnerId",0));
         deleteTrip = findViewById(R.id.trip_delete);
         confirmButton = findViewById(R.id.trip_info_confirm);
         listDestinations = findViewById(R.id.trip_destinations_listView);
@@ -181,7 +181,7 @@ public class modifyTrip extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations, Integer.parseInt(Objects.requireNonNull(getIntent().getStringExtra("tripOwner"))));
+                            tripResult.editTrip(restorePrefsData("token"), tripID, tripNameEdit.getText().toString(), destinations,getIntent().getIntExtra("tripOwnerId",0));
                         }
                     }).start();
                 }
@@ -209,7 +209,7 @@ public class modifyTrip extends AppCompatActivity {
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
-                        tripResult.deleteTrip(restorePrefsData("token"), tripID, Integer.parseInt(Objects.requireNonNull(getIntent().getStringExtra("tripOwner"))));
+                        tripResult.deleteTrip(restorePrefsData("token"), tripID, getIntent().getIntExtra("tripOwnerId",0));
                     }
                 });
                 finish();

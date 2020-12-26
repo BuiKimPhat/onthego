@@ -2,6 +2,7 @@ package com.leobkdn.onthego.data.source;
 
 import android.util.JsonReader;
 import android.util.JsonToken;
+import android.util.Log;
 
 import com.leobkdn.onthego.data.ServerData;
 import com.leobkdn.onthego.data.model.TripDestination;
@@ -83,23 +84,23 @@ public class TripDataSource extends ServerData {
                 jsonReader.beginArray();
             while (jsonReader.hasNext()) {
                 int id = -1;
-                String name = "an", owner = "an";
-                String ownerName = "an";
+                String name = "an";
+                int owner = 0;
+                Timestamp createdAt = null;
                 jsonReader.beginObject();
                 while (jsonReader.hasNext()) {
                     if (jsonReader.nextName().equals("id") && jsonReader.peek() != JsonToken.NULL) {
                         id = jsonReader.nextInt();
                     } else jsonReader.skipValue();
                     if (jsonReader.nextName().equals("ownerId") && jsonReader.peek() != JsonToken.NULL) {
-                        owner = ""+jsonReader.nextInt();
+                        owner = jsonReader.nextInt();
                     } else jsonReader.skipValue();
                     if (jsonReader.nextName().equals("name") && jsonReader.peek() != JsonToken.NULL){
                         name = jsonReader.nextString();
-                    }
-                    else jsonReader.skipValue();
+                    } else jsonReader.skipValue();
                 }
                 jsonReader.endObject();
-                trips.add(new Trip(id, name, owner));
+                trips.add(new Trip(id, name, owner,createdAt));
             }
             jsonReader.endArray();
             return trips;
@@ -119,7 +120,7 @@ public class TripDataSource extends ServerData {
         }
     } catch (Exception e) {
             e.printStackTrace();
-            trips.add(new Trip(0,"Faild","Faild"));
+            trips.add(new Trip(0,"Faild",-1));
             return trips;
         }
     }
@@ -387,7 +388,7 @@ public class TripDataSource extends ServerData {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Accept", "application/json");
             connection.setDoOutput(true);
-            String postData = "{\"tripId:" + tripId + ",\"uid\":" + uid + "}";
+            String postData = "{\"tripId\":" + tripId + ",\"uid\":" + uid + "}";
             connection.getOutputStream().write(postData.getBytes());
             if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 400) {
                 String stringResult = "Error";

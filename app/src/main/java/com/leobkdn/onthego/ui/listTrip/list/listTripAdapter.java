@@ -1,6 +1,7 @@
 package com.leobkdn.onthego.ui.listTrip.list;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ public class listTripAdapter extends BaseAdapter {
     public listTripAdapter(List<Trip> trip, Context context){
         this.trips = trip;
         this.context=context;
+        Log.i("size1"," "+ trip.size());
+        for(int i=0;i<trip.size();i++)
+            Log.i("size3"," "+ trip.get(i).getOwnerId());
     }
 
 
@@ -46,9 +50,10 @@ public class listTripAdapter extends BaseAdapter {
         } else view = convertView;
         //bind date
         Trip trip = (Trip) getItem(position);
-        ((TextView) view.findViewById(R.id.trip_id)).setText(String.format(" %d ", trip.getId()));
+        ((TextView) view.findViewById(R.id.trip_id)).setText(String.format(" %s ", trip.getId()));
         ((TextView) view.findViewById(R.id.trip_name)).setText(String.format("Tên : %s", trip.getName()));
-        ((TextView) view.findViewById(R.id.trip_owner)).setText(String.format("%s .", trip.getOwner()));
+        Log.i("err"," "+ trip.getOwnerId());
+        ((TextView) view.findViewById(R.id.trip_owner)).setText(String.format("Id người tạo : %s .", trip.getOwnerId()));
         return view;
     }
 }
