@@ -145,10 +145,10 @@ public class listTrip  extends AppCompatActivity {
             if (start < end) {
                 int i = start, j = end;
                 long chot;
-                chot = source.get((start + end) / 2).getOwnerId(); // chon phan tu o giua lam chot
+                chot = source.get((start + end) / 2).getId(); // chon phan tu o giua lam chot
                 while (i < j) {
-                    while ((source.get(i).getOwnerId()) < chot) i++;
-                    while ((source.get(j).getOwnerId()) > chot) j--;
+                    while ((source.get(i).getId()) < chot) i++;
+                    while ((source.get(j).getId()) > chot) j--;
                     if (i <= j) {
                         Trip temp = new Trip(source.get(i));
                         source.set(i, source.get(j));
@@ -202,10 +202,10 @@ public class listTrip  extends AppCompatActivity {
             if (start < end) {
                 int i = start, j = end;
                 float chot;
-                chot = source.get((start + end) / 2).getOwnerId(); // chon phan tu o giua lam chot
+                chot = source.get((start + end) / 2).getId(); // chon phan tu o giua lam chot
                 while (i < j) {
-                    while (source.get(i).getOwnerId() > chot) i++;
-                    while (source.get(j).getOwnerId() < chot) j--;
+                    while (source.get(i).getId() > chot) i++;
+                    while (source.get(j).getId() < chot) j--;
                     if (i <= j) {
                         Trip temp = new Trip(source.get(i));
                         source.set(i, source.get(j));
