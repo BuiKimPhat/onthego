@@ -9,7 +9,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 
 public abstract class ServerData {
-    protected static String server = "http://192.168.1.152:6996/api";
+    protected static String server = "http://34.126.123.226/api";
 
     protected static Exception errorReader(HttpURLConnection connection) throws Exception {
         InputStream responseBody = connection.getErrorStream();
